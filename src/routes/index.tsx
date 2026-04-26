@@ -78,8 +78,13 @@ function QuestionnaireComponent() {
         toast.error("Por favor, selecione quem está entrevistando.");
         return;
       }
-      if (!formData.nome || !formData.whatsapp) {
-        toast.error("Nome e WhatsApp são obrigatórios.");
+      if (!formData.nome || !formData.whatsapp || !formData.dataNascimento) {
+        toast.error("Nome, WhatsApp e Data de Nascimento são obrigatórios.");
+        return;
+      }
+    } else if (step >= 2 && step <= 6) {
+      if (!answers[step - 2] || answers[step - 2].trim().length < 5) {
+        toast.error("Por favor, responda a pergunta para continuar.");
         return;
       }
     }
@@ -117,36 +122,67 @@ function QuestionnaireComponent() {
 
   if (step === 0) {
     return (
-      <div className="min-h-screen bg-[#fff5f7] flex flex-col items-center justify-center p-4 text-center">
-        <div className="relative mb-8 animate-in zoom-in duration-700">
-          <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full" />
-          <div className="relative bg-white p-4 rounded-full shadow-2xl border-4 border-primary/10">
+      <div className="min-h-screen bg-[#f8f9fa] flex flex-col md:flex-row">
+        {/* Left Side: Image/Branding */}
+        <div className="hidden md:flex md:w-1/2 bg-[#e91e63] relative overflow-hidden items-center justify-center p-12">
+          <div className="absolute inset-0 bg-gradient-to-br from-[#e91e63] to-[#880e4f] opacity-90" />
+          <div className="relative z-10 text-center text-white max-w-md">
             <img 
               src="https://rede.deputadasarelli.com.br/assets/logo-sarelli-Cg7sc1zQ.webp" 
-              alt="Dra. Fernanda Sarelli" 
-              className="h-32 w-32 object-contain rounded-full border-2 border-[#e91e63]/20 p-2"
+              alt="Logo Sarelli" 
+              className="h-24 mx-auto mb-8 filter brightness-0 invert"
             />
+            <h2 className="text-4xl font-bold mb-6 tracking-tight">Ouvir você é o primeiro passo para transformar.</h2>
+            <p className="text-xl opacity-90 font-light leading-relaxed">
+              Participe da pesquisa "Voz das Mulheres" e ajude a Dra. Fernanda Sarelli a construir uma comunidade mais forte e justa.
+            </p>
           </div>
+          {/* Decorative elements */}
+          <div className="absolute top-[-10%] left-[-10%] w-64 h-64 bg-white/10 rounded-full blur-3xl" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-black/10 rounded-full blur-3xl" />
         </div>
-        <h1 className="text-3xl font-extrabold text-gray-900 mb-4 tracking-tight uppercase">
-          Voz das Mulheres
-        </h1>
-        <p className="text-lg text-gray-600 mb-10 max-w-sm mx-auto leading-relaxed">
-          Sua opinião é a força que transforma nossa comunidade. Participe da nossa pesquisa.
-        </p>
-        <Button 
-          onClick={() => setStep(1)} 
-          className="h-16 w-full max-w-xs rounded-2xl text-xl font-bold bg-gradient-to-r from-[#e91e63] to-[#ff9800] hover:scale-[1.03] transition-all shadow-xl shadow-primary/20 border-none"
-        >
-          COMEÇAR
-          <ChevronRight className="ml-2 h-6 w-6" />
-        </Button>
-        <div className="mt-12 opacity-50">
-          <img 
-            src="https://rede.deputadasarelli.com.br/assets/logo-sarelli-Cg7sc1zQ.webp" 
-            alt="Logo" 
-            className="h-8 mx-auto"
-          />
+
+        {/* Right Side: Action */}
+        <div className="w-full md:w-1/2 flex flex-col items-center justify-center p-8 bg-white">
+          <div className="w-full max-w-md space-y-12">
+            <div className="text-center md:hidden">
+              <img 
+                src="https://rede.deputadasarelli.com.br/assets/logo-sarelli-Cg7sc1zQ.webp" 
+                alt="Logo Sarelli" 
+                className="h-16 mx-auto mb-6"
+              />
+            </div>
+            
+            <div className="relative mx-auto w-48 h-48 md:w-64 md:h-64">
+              <div className="absolute inset-0 bg-gradient-to-r from-[#e91e63] to-[#ff9800] rounded-full animate-pulse blur-xl opacity-20" />
+              <img 
+                src="https://rede.deputadasarelli.com.br/assets/fernanda-sarelli-BrFuKmdI.webp" 
+                alt="Dra. Fernanda Sarelli" 
+                className="relative w-full h-full object-cover rounded-full border-8 border-white shadow-2xl z-10"
+              />
+            </div>
+
+            <div className="text-center space-y-4">
+              <h1 className="text-4xl font-black text-gray-900 tracking-tighter uppercase">
+                Voz das Mulheres
+              </h1>
+              <p className="text-gray-500 text-lg">
+                Sua opinião é a força que transforma nossa comunidade.
+              </p>
+            </div>
+
+            <Button 
+              onClick={() => setStep(1)} 
+              className="w-full h-18 rounded-2xl text-xl font-bold bg-[#e91e63] hover:bg-[#c2185b] transition-all shadow-xl shadow-pink-200 py-8"
+            >
+              COMEÇAR PESQUISA
+              <ChevronRight className="ml-2 h-6 w-6" />
+            </Button>
+
+            <p className="text-center text-xs text-gray-400 font-medium tracking-widest uppercase">
+              Dra. Fernanda Sarelli
+            </p>
+          </div>
         </div>
       </div>
     );
