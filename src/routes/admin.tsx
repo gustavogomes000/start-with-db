@@ -67,35 +67,44 @@ function AdminLayout() {
     }
     try {
       const s = JSON.parse(raw);
+      if (!s?.id) throw new Error("invalid");
       setSession({ id: s.id, username: s.username });
-      fetchAll();
+      fetchAll(s.id);
     } catch {
+      localStorage.removeItem("admin_session");
       navigate({ to: "/login" });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  async function fetchAll() {
+  async function fetchAll(adminId?: string) {
+    const id = adminId ?? session?.id;
+    if (!id) return;
     setLoading(true);
     try {
-      const [{ data: ent, error: e1 }, { data: ad, error: e2 }] = await Promise.all([
-        supabase
-          .from("promotion_entries")
-          .select("id, full_name, whatsapp, cpf, instagram, city, message, created_at")
-          .order("created_at", { ascending: false })
-          .limit(500),
-        supabase
-          .from("admin_users")
-          .select("id, username, created_at")
-          .order("created_at", { ascending: false }),
+      const [entriesRes, adminsRes] = await Promise.all([
+        supabase.functions.invoke("admin-api", {
+          body: { action: "list_entries", admin_id: id },
+        }),
+        supabase.functions.invoke("admin-api", {
+          body: { action: "list_admins", admin_id: id },
+        }),
       ]);
-      if (e1) throw e1;
-      if (e2) throw e2;
-      setCadastros((ent as Cadastro[]) || []);
-      setAdmins((ad as AdminUser[]) || []);
+      if (entriesRes.error) throw entriesRes.error;
+      if (adminsRes.error) throw adminsRes.error;
+      if (entriesRes.data?.error || adminsRes.data?.error) {
+        if (entriesRes.data?.error === "unauthorized" || adminsRes.data?.error === "unauthorized") {
+          localStorage.removeItem("admin_session");
+          navigate({ to: "/login" });
+          return;
+        }
+        throw new Error(entriesRes.data?.error || adminsRes.data?.error);
+      }
+      setCadastros((entriesRes.data?.entries as Cadastro[]) || []);
+      setAdmins((adminsRes.data?.admins as AdminUser[]) || []);
     } catch (err: any) {
       console.error(err);
-      toast.error("Erro ao carregar dados.");
+      toast.error(err.message || "Erro ao carregar dados.");
     } finally {
       setLoading(false);
     }
@@ -107,17 +116,25 @@ function AdminLayout() {
   }
 
   async function createAdmin() {
+    if (!session?.id) return;
     if (!newAdmin.username.trim() || newAdmin.password.length < 6) {
       toast.error("Usuário e senha (mín 6 caracteres) são obrigatórios.");
       return;
     }
     setSavingAdmin(true);
     try {
-      const { error } = await supabase.rpc("admin_create_user", {
-        p_username: newAdmin.username.trim(),
-        p_password: newAdmin.password,
+      const { data, error } = await supabase.functions.invoke("admin-api", {
+        body: {
+          action: "create_admin",
+          admin_id: session.id,
+          payload: {
+            username: newAdmin.username.trim(),
+            password: newAdmin.password,
+          },
+        },
       });
       if (error) throw error;
+      if (data?.error) throw new Error(data.error);
       toast.success("Administrador criado!");
       setNewAdmin({ username: "", password: "" });
       setNewAdminOpen(false);
