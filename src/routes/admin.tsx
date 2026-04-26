@@ -17,7 +17,17 @@ import {
   Shield,
   MessageSquare,
   Trash2,
+  Pencil,
+  KeyRound,
+  MoreVertical,
 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 import {
   Dialog,
   DialogContent,
