@@ -309,9 +309,9 @@ function AdminLayout() {
           {activeTab === "interviews" && (
             <div className="space-y-6">
               <div className="flex justify-between items-center">
-                <div className="relative w-96">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-                  <Input placeholder="Buscar por candidata ou entrevistador..." className="pl-12 h-14 rounded-2xl border-none shadow-sm" />
+                <div className="relative flex-1 md:w-96">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                  <Input placeholder="Candidata ou recrutador..." className="pl-12 h-12 rounded-2xl border-none shadow-sm" />
                 </div>
               </div>
 
