@@ -78,7 +78,6 @@ function QuestionnaireComponent() {
         toast.error("Por favor, selecione quem está entrevistando.");
         return;
       }
-    if (step === 1) {
       if (!formData.nome || !formData.whatsapp) {
         toast.error("Nome e WhatsApp são obrigatórios.");
         return;
