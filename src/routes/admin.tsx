@@ -161,6 +161,92 @@ function AdminLayout() {
     }
   }
 
+  async function saveUsername() {
+    if (!session?.id || !editAdmin) return;
+    if (!editUsername.trim()) {
+      toast.error("Informe um nome de usuário.");
+      return;
+    }
+    setSavingEdit(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("admin-api", {
+        body: {
+          action: "update_admin_username",
+          admin_id: session.id,
+          payload: { id: editAdmin.id, username: editUsername.trim() },
+        },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      toast.success("Nome atualizado!");
+      if (editAdmin.id === session.id) {
+        const updated = { ...session, username: editUsername.trim() };
+        setSession(updated);
+        localStorage.setItem(
+          "admin_session",
+          JSON.stringify({ ...updated, ts: Date.now() }),
+        );
+      }
+      setEditAdmin(null);
+      fetchAll();
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao atualizar nome.");
+    } finally {
+      setSavingEdit(false);
+    }
+  }
+
+  async function savePassword() {
+    if (!session?.id || !pwdAdmin) return;
+    if (newPassword.length < 6) {
+      toast.error("Senha deve ter ao menos 6 caracteres.");
+      return;
+    }
+    setSavingEdit(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("admin-api", {
+        body: {
+          action: "update_admin_password",
+          admin_id: session.id,
+          payload: { id: pwdAdmin.id, password: newPassword },
+        },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      toast.success("Senha atualizada!");
+      setPwdAdmin(null);
+      setNewPassword("");
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao atualizar senha.");
+    } finally {
+      setSavingEdit(false);
+    }
+  }
+
+  async function deleteAdmin(a: AdminUser) {
+    if (!session?.id) return;
+    if (a.id === session.id) {
+      toast.error("Você não pode excluir a si mesmo.");
+      return;
+    }
+    if (!confirm(`Excluir administrador "${a.username}"?`)) return;
+    try {
+      const { data, error } = await supabase.functions.invoke("admin-api", {
+        body: {
+          action: "delete_admin",
+          admin_id: session.id,
+          payload: { id: a.id },
+        },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      toast.success("Administrador excluído.");
+      fetchAll();
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao excluir.");
+    }
+  }
+
   const filtered = cadastros.filter((c) => {
     if (!search) return true;
     const s = search.toLowerCase();
