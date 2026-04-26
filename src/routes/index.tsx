@@ -193,7 +193,7 @@ function QuestionnaireComponent() {
 
             <Button 
               onClick={() => setStep(1)} 
-              className="w-full h-18 rounded-2xl text-xl font-bold bg-[#e91e63] hover:bg-[#c2185b] transition-all shadow-xl shadow-pink-200 py-8"
+              className="w-full h-18 rounded-2xl text-xl font-black bg-gradient-to-r from-[#e91e63] via-[#ffb347] to-[#e91e63] bg-[length:200%_auto] hover:bg-right transition-all duration-500 shadow-xl shadow-pink-200 py-8 border-none text-white"
             >
               COMEÇAR PESQUISA
               <ChevronRight className="ml-2 h-6 w-6" />
@@ -363,7 +363,7 @@ function QuestionnaireComponent() {
               
               <Button 
                 onClick={step === 6 ? handleSubmit : handleNext} 
-                className="h-16 flex-1 rounded-2xl text-xl font-black bg-gradient-to-r from-[#e91e63] to-[#ff9800] hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-primary/20 border-none"
+                className="h-16 flex-1 rounded-2xl text-xl font-black bg-gradient-to-r from-[#e91e63] via-[#ff9800] to-[#e91e63] bg-[length:200%_auto] hover:bg-right transition-all duration-500 shadow-xl shadow-pink-200 border-none text-white"
                 disabled={loading}
               >
                 {loading ? "ENVIANDO..." : step === 6 ? "FINALIZAR" : "CONTINUAR"}
