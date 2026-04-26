@@ -67,6 +67,11 @@ function AdminLayout() {
   const [newAdminOpen, setNewAdminOpen] = useState(false);
   const [newAdmin, setNewAdmin] = useState({ username: "", password: "" });
   const [savingAdmin, setSavingAdmin] = useState(false);
+  const [editAdmin, setEditAdmin] = useState<AdminUser | null>(null);
+  const [editUsername, setEditUsername] = useState("");
+  const [pwdAdmin, setPwdAdmin] = useState<AdminUser | null>(null);
+  const [newPassword, setNewPassword] = useState("");
+  const [savingEdit, setSavingEdit] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
