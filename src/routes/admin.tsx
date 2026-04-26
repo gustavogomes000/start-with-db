@@ -49,19 +49,46 @@ function AdminLayout() {
   async function fetchData() {
     setLoading(true);
     try {
-      // Mock data for now since we haven't created the new tables yet
-      setUsers([
-        { id: "1", nome: "Ana Silva", tipo: "Liderança", entrevistas: 12 },
-        { id: "2", nome: "Beatriz Costa", tipo: "Fiscal", entrevistas: 8 },
-        { id: "3", nome: "Carla Souza", tipo: "Coordenador", entrevistas: 25 },
-      ]);
+      // Fetch real recruiters
+      const { data: userData, error: userError } = await supabase
+        .from("hierarquia_usuarios")
+        .select("id, nome, tipo, ativo")
+        .order("nome");
       
-      setInterviews([
-        { id: "1", nome: "Maria Oliveira", data: "2024-05-20", status: "Completo", entrevistador: "Ana Silva" },
-        { id: "2", nome: "Juliana Santos", data: "2024-05-21", status: "Completo", entrevistador: "Beatriz Costa" },
-      ]);
+      if (userError) throw userError;
+
+      // Fetch real survey results (using cadastros_fernanda as base for now)
+      const { data: surveyData, error: surveyError } = await supabase
+        .from("cadastros_fernanda")
+        .select("id, nome, criado_em, cadastrado_por, telefone")
+        .order("criado_em", { ascending: false });
+
+      if (surveyError) throw surveyError;
+      
+      // Map data for display
+      const mappedUsers = userData.map(u => ({
+        id: u.id,
+        nome: u.nome,
+        tipo: u.tipo,
+        entrevistas: surveyData.filter(s => s.cadastrado_por === u.id).length
+      }));
+
+      const mappedInterviews = surveyData.map(s => {
+        const recruiter = userData.find(u => u.id === s.cadastrado_por);
+        return {
+          id: s.id,
+          nome: s.nome,
+          data: new Date(s.criado_em).toLocaleDateString('pt-BR'),
+          status: "Completo",
+          entrevistador: recruiter ? recruiter.nome : "Desconhecido"
+        };
+      });
+
+      setUsers(mappedUsers);
+      setInterviews(mappedInterviews);
     } catch (err) {
-      toast.error("Erro ao carregar dados.");
+      console.error(err);
+      toast.error("Erro ao carregar dados do banco.");
     } finally {
       setLoading(false);
     }
