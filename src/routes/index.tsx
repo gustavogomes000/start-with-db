@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { ChevronRight, ChevronLeft, Send, User, Calendar, MessageSquare, Instagram, Phone } from "lucide-react";
+import { ChevronRight, ChevronLeft, Send, User, Calendar, MessageSquare, Phone } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/")({
@@ -227,7 +227,7 @@ function QuestionnaireComponent() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="flex items-center gap-2"><Instagram size={16} /> Instagram</Label>
+                  <Label className="flex items-center gap-2">Instagram</Label>
                   <Input 
                     value={formData.instagram} 
                     onChange={e => setFormData({...formData, instagram: e.target.value})}
