@@ -45,11 +45,13 @@ function AdminLayout() {
     async function checkUser() {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        navigate({ to: "/login" });
+        // Only navigate if we are on the client side
+        if (typeof window !== 'undefined') {
+          navigate({ to: "/login" });
+        }
         return;
       }
       
-      // Simulate checking if admin (real implementation would check metadata or roles table)
       setIsAdmin(true); 
       fetchData();
     }
