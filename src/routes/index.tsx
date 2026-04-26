@@ -139,84 +139,117 @@ function QuestionnaireComponent() {
   if (step === 0) {
     return (
       <div
-        className="h-[100dvh] w-full flex flex-col items-center justify-between relative overflow-hidden px-6 py-8"
-        style={{
-          background:
-            "radial-gradient(ellipse at top, #ffe4ec 0%, #fff5f8 45%, #fff8f0 100%)",
-        }}
+        className="h-[100dvh] w-full flex flex-col relative overflow-hidden"
+        style={{ background: "#fff5f7" }}
       >
-        {/* Constellation pattern overlay (referência oficial) */}
+        {/* Top decorative arc — solid pink filling the upper half */}
         <div
-          className="absolute inset-0 pointer-events-none opacity-60"
+          className="absolute top-0 left-0 right-0 h-[58%] z-0"
+          style={{
+            background:
+              "linear-gradient(160deg, #ec407a 0%, #e91e63 55%, #d81b60 100%)",
+            borderBottomLeftRadius: "50% 14%",
+            borderBottomRightRadius: "50% 14%",
+          }}
+        />
+
+        {/* Subtle pattern overlay on the pink area */}
+        <div
+          className="absolute top-0 left-0 right-0 h-[58%] z-[1] opacity-25 mix-blend-overlay pointer-events-none"
           style={{
             backgroundImage: `url('https://rede.deputadasarelli.com.br/assets/bg-pattern.svg')`,
-            backgroundSize: "700px",
+            backgroundSize: "520px",
             backgroundRepeat: "repeat",
           }}
         />
 
-        {/* Glow blobs animados */}
-        <div className="absolute -top-32 -right-24 w-[420px] h-[420px] bg-pink-300/40 rounded-full blur-[120px] animate-pulse" />
+        {/* Soft golden + white highlights */}
         <div
-          className="absolute -bottom-32 -left-24 w-[420px] h-[420px] bg-amber-200/50 rounded-full blur-[120px] animate-pulse"
-          style={{ animationDelay: "1.2s" }}
+          className="absolute -top-20 -right-16 w-72 h-72 rounded-full z-[1] pointer-events-none"
+          style={{
+            background:
+              "radial-gradient(circle, rgba(255,215,140,0.55) 0%, rgba(255,215,140,0) 70%)",
+          }}
         />
         <div
-          className="absolute top-1/3 left-1/2 -translate-x-1/2 w-72 h-72 bg-pink-200/30 rounded-full blur-[100px] animate-pulse"
-          style={{ animationDelay: "2s" }}
+          className="absolute top-10 -left-20 w-64 h-64 rounded-full z-[1] pointer-events-none"
+          style={{
+            background:
+              "radial-gradient(circle, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0) 70%)",
+          }}
         />
 
-        {/* TOP: Foto + Logo */}
-        <div className="relative z-10 flex flex-col items-center pt-2 animate-in fade-in slide-in-from-top-4 duration-700">
-          <div className="relative w-36 h-36 mb-4">
-            <div className="absolute inset-0 bg-gradient-to-br from-[#e91e63] to-[#ffb347] rounded-full blur-2xl opacity-40 scale-110" />
-            <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-[#e91e63] via-[#ff6090] to-[#ffb347]" />
-            <img
-              src="https://rede.deputadasarelli.com.br/assets/fernanda-sarelli-BrFuKmdI.webp"
-              alt="Dra. Fernanda Sarelli"
-              className="relative w-full h-full object-cover rounded-full border-[3px] border-white shadow-[0_12px_30px_rgba(233,30,99,0.35)]"
-            />
-          </div>
+        {/* Brand bar */}
+        <div className="relative z-10 flex items-center justify-center pt-6 pb-2">
+          <span className="text-[10px] font-bold tracking-[0.45em] text-white/85 uppercase">
+            ✦  Pesquisa Oficial  ✦
+          </span>
+        </div>
+
+        {/* HERO: large white logo + portrait */}
+        <div className="relative z-10 flex flex-col items-center pt-3 px-6">
           <img
             src="https://rede.deputadasarelli.com.br/assets/logo-sarelli-Cg7sc1zQ.webp"
             alt="Doutora Fernanda Sarelli"
-            className="h-24 object-contain drop-shadow-md"
+            className="h-36 object-contain"
+            style={{
+              filter:
+                "brightness(0) invert(1) drop-shadow(0 6px 20px rgba(0,0,0,0.25))",
+            }}
           />
+
+          {/* Portrait sitting on the pink/white seam */}
+          <div className="relative w-44 h-44 mt-5">
+            <div
+              className="absolute -inset-[6px] rounded-full"
+              style={{
+                background:
+                  "conic-gradient(from 140deg, #ffd97a, #ffffff, #ffb347, #ffd97a)",
+              }}
+            />
+            <div className="absolute inset-0 rounded-full bg-white" />
+            <img
+              src="https://rede.deputadasarelli.com.br/assets/fernanda-sarelli-BrFuKmdI.webp"
+              alt="Dra. Fernanda Sarelli"
+              className="relative w-full h-full object-cover rounded-full p-[3px]"
+            />
+            <div className="absolute bottom-2 right-2 w-4 h-4 rounded-full bg-[#ffb347] border-2 border-white shadow" />
+          </div>
         </div>
 
-        {/* MIDDLE: Título + descrição */}
-        <div className="relative z-10 text-center max-w-xs animate-in fade-in zoom-in duration-700 delay-150">
-          <span className="text-[10px] font-black tracking-[0.4em] text-[#c9a227] uppercase">
-            Pesquisa Oficial
-          </span>
-          <h1 className="mt-3 text-[2.6rem] leading-[0.9] font-black text-gray-900 tracking-tighter uppercase">
-            Voz das
-            <br />
-            <span className="bg-gradient-to-r from-[#e91e63] to-[#ff6090] bg-clip-text text-transparent">
-              Mulheres
-            </span>
-          </h1>
-          <div className="mx-auto mt-3 h-[3px] w-16 rounded-full bg-gradient-to-r from-[#e91e63] to-[#ffb347]" />
-          <p className="mt-4 text-[15px] text-gray-600 font-medium leading-snug">
-            Sua opinião é a força que transforma nossa comunidade.
-          </p>
-        </div>
+        {/* Floating card with copy + CTA */}
+        <div className="relative z-10 flex-1 flex items-end px-5 pb-7">
+          <div className="w-full bg-white rounded-[28px] px-7 pt-7 pb-6 shadow-[0_20px_60px_-15px_rgba(216,27,96,0.35)] border border-pink-50">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="h-[2px] w-6 bg-gradient-to-r from-[#e91e63] to-[#ffb347] rounded-full" />
+              <span className="text-[10px] font-black tracking-[0.35em] text-[#c9a227] uppercase">
+                Chama a Doutora
+              </span>
+            </div>
 
-        {/* BOTTOM: CTA sempre visível */}
-        <div className="relative z-10 w-full max-w-sm animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
-          <Button
-            onClick={() => setStep(1)}
-            className="w-full h-16 rounded-2xl text-lg font-black bg-gradient-to-r from-[#e91e63] via-[#ff6090] to-[#ffb347] bg-[length:200%_auto] hover:bg-right transition-all duration-700 shadow-[0_15px_35px_-8px_rgba(233,30,99,0.55)] border-none text-white active:scale-[0.97] uppercase tracking-wider"
-          >
-            Começar
-            <ChevronRight className="ml-1 h-5 w-5" />
-          </Button>
-          <div className="mt-4 flex items-center justify-center gap-3">
-            <div className="w-8 h-px bg-pink-200" />
-            <span className="text-[10px] text-pink-400 font-bold tracking-[0.3em] uppercase">
-              Chama a Doutora
-            </span>
-            <div className="w-8 h-px bg-pink-200" />
+            <h1 className="text-[2.1rem] leading-[0.95] font-black text-gray-900 tracking-tight">
+              Voz das{" "}
+              <span className="bg-gradient-to-r from-[#e91e63] to-[#ff8a4c] bg-clip-text text-transparent">
+                Mulheres
+              </span>
+            </h1>
+
+            <p className="mt-3 text-[14px] text-gray-500 font-medium leading-snug">
+              Sua opinião é a força que transforma nossa comunidade. Leva menos de 2 minutos.
+            </p>
+
+            <Button
+              onClick={() => setStep(1)}
+              className="mt-5 w-full h-14 rounded-2xl text-[15px] font-black bg-gradient-to-r from-[#e91e63] via-[#ec407a] to-[#ff8a4c] bg-[length:200%_auto] hover:bg-right transition-all duration-700 shadow-[0_12px_30px_-8px_rgba(233,30,99,0.6)] border-none text-white active:scale-[0.97] uppercase tracking-[0.18em]"
+            >
+              Começar agora
+              <ChevronRight className="ml-1 h-5 w-5" />
+            </Button>
+
+            <div className="mt-4 flex items-center justify-center gap-2 text-[10px] text-gray-400 font-semibold tracking-[0.2em] uppercase">
+              <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+              Anônimo · Seguro · Rápido
+            </div>
           </div>
         </div>
       </div>
