@@ -42,7 +42,7 @@ const QUESTIONS = [
 ];
 
 function QuestionnaireComponent() {
-  const [step, setStep] = useState(1); // Starting directly at Personal Info (step 1)
+  const [step, setStep] = useState(0); // 0: Start, 1: Personal info/Recruiter, 2-6: Questions, 7: Success
   const [users, setUsers] = useState<any[]>([]);
   const [selectedUserId, setSelectedUserId] = useState<string>("");
   const [formData, setFormData] = useState({
@@ -115,16 +115,56 @@ function QuestionnaireComponent() {
     }
   };
 
+  if (step === 0) {
+    return (
+      <div className="min-h-screen bg-[#fff5f7] flex flex-col items-center justify-center p-4 text-center">
+        <div className="relative mb-8 animate-in zoom-in duration-700">
+          <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full" />
+          <div className="relative bg-white p-4 rounded-full shadow-2xl border-4 border-primary/10">
+            <img 
+              src="https://rede.deputadasarelli.com.br/assets/logo-sarelli-Cg7sc1zQ.webp" 
+              alt="Dra. Fernanda Sarelli" 
+              className="h-32 w-32 object-contain rounded-full border-2 border-[#e91e63]/20 p-2"
+            />
+          </div>
+        </div>
+        <h1 className="text-3xl font-extrabold text-gray-900 mb-4 tracking-tight uppercase">
+          Voz das Mulheres
+        </h1>
+        <p className="text-lg text-gray-600 mb-10 max-w-sm mx-auto leading-relaxed">
+          Sua opinião é a força que transforma nossa comunidade. Participe da nossa pesquisa.
+        </p>
+        <Button 
+          onClick={() => setStep(1)} 
+          className="h-16 w-full max-w-xs rounded-2xl text-xl font-bold bg-gradient-to-r from-[#e91e63] to-[#ff9800] hover:scale-[1.03] transition-all shadow-xl shadow-primary/20 border-none"
+        >
+          COMEÇAR
+          <ChevronRight className="ml-2 h-6 w-6" />
+        </Button>
+        <div className="mt-12 opacity-50">
+          <img 
+            src="https://rede.deputadasarelli.com.br/assets/logo-sarelli-Cg7sc1zQ.webp" 
+            alt="Logo" 
+            className="h-8 mx-auto"
+          />
+        </div>
+      </div>
+    );
+  }
+
   if (step === 7) {
     return (
-      <div className="min-h-screen bg-[#f8f9fa] flex items-center justify-center p-4">
-        <Card className="w-full max-w-md text-center p-8 rounded-3xl shadow-xl animate-in fade-in zoom-in duration-500">
-          <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Send size={40} />
+      <div className="min-h-screen bg-[#fff5f7] flex items-center justify-center p-4">
+        <Card className="w-full max-w-md text-center p-8 rounded-[2.5rem] shadow-2xl animate-in fade-in zoom-in duration-500 border-none">
+          <div className="w-24 h-24 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
+            <Send size={48} />
           </div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">Muito obrigado!</h2>
-          <p className="text-gray-600 mb-8">Sua participação é fundamental para construirmos um futuro melhor para todas as mulheres.</p>
-          <Button onClick={() => window.location.reload()} className="w-full h-12 rounded-xl text-lg">
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">Muito obrigado!</h2>
+          <p className="text-lg text-gray-600 mb-8 leading-relaxed">Sua participação é fundamental para construirmos um futuro melhor para todas as mulheres.</p>
+          <Button 
+            onClick={() => window.location.reload()} 
+            className="w-full h-14 rounded-2xl text-lg font-bold bg-gradient-to-r from-[#e91e63] to-[#ff9800] border-none"
+          >
             Nova Entrevista
           </Button>
         </Card>
@@ -133,107 +173,120 @@ function QuestionnaireComponent() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8f9fa] flex flex-col items-center p-4 pb-12">
-      <div className="w-full max-w-lg mt-8 mb-12 text-center">
+    <div className="min-h-screen bg-[#fff5f7] flex flex-col items-center p-4 pb-12 pt-8">
+      <div className="w-full max-w-lg mb-8 text-center animate-in fade-in slide-in-from-top duration-500">
         <img 
           src="https://rede.deputadasarelli.com.br/assets/logo-sarelli-Cg7sc1zQ.webp" 
           alt="Sarelli" 
-          className="h-12 mx-auto mb-4"
+          className="h-12 mx-auto mb-2"
         />
-        <h1 className="text-xl font-bold text-primary uppercase tracking-tight">Voz das Mulheres</h1>
+        <div className="h-1 w-20 bg-gradient-to-r from-[#e91e63] to-[#ff9800] mx-auto rounded-full mb-4" />
+        <h1 className="text-xs font-black text-primary uppercase tracking-[0.3em] opacity-80">Pesquisa Interativa</h1>
       </div>
 
-      <Card className="w-full max-w-lg border-none shadow-2xl rounded-[2rem] overflow-hidden">
-        <div className="h-2 bg-muted w-full">
+      <Card className="w-full max-w-lg border-none shadow-2xl rounded-[2.5rem] overflow-hidden bg-white/90 backdrop-blur-sm">
+        <div className="h-2.5 bg-muted w-full">
           <div 
-            className="h-full bg-primary transition-all duration-500 ease-in-out" 
+            className="h-full bg-gradient-to-r from-[#e91e63] to-[#ff9800] transition-all duration-700 ease-out" 
             style={{ width: `${(step / 6) * 100}%` }}
           />
         </div>
         
-        <CardHeader className="pt-8 px-8">
-          <CardTitle className="text-2xl font-bold flex items-center gap-3">
-            {step === 1 && <span className="p-2 bg-primary/10 rounded-lg"><User className="text-primary" /></span>}
-            {step >= 2 && step <= 6 && <span className="p-2 bg-primary/10 rounded-lg"><MessageSquare className="text-primary" /></span>}
+        <CardHeader className="pt-10 px-8 pb-4">
+          <CardTitle className="text-2xl font-black flex items-center gap-4 text-gray-900">
+            {step === 1 && <span className="p-3 bg-primary/10 rounded-2xl"><User className="text-primary h-6 w-6" /></span>}
+            {step >= 2 && step <= 6 && <span className="p-3 bg-primary/10 rounded-2xl"><MessageSquare className="text-primary h-6 w-6" /></span>}
             
-            {step === 1 ? "Início da Pesquisa" : 
-             `Pergunta ${step - 1} de 5`}
+            <span className="tracking-tight">
+              {step === 1 ? "Dados Básicos" : `Pergunta ${step - 1} de 5`}
+            </span>
           </CardTitle>
         </CardHeader>
 
-        <CardContent className="p-8">
+        <CardContent className="p-8 pt-2">
           <div className="space-y-6">
             {step === 1 && (
-              <div className="space-y-5 animate-in slide-in-from-right duration-300">
+              <div className="space-y-6 animate-in slide-in-from-right duration-500">
                 <div className="space-y-2">
-                  <Label className="flex items-center gap-2 font-bold text-gray-700">Quem está entrevistando?</Label>
-                  <select 
-                    value={selectedUserId} 
-                    onChange={e => setSelectedUserId(e.target.value)}
-                    className="w-full h-12 px-4 rounded-xl bg-muted border-none focus:ring-2 focus:ring-primary appearance-none cursor-pointer font-medium"
-                  >
-                    <option value="">Selecione a pessoa...</option>
-                    {users.map(user => (
-                      <option key={user.id} value={user.id}>{user.nome}</option>
-                    ))}
-                  </select>
+                  <Label className="font-bold text-gray-800 text-sm ml-1">Quem está entrevistando?</Label>
+                  <div className="relative">
+                    <select 
+                      value={selectedUserId} 
+                      onChange={e => setSelectedUserId(e.target.value)}
+                      className="w-full h-14 pl-4 pr-10 rounded-2xl bg-muted/50 border-2 border-transparent focus:border-primary/30 focus:bg-white transition-all appearance-none cursor-pointer font-bold text-gray-900 shadow-sm"
+                    >
+                      <option value="">Selecione a pessoa...</option>
+                      {users.map(user => (
+                        <option key={user.id} value={user.id}>{user.nome}</option>
+                      ))}
+                    </select>
+                    <ChevronRight className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 rotate-90 pointer-events-none" />
+                  </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label className="flex items-center gap-2 font-bold text-gray-700"><User size={16} /> Nome Completo</Label>
-                  <Input 
-                    value={formData.nome} 
-                    onChange={e => setFormData({...formData, nome: e.target.value})}
-                    placeholder="Digite seu nome"
-                    className="h-12 rounded-xl bg-muted border-none focus-visible:ring-primary"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label className="flex items-center gap-2">CPF</Label>
-                  <Input 
-                    value={formData.cpf} 
-                    onChange={e => setFormData({...formData, cpf: e.target.value})}
-                    placeholder="000.000.000-00"
-                    className="h-12 rounded-xl bg-muted border-none focus-visible:ring-primary"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label className="flex items-center gap-2"><Calendar size={16} /> Data de Nascimento</Label>
-                  <Input 
-                    type="date"
-                    value={formData.dataNascimento} 
-                    onChange={e => setFormData({...formData, dataNascimento: e.target.value})}
-                    className="h-12 rounded-xl bg-muted border-none focus-visible:ring-primary"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label className="flex items-center gap-2"><Phone size={16} /> WhatsApp</Label>
-                  <Input 
-                    value={formData.whatsapp} 
-                    onChange={e => setFormData({...formData, whatsapp: e.target.value})}
-                    placeholder="(00) 00000-0000"
-                    className="h-12 rounded-xl bg-muted border-none focus-visible:ring-primary"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label className="flex items-center gap-2">Instagram</Label>
-                  <Input 
-                    value={formData.instagram} 
-                    onChange={e => setFormData({...formData, instagram: e.target.value})}
-                    placeholder="@seu.perfil"
-                    className="h-12 rounded-xl bg-muted border-none focus-visible:ring-primary"
-                  />
+                <div className="grid grid-cols-1 gap-4">
+                  <div className="space-y-2">
+                    <Label className="font-bold text-gray-800 text-sm ml-1">Nome Completo</Label>
+                    <Input 
+                      value={formData.nome} 
+                      onChange={e => setFormData({...formData, nome: e.target.value})}
+                      placeholder="Nome da pessoa respondendo"
+                      className="h-14 rounded-2xl bg-muted/50 border-2 border-transparent focus-visible:ring-primary focus-visible:bg-white transition-all font-medium text-gray-900"
+                    />
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label className="font-bold text-gray-800 text-sm ml-1">CPF (Opcional)</Label>
+                      <Input 
+                        value={formData.cpf} 
+                        onChange={e => setFormData({...formData, cpf: e.target.value})}
+                        placeholder="000.000.000-00"
+                        className="h-14 rounded-2xl bg-muted/50 border-2 border-transparent focus-visible:ring-primary focus-visible:bg-white transition-all font-medium text-gray-900"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="font-bold text-gray-800 text-sm ml-1">WhatsApp</Label>
+                      <Input 
+                        value={formData.whatsapp} 
+                        onChange={e => setFormData({...formData, whatsapp: e.target.value})}
+                        placeholder="(00) 00000-0000"
+                        className="h-14 rounded-2xl bg-muted/50 border-2 border-transparent focus-visible:ring-primary focus-visible:bg-white transition-all font-medium text-gray-900"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label className="font-bold text-gray-800 text-sm ml-1">Nascimento</Label>
+                      <Input 
+                        type="date"
+                        value={formData.dataNascimento} 
+                        onChange={e => setFormData({...formData, dataNascimento: e.target.value})}
+                        className="h-14 rounded-2xl bg-muted/50 border-2 border-transparent focus-visible:ring-primary focus-visible:bg-white transition-all font-medium text-gray-900"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="font-bold text-gray-800 text-sm ml-1">Instagram</Label>
+                      <Input 
+                        value={formData.instagram} 
+                        onChange={e => setFormData({...formData, instagram: e.target.value})}
+                        placeholder="@perfil"
+                        className="h-14 rounded-2xl bg-muted/50 border-2 border-transparent focus-visible:ring-primary focus-visible:bg-white transition-all font-medium text-gray-900"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
 
             {step >= 2 && step <= 6 && (
-              <div className="space-y-6 animate-in slide-in-from-right duration-300">
-                <p className="text-xl font-medium leading-relaxed text-gray-800">
+              <div className="space-y-6 animate-in slide-in-from-right duration-500">
+                <p className="text-xl font-bold leading-snug text-gray-900 px-1">
                   {QUESTIONS[step - 2].question}
                 </p>
                 <textarea
-                  className="w-full min-h-[150px] p-4 rounded-2xl bg-muted border-none focus:ring-2 focus:ring-primary transition-all text-lg resize-none"
+                  className="w-full min-h-[180px] p-6 rounded-[2rem] bg-muted/30 border-2 border-transparent focus:border-primary/20 focus:bg-white transition-all text-lg font-medium resize-none shadow-inner"
                   placeholder={QUESTIONS[step - 2].placeholder}
                   value={answers[step - 2] || ""}
                   onChange={e => setAnswers({...answers, [step - 2]: e.target.value})}
@@ -241,24 +294,24 @@ function QuestionnaireComponent() {
               </div>
             )}
 
-            <div className="flex gap-3 pt-4">
+            <div className="flex gap-4 pt-4">
               {step > 1 && (
                 <Button 
                   variant="outline" 
                   onClick={handleBack} 
-                  className="h-14 w-20 rounded-2xl border-2"
+                  className="h-16 w-20 rounded-2xl border-2 hover:bg-muted/50 transition-all text-gray-400"
                 >
-                  <ChevronLeft size={24} />
+                  <ChevronLeft size={28} />
                 </Button>
               )}
               
               <Button 
                 onClick={step === 6 ? handleSubmit : handleNext} 
-                className="h-14 flex-1 rounded-2xl text-lg font-bold transition-all hover:scale-[1.02] shadow-lg shadow-primary/20"
+                className="h-16 flex-1 rounded-2xl text-xl font-black bg-gradient-to-r from-[#e91e63] to-[#ff9800] hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-primary/20 border-none"
                 disabled={loading}
               >
-                {loading ? "Enviando..." : step === 6 ? "Finalizar Entrevista" : "Continuar"}
-                {step < 6 && <ChevronRight size={20} className="ml-2" />}
+                {loading ? "ENVIANDO..." : step === 6 ? "FINALIZAR" : "CONTINUAR"}
+                {step < 6 && <ChevronRight size={24} className="ml-2" />}
               </Button>
             </div>
           </div>
