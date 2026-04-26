@@ -15,9 +15,18 @@ import {
   Plus, 
   Search,
   Copy,
-  ExternalLink
+  ExternalLink,
+  Eye,
+  Calendar as CalendarIcon
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export const Route = createFileRoute("/admin")({
   component: AdminLayout,
@@ -29,6 +38,7 @@ function AdminLayout() {
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [selectedInterview, setSelectedInterview] = useState<any>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -246,7 +256,15 @@ function AdminLayout() {
                             </Badge>
                           </TableCell>
                           <TableCell className="text-right">
-                            <Button variant="ghost" size="sm">Ver Detalhes</Button>
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              className="text-pink-600 hover:text-pink-700 hover:bg-pink-50 font-bold gap-2"
+                              onClick={() => setSelectedInterview(item)}
+                            >
+                              <Eye size={16} />
+                              Ver Respostas
+                            </Button>
                           </TableCell>
                         </TableRow>
                       ))}
@@ -254,6 +272,33 @@ function AdminLayout() {
                   </Table>
                 </CardContent>
               </Card>
+
+              {/* Interview Details Dialog */}
+              <Dialog open={!!selectedInterview} onOpenChange={() => setSelectedInterview(null)}>
+                <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto rounded-3xl">
+                  <DialogHeader>
+                    <DialogTitle className="text-2xl font-black text-gray-900 uppercase tracking-tighter">Respostas da Pesquisa</DialogTitle>
+                    <DialogDescription className="text-pink-600 font-bold">
+                      Candidata: {selectedInterview?.nome} • Entrevistador: {selectedInterview?.entrevistador}
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="mt-6 space-y-6">
+                    <div className="bg-gray-50 p-6 rounded-2xl border border-gray-100">
+                      <p className="whitespace-pre-wrap text-gray-700 leading-relaxed font-medium">
+                        {selectedInterview?.detalhes}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="mt-8">
+                    <Button 
+                      className="w-full h-14 rounded-2xl bg-[#e91e63] font-bold"
+                      onClick={() => setSelectedInterview(null)}
+                    >
+                      FECHAR
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </div>
           )}
 
