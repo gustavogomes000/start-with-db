@@ -142,67 +142,47 @@ function QuestionnaireComponent() {
 
   if (step === 0) {
     return (
-      <div className="min-h-screen bg-[#f8f9fa] flex flex-col md:flex-row">
-        {/* Left Side: Image/Branding */}
-        <div className="hidden md:flex md:w-1/2 bg-[#e91e63] relative overflow-hidden items-center justify-center p-12">
-          <div className="absolute inset-0 bg-gradient-to-br from-[#e91e63] to-[#880e4f] opacity-90" />
-          <div className="relative z-10 text-center text-white max-w-md">
+      <div className="min-h-screen bg-white flex flex-col items-center justify-center relative overflow-hidden">
+        {/* Mobile-first background elements */}
+        <div className="absolute top-[-5%] right-[-10%] w-64 h-64 bg-pink-50 rounded-full blur-3xl opacity-60" />
+        <div className="absolute bottom-[-5%] left-[-10%] w-64 h-64 bg-orange-50 rounded-full blur-3xl opacity-60" />
+        
+        <div className="w-full max-w-sm px-6 flex flex-col items-center z-10">
+          <img 
+            src="https://rede.deputadasarelli.com.br/assets/logo-sarelli-Cg7sc1zQ.webp" 
+            alt="Logo Sarelli" 
+            className="h-14 mb-8"
+          />
+          
+          <div className="relative w-56 h-56 mb-10">
+            <div className="absolute inset-0 bg-gradient-to-r from-[#e91e63] to-[#ff9800] rounded-full blur-2xl opacity-20 scale-110" />
             <img 
-              src="https://rede.deputadasarelli.com.br/assets/logo-sarelli-Cg7sc1zQ.webp" 
-              alt="Logo Sarelli" 
-              className="h-24 mx-auto mb-8 filter brightness-0 invert"
+              src="https://rede.deputadasarelli.com.br/assets/fernanda-sarelli-BrFuKmdI.webp" 
+              alt="Dra. Fernanda Sarelli" 
+              className="relative w-full h-full object-cover rounded-full border-4 border-white shadow-2xl"
             />
-            <h2 className="text-4xl font-bold mb-6 tracking-tight">Ouvir você é o primeiro passo para transformar.</h2>
-            <p className="text-xl opacity-90 font-light leading-relaxed">
-              Participe da pesquisa "Voz das Mulheres" e ajude a Dra. Fernanda Sarelli a construir uma comunidade mais forte e justa.
+          </div>
+
+          <div className="text-center space-y-3 mb-12">
+            <h1 className="text-3xl font-black text-gray-900 tracking-tighter uppercase leading-none">
+              Voz das Mulheres
+            </h1>
+            <p className="text-gray-500 text-base font-medium px-4">
+              Sua opinião é a força que transforma nossa comunidade.
             </p>
           </div>
-          {/* Decorative elements */}
-          <div className="absolute top-[-10%] left-[-10%] w-64 h-64 bg-white/10 rounded-full blur-3xl" />
-          <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-black/10 rounded-full blur-3xl" />
-        </div>
 
-        {/* Right Side: Action */}
-        <div className="w-full md:w-1/2 flex flex-col items-center justify-center p-8 bg-white">
-          <div className="w-full max-w-md space-y-12">
-            <div className="text-center md:hidden">
-              <img 
-                src="https://rede.deputadasarelli.com.br/assets/logo-sarelli-Cg7sc1zQ.webp" 
-                alt="Logo Sarelli" 
-                className="h-16 mx-auto mb-6"
-              />
-            </div>
-            
-            <div className="relative mx-auto w-48 h-48 md:w-64 md:h-64">
-              <div className="absolute inset-0 bg-gradient-to-r from-[#e91e63] to-[#ff9800] rounded-full animate-pulse blur-xl opacity-20" />
-              <img 
-                src="https://rede.deputadasarelli.com.br/assets/fernanda-sarelli-BrFuKmdI.webp" 
-                alt="Dra. Fernanda Sarelli" 
-                className="relative w-full h-full object-cover rounded-full border-8 border-white shadow-2xl z-10"
-              />
-            </div>
+          <Button 
+            onClick={() => setStep(1)} 
+            className="w-full h-16 rounded-2xl text-lg font-black bg-gradient-to-r from-[#e91e63] via-[#ffb347] to-[#e91e63] bg-[length:200%_auto] hover:bg-right transition-all duration-500 shadow-xl shadow-pink-100 border-none text-white active:scale-95"
+          >
+            COMEÇAR PESQUISA
+            <ChevronRight className="ml-2 h-5 w-5" />
+          </Button>
 
-            <div className="text-center space-y-4">
-              <h1 className="text-4xl font-black text-gray-900 tracking-tighter uppercase">
-                Voz das Mulheres
-              </h1>
-              <p className="text-gray-500 text-lg">
-                Sua opinião é a força que transforma nossa comunidade.
-              </p>
-            </div>
-
-            <Button 
-              onClick={() => setStep(1)} 
-              className="w-full h-18 rounded-2xl text-xl font-black bg-gradient-to-r from-[#e91e63] via-[#ffb347] to-[#e91e63] bg-[length:200%_auto] hover:bg-right transition-all duration-500 shadow-xl shadow-pink-200 py-8 border-none text-white"
-            >
-              COMEÇAR PESQUISA
-              <ChevronRight className="ml-2 h-6 w-6" />
-            </Button>
-
-            <p className="text-center text-xs text-gray-400 font-medium tracking-widest uppercase">
-              Dra. Fernanda Sarelli
-            </p>
-          </div>
+          <p className="mt-12 text-[10px] text-gray-400 font-bold tracking-[0.2em] uppercase">
+            Dra. Fernanda Sarelli
+          </p>
         </div>
       </div>
     );
@@ -210,54 +190,52 @@ function QuestionnaireComponent() {
 
   if (step === 7) {
     return (
-      <div className="min-h-screen bg-[#fff5f7] flex items-center justify-center p-4">
-        <Card className="w-full max-w-md text-center p-8 rounded-[2.5rem] shadow-2xl animate-in fade-in zoom-in duration-500 border-none">
-          <div className="w-24 h-24 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
-            <Send size={48} />
+      <div className="min-h-screen bg-white flex items-center justify-center p-6">
+        <div className="w-full max-w-sm text-center space-y-8 animate-in fade-in zoom-in duration-500">
+          <div className="w-24 h-24 bg-green-50 text-green-500 rounded-full flex items-center justify-center mx-auto shadow-inner">
+            <Send size={40} />
           </div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">Muito obrigado!</h2>
-          <p className="text-lg text-gray-600 mb-8 leading-relaxed">Sua participação é fundamental para construirmos um futuro melhor para todas as mulheres.</p>
+          <div className="space-y-2">
+            <h2 className="text-3xl font-black text-gray-900 uppercase tracking-tighter">Muito obrigado!</h2>
+            <p className="text-gray-500 font-medium">Sua participação é fundamental para construirmos um futuro melhor.</p>
+          </div>
           <Button 
             onClick={() => window.location.reload()} 
-            className="w-full h-14 rounded-2xl text-lg font-bold bg-gradient-to-r from-[#e91e63] to-[#ff9800] border-none"
+            className="w-full h-16 rounded-2xl text-lg font-bold bg-[#e91e63] shadow-lg shadow-pink-100 active:scale-95 transition-transform"
           >
             Nova Entrevista
           </Button>
-        </Card>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#fff5f7] flex flex-col items-center p-4 pb-12 pt-8">
-      <div className="w-full max-w-lg mb-8 text-center animate-in fade-in slide-in-from-top duration-500">
+    <div className="min-h-screen bg-white flex flex-col">
+      <header className="px-6 py-4 flex flex-col items-center bg-white border-b border-gray-50 sticky top-0 z-20">
         <img 
           src="https://rede.deputadasarelli.com.br/assets/logo-sarelli-Cg7sc1zQ.webp" 
           alt="Sarelli" 
-          className="h-12 mx-auto mb-2"
+          className="h-8 mb-2"
         />
-        <div className="h-1 w-20 bg-gradient-to-r from-[#e91e63] to-[#ff9800] mx-auto rounded-full mb-4" />
-        <h1 className="text-xs font-black text-primary uppercase tracking-[0.3em] opacity-80">Pesquisa Interativa</h1>
-      </div>
-
-      <Card className="w-full max-w-lg border-none shadow-2xl rounded-[2.5rem] overflow-hidden bg-white/90 backdrop-blur-sm">
-        <div className="h-2.5 bg-muted w-full">
+        <div className="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden mt-2">
           <div 
-            className="h-full bg-gradient-to-r from-[#e91e63] to-[#ff9800] transition-all duration-700 ease-out" 
+            className="h-full bg-gradient-to-r from-[#e91e63] to-[#ff9800] transition-all duration-500" 
             style={{ width: `${(step / 6) * 100}%` }}
           />
         </div>
-        
-        <CardHeader className="pt-10 px-8 pb-4">
-          <CardTitle className="text-2xl font-black flex items-center gap-4 text-gray-900">
-            {step === 1 && <span className="p-3 bg-primary/10 rounded-2xl"><User className="text-primary h-6 w-6" /></span>}
-            {step >= 2 && step <= 6 && <span className="p-3 bg-primary/10 rounded-2xl"><MessageSquare className="text-primary h-6 w-6" /></span>}
-            
-            <span className="tracking-tight">
-              {step === 1 ? "Dados Básicos" : `Pergunta ${step - 1} de 5`}
+      </header>
+
+      <main className="flex-1 p-6 pb-24">
+        <div className="max-w-md mx-auto space-y-8">
+          <div className="space-y-1">
+            <span className="text-[10px] font-black text-pink-600 uppercase tracking-widest">
+              Passo {step} de 6
             </span>
-          </CardTitle>
-        </CardHeader>
+            <h2 className="text-2xl font-black text-gray-900 uppercase tracking-tighter">
+              {step === 1 ? "Dados da Candidata" : `Pergunta ${step - 1}`}
+            </h2>
+          </div>
 
         <CardContent className="p-8 pt-2">
           <div className="space-y-6">
