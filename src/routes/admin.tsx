@@ -17,7 +17,17 @@ import {
   Shield,
   MessageSquare,
   Trash2,
+  Pencil,
+  KeyRound,
+  MoreVertical,
 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 import {
   Dialog,
   DialogContent,
@@ -57,6 +67,11 @@ function AdminLayout() {
   const [newAdminOpen, setNewAdminOpen] = useState(false);
   const [newAdmin, setNewAdmin] = useState({ username: "", password: "" });
   const [savingAdmin, setSavingAdmin] = useState(false);
+  const [editAdmin, setEditAdmin] = useState<AdminUser | null>(null);
+  const [editUsername, setEditUsername] = useState("");
+  const [pwdAdmin, setPwdAdmin] = useState<AdminUser | null>(null);
+  const [newPassword, setNewPassword] = useState("");
+  const [savingEdit, setSavingEdit] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -143,6 +158,92 @@ function AdminLayout() {
       toast.error(err.message || "Erro ao criar administrador.");
     } finally {
       setSavingAdmin(false);
+    }
+  }
+
+  async function saveUsername() {
+    if (!session?.id || !editAdmin) return;
+    if (!editUsername.trim()) {
+      toast.error("Informe um nome de usuário.");
+      return;
+    }
+    setSavingEdit(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("admin-api", {
+        body: {
+          action: "update_admin_username",
+          admin_id: session.id,
+          payload: { id: editAdmin.id, username: editUsername.trim() },
+        },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      toast.success("Nome atualizado!");
+      if (editAdmin.id === session.id) {
+        const updated = { ...session, username: editUsername.trim() };
+        setSession(updated);
+        localStorage.setItem(
+          "admin_session",
+          JSON.stringify({ ...updated, ts: Date.now() }),
+        );
+      }
+      setEditAdmin(null);
+      fetchAll();
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao atualizar nome.");
+    } finally {
+      setSavingEdit(false);
+    }
+  }
+
+  async function savePassword() {
+    if (!session?.id || !pwdAdmin) return;
+    if (newPassword.length < 6) {
+      toast.error("Senha deve ter ao menos 6 caracteres.");
+      return;
+    }
+    setSavingEdit(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("admin-api", {
+        body: {
+          action: "update_admin_password",
+          admin_id: session.id,
+          payload: { id: pwdAdmin.id, password: newPassword },
+        },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      toast.success("Senha atualizada!");
+      setPwdAdmin(null);
+      setNewPassword("");
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao atualizar senha.");
+    } finally {
+      setSavingEdit(false);
+    }
+  }
+
+  async function deleteAdmin(a: AdminUser) {
+    if (!session?.id) return;
+    if (a.id === session.id) {
+      toast.error("Você não pode excluir a si mesmo.");
+      return;
+    }
+    if (!confirm(`Excluir administrador "${a.username}"?`)) return;
+    try {
+      const { data, error } = await supabase.functions.invoke("admin-api", {
+        body: {
+          action: "delete_admin",
+          admin_id: session.id,
+          payload: { id: a.id },
+        },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      toast.success("Administrador excluído.");
+      fetchAll();
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao excluir.");
     }
   }
 
@@ -315,6 +416,45 @@ function AdminLayout() {
                       VOCÊ
                     </Badge>
                   )}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button
+                        className="w-9 h-9 rounded-xl hover:bg-gray-50 flex items-center justify-center text-gray-400"
+                        aria-label="Ações"
+                      >
+                        <MoreVertical size={18} />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="rounded-2xl">
+                      <DropdownMenuItem
+                        onClick={() => {
+                          setEditAdmin(a);
+                          setEditUsername(a.username);
+                        }}
+                      >
+                        <Pencil size={14} className="mr-2" /> Editar nome
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => {
+                          setPwdAdmin(a);
+                          setNewPassword("");
+                        }}
+                      >
+                        <KeyRound size={14} className="mr-2" /> Trocar senha
+                      </DropdownMenuItem>
+                      {a.id !== session.id && (
+                        <>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            onClick={() => deleteAdmin(a)}
+                            className="text-red-600 focus:text-red-600"
+                          >
+                            <Trash2 size={14} className="mr-2" /> Excluir
+                          </DropdownMenuItem>
+                        </>
+                      )}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </CardContent>
               </Card>
             ))}
@@ -403,6 +543,75 @@ function AdminLayout() {
               className="w-full h-12 rounded-2xl bg-gradient-to-r from-[#e91e63] to-[#ec407a] font-black uppercase tracking-[0.2em] text-xs"
             >
               {savingAdmin ? "Salvando..." : "Criar"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit username dialog */}
+      <Dialog open={!!editAdmin} onOpenChange={(o) => !o && setEditAdmin(null)}>
+        <DialogContent className="max-w-md rounded-3xl">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-black uppercase tracking-tight">
+              Editar nome
+            </DialogTitle>
+            <DialogDescription>
+              Altere o nome de usuário do administrador.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-1.5 mt-2">
+            <Label className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">
+              Usuário
+            </Label>
+            <Input
+              value={editUsername}
+              onChange={(e) => setEditUsername(e.target.value)}
+              className="h-12 rounded-2xl bg-gray-50 border-none px-4"
+            />
+          </div>
+          <DialogFooter>
+            <Button
+              onClick={saveUsername}
+              disabled={savingEdit}
+              className="w-full h-12 rounded-2xl bg-gradient-to-r from-[#e91e63] to-[#ec407a] font-black uppercase tracking-[0.2em] text-xs"
+            >
+              {savingEdit ? "Salvando..." : "Salvar"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Change password dialog */}
+      <Dialog open={!!pwdAdmin} onOpenChange={(o) => !o && setPwdAdmin(null)}>
+        <DialogContent className="max-w-md rounded-3xl">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-black uppercase tracking-tight">
+              Trocar senha
+            </DialogTitle>
+            <DialogDescription>
+              Defina uma nova senha para{" "}
+              <span className="font-bold">{pwdAdmin?.username}</span>.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-1.5 mt-2">
+            <Label className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">
+              Nova senha (mín 6)
+            </Label>
+            <Input
+              type="text"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              className="h-12 rounded-2xl bg-gray-50 border-none px-4"
+              placeholder="••••••"
+            />
+          </div>
+          <DialogFooter>
+            <Button
+              onClick={savePassword}
+              disabled={savingEdit}
+              className="w-full h-12 rounded-2xl bg-gradient-to-r from-[#e91e63] to-[#ec407a] font-black uppercase tracking-[0.2em] text-xs"
+            >
+              {savingEdit ? "Salvando..." : "Salvar nova senha"}
             </Button>
           </DialogFooter>
         </DialogContent>
