@@ -361,43 +361,41 @@ function QuestionnaireComponent() {
           </div>
 
           {step === 1 && (
-            <div className="space-y-6 animate-in slide-in-from-right duration-500">
-              <div className="bg-white/80 backdrop-blur-md p-6 rounded-[2rem] border border-pink-50 shadow-sm space-y-4">
-                <div className="flex items-center gap-3 mb-2">
-                  <User className="text-pink-500" size={24} />
+            <div className="space-y-5 animate-in slide-in-from-right duration-500 pb-10">
+              <div className="bg-white/80 backdrop-blur-md p-6 rounded-[2rem] border border-pink-50 shadow-sm space-y-5">
+                <div className="flex items-center gap-3 mb-1">
+                  <User className="text-pink-500" size={22} />
                   <span className="text-sm font-bold text-gray-700">
                     Identifique o entrevistador responsável
                   </span>
                 </div>
-                <Label className="text-xs font-black uppercase tracking-[0.2em] text-pink-400">
-                  Selecione o entrevistador
-                </Label>
-                <div className="relative">
-                  <select
-                    value={selectedUserId}
-                    onChange={(e) => setSelectedUserId(e.target.value)}
-                    className="w-full h-16 pl-6 pr-12 rounded-2xl bg-white border border-pink-100 appearance-none font-bold text-gray-900 shadow-sm focus:ring-4 focus:ring-pink-100 transition-all text-lg"
-                  >
-                    <option value="">Selecione...</option>
-                    {users.map((user) => (
-                      <option key={user.id} value={user.id}>
-                        {user.nome}
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronRight className="absolute right-5 top-1/2 -translate-y-1/2 h-6 w-6 text-pink-400 rotate-90 pointer-events-none" />
+                <div className="space-y-2">
+                  <Label className="text-xs font-black uppercase tracking-[0.2em] text-pink-400">
+                    Selecione o entrevistador
+                  </Label>
+                  <div className="relative">
+                    <select
+                      value={selectedUserId}
+                      onChange={(e) => setSelectedUserId(e.target.value)}
+                      className="w-full h-14 pl-5 pr-12 rounded-2xl bg-white border border-pink-100 appearance-none font-bold text-gray-900 shadow-sm focus:ring-4 focus:ring-pink-100 transition-all text-base"
+                    >
+                      <option value="">Selecione...</option>
+                      {users.map((user) => (
+                        <option key={user.id} value={user.id}>
+                          {user.nome}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronRight className="absolute right-5 top-1/2 -translate-y-1/2 h-6 w-6 text-pink-400 rotate-90 pointer-events-none" />
+                  </div>
+                  {users.length === 0 && (
+                    <p className="text-xs text-gray-400 italic">Carregando entrevistadores...</p>
+                  )}
                 </div>
-                {users.length === 0 && (
-                  <p className="text-xs text-gray-400 italic">Carregando entrevistadores...</p>
-                )}
-              </div>
-            </div>
-          )}
 
-          {step === 2 && (
-            <div className="space-y-6 animate-in slide-in-from-right duration-500 pb-10">
-              <div className="bg-white/80 backdrop-blur-md p-6 rounded-[2rem] border border-pink-50 shadow-sm space-y-5">
-                <div className="space-y-3">
+                <div className="h-px bg-pink-50 my-2" />
+
+                <div className="space-y-2">
                   <Label className="text-xs font-black uppercase tracking-[0.2em] text-pink-400">Nome Completo</Label>
                   <Input
                     value={formData.nome}
@@ -406,7 +404,7 @@ function QuestionnaireComponent() {
                     className="h-14 rounded-2xl bg-white border-pink-100 shadow-sm px-5 text-base font-medium focus:ring-4 focus:ring-pink-100"
                   />
                 </div>
-                <div className="space-y-3">
+                <div className="space-y-2">
                   <Label className="text-xs font-black uppercase tracking-[0.2em] text-pink-400">CPF</Label>
                   <Input
                     value={formData.cpf}
@@ -415,7 +413,7 @@ function QuestionnaireComponent() {
                     className="h-14 rounded-2xl bg-white border-pink-100 shadow-sm px-5 text-base font-medium focus:ring-4 focus:ring-pink-100"
                   />
                 </div>
-                <div className="space-y-3">
+                <div className="space-y-2">
                   <Label className="text-xs font-black uppercase tracking-[0.2em] text-pink-400">WhatsApp</Label>
                   <Input
                     value={formData.whatsapp}
@@ -424,7 +422,7 @@ function QuestionnaireComponent() {
                     className="h-14 rounded-2xl bg-white border-pink-100 shadow-sm px-5 text-base font-medium focus:ring-4 focus:ring-pink-100"
                   />
                 </div>
-                <div className="space-y-3">
+                <div className="space-y-2">
                   <Label className="text-xs font-black uppercase tracking-[0.2em] text-pink-400">Data de Nascimento</Label>
                   <Input
                     type="date"
@@ -433,7 +431,7 @@ function QuestionnaireComponent() {
                     className="h-14 rounded-2xl bg-white border-pink-100 shadow-sm px-5 text-base font-medium focus:ring-4 focus:ring-pink-100"
                   />
                 </div>
-                <div className="space-y-3">
+                <div className="space-y-2">
                   <Label className="text-xs font-black uppercase tracking-[0.2em] text-pink-400">Instagram</Label>
                   <Input
                     value={formData.instagram}
@@ -446,7 +444,7 @@ function QuestionnaireComponent() {
             </div>
           )}
 
-          {step === 3 && (
+          {step === 2 && (
             <div className="space-y-6 animate-in slide-in-from-right duration-500">
               <div className="bg-white/70 backdrop-blur-sm p-6 rounded-[2rem] border border-pink-50 shadow-sm">
                 <div className="flex items-center gap-2 mb-3">
