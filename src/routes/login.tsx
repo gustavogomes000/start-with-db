@@ -54,87 +54,94 @@ function LoginComponent() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#f4f4f4] p-4">
-      <div className="w-full max-w-[400px] flex flex-col items-center">
-        {/* Logo Section */}
-        <div className="mb-8 text-center">
-          <img 
-            src="https://rede.deputadasarelli.com.br/assets/fernanda-sarelli-BrFuKmdI.webp" 
-            alt="Dra. Fernanda Sarelli" 
-            className="w-32 h-32 rounded-full border-4 border-white shadow-lg mx-auto mb-4 object-cover"
-          />
+    <div className="min-h-screen flex flex-col md:flex-row bg-[#f8f9fa]">
+      {/* Visual Side */}
+      <div className="hidden md:flex md:w-1/2 bg-[#e91e63] relative overflow-hidden items-center justify-center p-12">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#e91e63] to-[#880e4f] opacity-95" />
+        <div className="relative z-10 text-center text-white max-w-md">
           <img 
             src="https://rede.deputadasarelli.com.br/assets/logo-sarelli-Cg7sc1zQ.webp" 
-            alt="Sarelli" 
-            className="h-10 mx-auto"
+            alt="Logo Sarelli" 
+            className="h-24 mx-auto mb-8 filter brightness-0 invert"
           />
+          <h2 className="text-4xl font-black mb-6 tracking-tight uppercase">Painel Administrativo</h2>
+          <p className="text-xl opacity-80 font-light leading-relaxed">
+            Gestão inteligente de pesquisas e recrutamento para a Dra. Fernanda Sarelli.
+          </p>
         </div>
+        <div className="absolute top-[-20%] right-[-20%] w-[500px] h-[500px] bg-white/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-96 h-96 bg-black/10 rounded-full blur-3xl" />
+      </div>
 
-        <Card className="w-full border-none shadow-xl rounded-2xl overflow-hidden">
-          <CardHeader className="bg-primary text-primary-foreground py-6">
-            <CardTitle className="text-xl font-bold text-center uppercase tracking-wider">
-              Painel de Acesso
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-8">
-            <form onSubmit={handleLogin} className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="username">Usuário</Label>
-                <Input
-                  id="username"
-                  type="text"
-                  placeholder="Seu usuário"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  className="bg-muted border-none h-12 rounded-xl"
-                  required
-                />
-              </div>
+      {/* Login Side */}
+      <div className="w-full md:w-1/2 flex flex-col items-center justify-center p-8 bg-white">
+        <div className="w-full max-w-[400px] space-y-8">
+          <div className="text-center space-y-4">
+            <div className="relative mx-auto w-32 h-32 mb-6">
+              <div className="absolute inset-0 bg-pink-100 rounded-full blur-xl opacity-50" />
+              <img 
+                src="https://rede.deputadasarelli.com.br/assets/fernanda-sarelli-BrFuKmdI.webp" 
+                alt="Dra. Fernanda Sarelli" 
+                className="relative w-full h-full object-cover rounded-full border-4 border-white shadow-xl z-10"
+              />
+            </div>
+            <h1 className="text-3xl font-black text-gray-900 tracking-tighter uppercase">Bem-vindo(a)</h1>
+            <p className="text-gray-500">Acesse o sistema com suas credenciais.</p>
+          </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="password">Senha</Label>
-                <div className="relative">
+          <Card className="border-none shadow-2xl rounded-3xl overflow-hidden bg-gray-50/50">
+            <CardContent className="p-8">
+              <form onSubmit={handleLogin} className="space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="username" className="text-xs font-bold uppercase tracking-wider text-gray-400 ml-1">Usuário</Label>
                   <Input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Sua senha"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="bg-muted border-none h-12 rounded-xl pr-10"
+                    id="username"
+                    type="text"
+                    placeholder="Seu usuário"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    className="h-14 rounded-2xl border-none bg-white shadow-sm focus-visible:ring-pink-500 font-medium"
                     required
                   />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
-                  >
-                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                  </button>
                 </div>
-              </div>
 
-              <div className="flex items-center space-x-2 py-2">
-                <Checkbox id="remember" />
-                <Label htmlFor="remember" className="text-sm font-normal text-muted-foreground cursor-pointer">
-                  Lembrar meus dados
-                </Label>
-              </div>
+                <div className="space-y-2">
+                  <Label htmlFor="password" className="text-xs font-bold uppercase tracking-wider text-gray-400 ml-1">Senha</Label>
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Sua senha"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="h-14 rounded-2xl border-none bg-white shadow-sm focus-visible:ring-pink-500 pr-12 font-medium"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-pink-600 transition-colors"
+                    >
+                      {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                    </button>
+                  </div>
+                </div>
 
-              <Button 
-                type="submit" 
-                className="w-full h-12 rounded-xl text-lg font-bold transition-all hover:scale-[1.02]" 
-                disabled={loading}
-              >
-                {loading ? "Carregando..." : "Entrar"}
-              </Button>
-            </form>
+                <Button 
+                  type="submit" 
+                  className="w-full h-16 rounded-2xl text-lg font-black bg-[#e91e63] hover:bg-[#c2185b] transition-all shadow-xl shadow-pink-100 mt-4" 
+                  disabled={loading}
+                >
+                  {loading ? "Entrando..." : "ENTRAR NO PAINEL"}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
 
-            <div className="mt-8 flex justify-between items-center text-sm">
-              <a href="#" className="text-primary hover:underline font-medium">Site</a>
-              <a href="#" className="text-primary hover:underline font-medium">Suporte</a>
-            </div>
-          </CardContent>
-        </Card>
+          <p className="text-center text-xs text-gray-400 font-medium tracking-widest uppercase pt-4">
+            Dra. Fernanda Sarelli
+          </p>
+        </div>
       </div>
     </div>
   );
