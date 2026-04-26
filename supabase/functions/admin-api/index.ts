@@ -23,6 +23,16 @@ Deno.serve(async (req) => {
     // Validate admin session via anon client (uses public.admin_users via SECURITY DEFINER funcs)
     const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
 
+    // Public action — no auth required (used by the public form)
+    if (action === "list_interviewers") {
+      const { data, error } = await admin
+        .from("admin_users")
+        .select("id, username")
+        .order("username", { ascending: true });
+      if (error) return json({ error: error.message }, 400);
+      return json({ interviewers: data ?? [] });
+    }
+
     if (action === "login") {
       const { username, password } = payload ?? {};
       if (!username || !password) return json({ error: "missing credentials" }, 400);
