@@ -45,11 +45,13 @@ function AdminLayout() {
     async function checkUser() {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        navigate({ to: "/login" });
+        // Only navigate if we are on the client side
+        if (typeof window !== 'undefined') {
+          navigate({ to: "/login" });
+        }
         return;
       }
       
-      // Simulate checking if admin (real implementation would check metadata or roles table)
       setIsAdmin(true); 
       fetchData();
     }
@@ -117,56 +119,62 @@ function AdminLayout() {
   };
 
   return (
-    <div className="min-h-screen bg-[#fcfcfc] flex">
-      {/* Sidebar */}
-      <div className="w-72 bg-white border-r flex flex-col shadow-xl z-20">
-        <div className="p-8 border-b bg-gray-50/50">
-          <img src="https://rede.deputadasarelli.com.br/assets/logo-sarelli-Cg7sc1zQ.webp" alt="Logo" className="h-10 mx-auto" />
-          <div className="mt-6 flex items-center gap-3 p-3 bg-white rounded-2xl shadow-sm border border-pink-50">
-            <div className="w-12 h-12 rounded-xl bg-[#e91e63] flex items-center justify-center text-white font-black text-xl shadow-lg shadow-pink-100">
+    <div className="min-h-screen bg-[#fcfcfc] flex flex-col md:flex-row">
+      {/* Sidebar / Bottom Nav for Mobile */}
+      <div className="w-full md:w-72 bg-white border-b md:border-r flex flex-col shadow-xl z-20 sticky top-0 md:h-screen">
+        <div className="p-4 md:p-8 border-b bg-gray-50/50 flex md:flex-col items-center justify-between md:justify-start gap-4">
+          <img src="https://rede.deputadasarelli.com.br/assets/logo-sarelli-Cg7sc1zQ.webp" alt="Logo" className="h-8 md:h-10" />
+          <div className="flex items-center gap-3 p-2 md:p-3 bg-white rounded-xl md:rounded-2xl shadow-sm border border-pink-50">
+            <div className="w-8 h-8 md:w-12 md:h-12 rounded-lg md:rounded-xl bg-[#e91e63] flex items-center justify-center text-white font-black text-sm md:text-xl shadow-lg shadow-pink-100">
               A
             </div>
-            <div>
+            <div className="hidden md:block">
               <p className="text-sm font-black text-gray-900 uppercase tracking-tighter">Administrador</p>
               <Badge className="bg-pink-50 text-pink-600 border-none text-[10px] font-bold px-2">SUPER ADMIN</Badge>
             </div>
           </div>
         </div>
         
-        <nav className="flex-1 p-6 space-y-2">
+        <nav className="flex md:flex-col p-2 md:p-6 gap-1 md:gap-2 overflow-x-auto md:overflow-x-visible no-scrollbar">
           <button 
             onClick={() => setActiveTab("dashboard")}
             className={cn(
-              "w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300 font-bold",
-              activeTab === "dashboard" ? "bg-[#e91e63] text-white shadow-xl shadow-pink-100" : "hover:bg-pink-50 text-gray-500 hover:text-[#e91e63]"
+              "flex-1 md:w-full flex items-center justify-center md:justify-start gap-2 md:gap-4 px-4 md:px-5 py-3 md:py-4 rounded-xl md:rounded-2xl transition-all duration-300 font-bold whitespace-nowrap",
+              activeTab === "dashboard" ? "bg-[#e91e63] text-white shadow-lg md:shadow-xl shadow-pink-100" : "hover:bg-pink-50 text-gray-500"
             )}
           >
-            <LayoutDashboard size={22} />
-            Dashboard
+            <LayoutDashboard size={20} />
+            <span className="text-sm md:text-base">Geral</span>
           </button>
           <button 
             onClick={() => setActiveTab("interviews")}
             className={cn(
-              "w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300 font-bold",
-              activeTab === "interviews" ? "bg-[#e91e63] text-white shadow-xl shadow-pink-100" : "hover:bg-pink-50 text-gray-500 hover:text-[#e91e63]"
+              "flex-1 md:w-full flex items-center justify-center md:justify-start gap-2 md:gap-4 px-4 md:px-5 py-3 md:py-4 rounded-xl md:rounded-2xl transition-all duration-300 font-bold whitespace-nowrap",
+              activeTab === "interviews" ? "bg-[#e91e63] text-white shadow-lg md:shadow-xl shadow-pink-100" : "hover:bg-pink-50 text-gray-500"
             )}
           >
-            <MessageSquare size={22} />
-            Pesquisas
+            <MessageSquare size={20} />
+            <span className="text-sm md:text-base">Pesquisas</span>
           </button>
           <button 
             onClick={() => setActiveTab("users")}
             className={cn(
-              "w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300 font-bold",
-              activeTab === "users" ? "bg-[#e91e63] text-white shadow-xl shadow-pink-100" : "hover:bg-pink-50 text-gray-500 hover:text-[#e91e63]"
+              "flex-1 md:w-full flex items-center justify-center md:justify-start gap-2 md:gap-4 px-4 md:px-5 py-3 md:py-4 rounded-xl md:rounded-2xl transition-all duration-300 font-bold whitespace-nowrap",
+              activeTab === "users" ? "bg-[#e91e63] text-white shadow-lg md:shadow-xl shadow-pink-100" : "hover:bg-pink-50 text-gray-500"
             )}
           >
-            <Users size={22} />
-            Recrutadores
+            <Users size={20} />
+            <span className="text-sm md:text-base">Equipe</span>
+          </button>
+          <button 
+            onClick={handleLogout}
+            className="md:hidden flex items-center justify-center p-3 text-red-500"
+          >
+            <LogOut size={20} />
           </button>
         </nav>
 
-        <div className="p-6 border-t bg-gray-50/50 space-y-2">
+        <div className="hidden md:block p-6 border-t bg-gray-50/50">
           <button 
             onClick={handleLogout}
             className="w-full flex items-center gap-4 px-5 py-4 rounded-2xl hover:bg-red-50 text-red-500 transition-all font-bold"
@@ -178,23 +186,19 @@ function AdminLayout() {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="h-20 bg-white/80 backdrop-blur-md border-b px-10 flex items-center justify-between z-10">
+      <div className="flex-1 flex flex-col overflow-x-hidden">
+        <header className="hidden md:flex h-20 bg-white/80 backdrop-blur-md border-b px-10 items-center justify-between z-10">
           <h2 className="text-2xl font-black text-gray-900 uppercase tracking-tighter">
             {activeTab === "dashboard" ? "Resumo Geral" : activeTab === "users" ? "Recrutadores" : "Pesquisas Realizadas"}
           </h2>
           <div className="flex items-center gap-6">
-            <div className="text-right hidden sm:block">
-              <p className="text-sm font-black text-gray-900">Dra. Fernanda Sarelli</p>
-              <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Portal da Mulher</p>
-            </div>
             <div className="w-12 h-12 rounded-full border-2 border-pink-100 p-1">
               <img src="https://rede.deputadasarelli.com.br/assets/fernanda-sarelli-BrFuKmdI.webp" className="w-full h-full object-cover rounded-full" alt="User" />
             </div>
           </div>
         </header>
 
-        <main className="p-10 overflow-y-auto bg-[#fcfcfc]">
+        <main className="p-4 md:p-10 overflow-y-auto bg-[#fcfcfc] pb-20">
           {activeTab === "dashboard" && (
             <div className="space-y-8">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -305,9 +309,9 @@ function AdminLayout() {
           {activeTab === "interviews" && (
             <div className="space-y-6">
               <div className="flex justify-between items-center">
-                <div className="relative w-96">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-                  <Input placeholder="Buscar por candidata ou entrevistador..." className="pl-12 h-14 rounded-2xl border-none shadow-sm" />
+                <div className="relative flex-1 md:w-96">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                  <Input placeholder="Candidata ou recrutador..." className="pl-12 h-12 rounded-2xl border-none shadow-sm" />
                 </div>
               </div>
 
@@ -316,33 +320,33 @@ function AdminLayout() {
                   <Table>
                     <TableHeader className="bg-gray-50/50">
                       <TableRow className="hover:bg-transparent border-b">
-                        <TableHead className="pl-8 h-14 text-xs font-bold uppercase text-gray-400">Candidata</TableHead>
-                        <TableHead className="h-14 text-xs font-bold uppercase text-gray-400">Data</TableHead>
-                        <TableHead className="h-14 text-xs font-bold uppercase text-gray-400">Entrevistador</TableHead>
-                        <TableHead className="h-14 text-xs font-bold uppercase text-gray-400">Status</TableHead>
-                        <TableHead className="text-right pr-8 h-14 text-xs font-bold uppercase text-gray-400">Ações</TableHead>
+                        <TableHead className="pl-4 md:pl-8 h-12 md:h-14 text-[10px] md:text-xs font-bold uppercase text-gray-400">Candidata</TableHead>
+                        <TableHead className="hidden md:table-cell h-14 text-xs font-bold uppercase text-gray-400">Data</TableHead>
+                        <TableHead className="h-12 md:h-14 text-[10px] md:text-xs font-bold uppercase text-gray-400">Entrevistador</TableHead>
+                        <TableHead className="hidden md:table-cell h-14 text-xs font-bold uppercase text-gray-400">Status</TableHead>
+                        <TableHead className="text-right pr-4 md:pr-8 h-12 md:h-14 text-[10px] md:text-xs font-bold uppercase text-gray-400">Ações</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {interviews.map((item) => (
                         <TableRow key={item.id} className="hover:bg-pink-50/30 transition-colors border-b">
-                          <TableCell className="pl-8 font-bold text-gray-900">{item.nome}</TableCell>
-                          <TableCell className="text-gray-500 font-medium">{item.data}</TableCell>
-                          <TableCell className="text-gray-600 font-bold">{item.entrevistador}</TableCell>
-                          <TableCell>
+                          <TableCell className="pl-4 md:pl-8 font-bold text-gray-900 text-sm md:text-base">{item.nome}</TableCell>
+                          <TableCell className="hidden md:table-cell text-gray-500 font-medium">{item.data}</TableCell>
+                          <TableCell className="text-gray-600 font-bold text-sm md:text-base">{item.entrevistador}</TableCell>
+                          <TableCell className="hidden md:table-cell">
                             <Badge variant="outline" className="bg-green-50 text-green-600 border-green-100 font-bold px-3 py-1">
                               {item.status}
                             </Badge>
                           </TableCell>
-                          <TableCell className="text-right pr-8">
+                          <TableCell className="text-right pr-4 md:pr-8">
                             <Button 
                               variant="ghost" 
                               size="sm" 
-                              className="text-pink-600 hover:text-pink-700 hover:bg-pink-100 font-bold gap-2"
+                              className="text-pink-600 hover:text-pink-700 hover:bg-pink-100 font-bold gap-1 md:gap-2 px-2 md:px-4"
                               onClick={() => setSelectedInterview(item)}
                             >
                               <Eye size={16} />
-                              Ver Respostas
+                              <span className="hidden md:inline">Ver Respostas</span>
                             </Button>
                           </TableCell>
                         </TableRow>
@@ -371,34 +375,34 @@ function AdminLayout() {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead className="pl-6">Nome</TableHead>
-                        <TableHead>Tipo</TableHead>
-                        <TableHead>Entrevistas</TableHead>
-                        <TableHead>Link Personalizado</TableHead>
-                        <TableHead className="text-right pr-6">Ações</TableHead>
+                        <TableHead className="pl-4 md:pl-8 text-xs font-bold uppercase text-gray-400">Recrutador</TableHead>
+                        <TableHead className="hidden md:table-cell text-xs font-bold uppercase text-gray-400">Tipo</TableHead>
+                        <TableHead className="text-xs font-bold uppercase text-gray-400">Entrevistas</TableHead>
+                        <TableHead className="text-xs font-bold uppercase text-gray-400">Link</TableHead>
+                        <TableHead className="text-right pr-4 md:pr-8 text-xs font-bold uppercase text-gray-400">Ações</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {users.map((user) => (
-                        <TableRow key={user.id}>
-                          <TableCell className="pl-6 font-medium">{user.nome}</TableCell>
-                          <TableCell>
-                            <Badge variant="secondary">{user.tipo}</Badge>
+                        <TableRow key={user.id} className="hover:bg-pink-50/30 transition-colors border-b">
+                          <TableCell className="pl-4 md:pl-8 font-bold text-gray-900">{user.nome}</TableCell>
+                          <TableCell className="hidden md:table-cell">
+                            <Badge variant="secondary" className="bg-gray-100 text-gray-600 border-none font-bold">{user.tipo}</Badge>
                           </TableCell>
-                          <TableCell>{user.entrevistas}</TableCell>
+                          <TableCell className="font-bold text-pink-600">{user.entrevistas}</TableCell>
                           <TableCell>
-                            <div className="flex items-center gap-2">
-                              <code className="bg-slate-100 px-2 py-1 rounded text-xs">.../recruiter={user.id}</code>
+                            <div className="flex items-center gap-1">
                               <button 
                                 onClick={() => copyRecruiterLink(user.id)}
-                                className="p-1 hover:bg-slate-100 rounded text-primary transition-colors"
+                                className="p-2 hover:bg-pink-100 rounded-lg text-pink-600 transition-colors"
+                                title="Copiar link de recrutamento"
                               >
-                                <Copy size={16} />
+                                <Copy size={18} />
                               </button>
                             </div>
                           </TableCell>
-                          <TableCell className="text-right pr-6">
-                            <Button variant="ghost" size="sm">Editar</Button>
+                          <TableCell className="text-right pr-4 md:pr-8">
+                            <Button variant="ghost" size="sm" className="font-bold text-gray-400 hover:text-pink-600">Editar</Button>
                           </TableCell>
                         </TableRow>
                       ))}

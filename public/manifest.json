@@ -1,0 +1,21 @@
+{
+  "name": "Voz das Mulheres",
+  "short_name": "VozMulheres",
+  "description": "Sistema de pesquisa Voz das Mulheres - Dra. Fernanda Sarelli",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#e91e63",
+  "icons": [
+    {
+      "src": "https://rede.deputadasarelli.com.br/assets/logo-sarelli-Cg7sc1zQ.webp",
+      "sizes": "192x192",
+      "type": "image/webp"
+    },
+    {
+      "src": "https://rede.deputadasarelli.com.br/assets/logo-sarelli-Cg7sc1zQ.webp",
+      "sizes": "512x512",
+      "type": "image/webp"
+    }
+  ]
+}
