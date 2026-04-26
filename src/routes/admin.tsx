@@ -318,33 +318,33 @@ function AdminLayout() {
                   <Table>
                     <TableHeader className="bg-gray-50/50">
                       <TableRow className="hover:bg-transparent border-b">
-                        <TableHead className="pl-8 h-14 text-xs font-bold uppercase text-gray-400">Candidata</TableHead>
-                        <TableHead className="h-14 text-xs font-bold uppercase text-gray-400">Data</TableHead>
-                        <TableHead className="h-14 text-xs font-bold uppercase text-gray-400">Entrevistador</TableHead>
-                        <TableHead className="h-14 text-xs font-bold uppercase text-gray-400">Status</TableHead>
-                        <TableHead className="text-right pr-8 h-14 text-xs font-bold uppercase text-gray-400">Ações</TableHead>
+                        <TableHead className="pl-4 md:pl-8 h-12 md:h-14 text-[10px] md:text-xs font-bold uppercase text-gray-400">Candidata</TableHead>
+                        <TableHead className="hidden md:table-cell h-14 text-xs font-bold uppercase text-gray-400">Data</TableHead>
+                        <TableHead className="h-12 md:h-14 text-[10px] md:text-xs font-bold uppercase text-gray-400">Entrevistador</TableHead>
+                        <TableHead className="hidden md:table-cell h-14 text-xs font-bold uppercase text-gray-400">Status</TableHead>
+                        <TableHead className="text-right pr-4 md:pr-8 h-12 md:h-14 text-[10px] md:text-xs font-bold uppercase text-gray-400">Ações</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {interviews.map((item) => (
                         <TableRow key={item.id} className="hover:bg-pink-50/30 transition-colors border-b">
-                          <TableCell className="pl-8 font-bold text-gray-900">{item.nome}</TableCell>
-                          <TableCell className="text-gray-500 font-medium">{item.data}</TableCell>
-                          <TableCell className="text-gray-600 font-bold">{item.entrevistador}</TableCell>
-                          <TableCell>
+                          <TableCell className="pl-4 md:pl-8 font-bold text-gray-900 text-sm md:text-base">{item.nome}</TableCell>
+                          <TableCell className="hidden md:table-cell text-gray-500 font-medium">{item.data}</TableCell>
+                          <TableCell className="text-gray-600 font-bold text-sm md:text-base">{item.entrevistador}</TableCell>
+                          <TableCell className="hidden md:table-cell">
                             <Badge variant="outline" className="bg-green-50 text-green-600 border-green-100 font-bold px-3 py-1">
                               {item.status}
                             </Badge>
                           </TableCell>
-                          <TableCell className="text-right pr-8">
+                          <TableCell className="text-right pr-4 md:pr-8">
                             <Button 
                               variant="ghost" 
                               size="sm" 
-                              className="text-pink-600 hover:text-pink-700 hover:bg-pink-100 font-bold gap-2"
+                              className="text-pink-600 hover:text-pink-700 hover:bg-pink-100 font-bold gap-1 md:gap-2 px-2 md:px-4"
                               onClick={() => setSelectedInterview(item)}
                             >
                               <Eye size={16} />
-                              Ver Respostas
+                              <span className="hidden md:inline">Ver Respostas</span>
                             </Button>
                           </TableCell>
                         </TableRow>
