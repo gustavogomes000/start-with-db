@@ -121,6 +121,9 @@ function QuestionnaireComponent() {
     try {
       const allAnswers = QUESTIONS.map((q, i) => `${q.id}. ${q.question}\nR: ${answers[i] || ""}`).join("\n\n");
 
+      const interviewerName = users.find((u) => u.id === selectedUserId)?.nome || "—";
+      const fullMessage = `Entrevistador: ${interviewerName} (${selectedUserId})\nNascimento: ${formData.dataNascimento}\n\n${allAnswers}`;
+
       const { error } = await supabase.from("promotion_entries").insert({
         full_name: formData.nome,
         whatsapp: formData.whatsapp,
@@ -128,8 +131,7 @@ function QuestionnaireComponent() {
         cpf: formData.cpf,
         instagram: formData.instagram,
         city: "Voz das Mulheres",
-        promotion_id: recruiterId || selectedUserId,
-        message: allAnswers,
+        message: fullMessage,
       });
 
       if (error) throw error;
