@@ -140,7 +140,7 @@ function QuestionnaireComponent() {
     return (
       <div
         className="h-[100dvh] w-full flex flex-col relative overflow-hidden"
-        style={{ background: "#fff5f7" }}
+        style={{ background: "#ffffff" }}
       >
         {/* Top decorative arc — solid pink filling the upper half */}
         <div
