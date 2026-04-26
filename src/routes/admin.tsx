@@ -1,423 +1,440 @@
-import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { 
-  Users, 
-  MessageSquare, 
-  Settings, 
-  LogOut, 
-  LayoutDashboard, 
-  Plus, 
+import {
+  Users,
+  LogOut,
+  LayoutDashboard,
+  Plus,
   Search,
-  Copy,
-  ExternalLink,
   Eye,
-  Calendar as CalendarIcon
+  Shield,
+  MessageSquare,
+  Trash2,
 } from "lucide-react";
-import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
 } from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/admin")({
   component: AdminLayout,
 });
 
+type Cadastro = {
+  id: string;
+  full_name: string | null;
+  whatsapp: string | null;
+  cpf: string | null;
+  instagram: string | null;
+  city: string | null;
+  message: string | null;
+  created_at: string;
+};
+
+type AdminUser = { id: string; username: string; created_at: string };
+
 function AdminLayout() {
-  const [activeTab, setActiveTab] = useState("dashboard");
-  const [interviews, setInterviews] = useState<any[]>([]);
-  const [users, setUsers] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [selectedInterview, setSelectedInterview] = useState<any>(null);
   const navigate = useNavigate();
+  const [session, setSession] = useState<{ id: string; username: string } | null>(null);
+  const [activeTab, setActiveTab] = useState<"dashboard" | "cadastros" | "admins">("dashboard");
+  const [cadastros, setCadastros] = useState<Cadastro[]>([]);
+  const [admins, setAdmins] = useState<AdminUser[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [selected, setSelected] = useState<Cadastro | null>(null);
+  const [newAdminOpen, setNewAdminOpen] = useState(false);
+  const [newAdmin, setNewAdmin] = useState({ username: "", password: "" });
+  const [savingAdmin, setSavingAdmin] = useState(false);
 
   useEffect(() => {
-    async function checkUser() {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        // Only navigate if we are on the client side
-        if (typeof window !== 'undefined') {
-          navigate({ to: "/login" });
-        }
-        return;
-      }
-      
-      setIsAdmin(true); 
-      fetchData();
+    if (typeof window === "undefined") return;
+    const raw = localStorage.getItem("admin_session");
+    if (!raw) {
+      navigate({ to: "/login" });
+      return;
     }
-    checkUser();
+    try {
+      const s = JSON.parse(raw);
+      setSession({ id: s.id, username: s.username });
+      fetchAll();
+    } catch {
+      navigate({ to: "/login" });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  async function fetchData() {
+  async function fetchAll() {
     setLoading(true);
     try {
-      // Fetch real recruiters
-      const { data: userData, error: userError } = await supabase
-        .from("hierarquia_usuarios")
-        .select("id, nome, tipo, ativo")
-        .order("nome");
-      
-      if (userError) throw userError;
-
-      // Fetch real survey results from promotion_entries
-      const { data: surveyData, error: surveyError } = await supabase
-        .from("promotion_entries")
-        .select("id, full_name, created_at, promotion_id, whatsapp, message")
-        .order("created_at", { ascending: false });
-
-      if (surveyError) throw surveyError;
-      
-      // Map data for display
-      const mappedUsers = userData.map(u => ({
-        id: u.id,
-        nome: u.nome,
-        tipo: u.tipo,
-        entrevistas: surveyData.filter(s => s.promotion_id === u.id).length
-      }));
-
-      const mappedInterviews = surveyData.map(s => {
-        const recruiter = userData.find(u => u.id === s.promotion_id);
-        return {
-          id: s.id,
-          nome: s.full_name,
-          data: new Date(s.created_at).toLocaleDateString('pt-BR'),
-          status: "Completo",
-          entrevistador: recruiter ? recruiter.nome : "Link Direto / Outro",
-          detalhes: s.message
-        };
-      });
-
-      setUsers(mappedUsers);
-      setInterviews(mappedInterviews);
-    } catch (err) {
+      const [{ data: ent, error: e1 }, { data: ad, error: e2 }] = await Promise.all([
+        supabase
+          .from("promotion_entries")
+          .select("id, full_name, whatsapp, cpf, instagram, city, message, created_at")
+          .order("created_at", { ascending: false })
+          .limit(500),
+        supabase
+          .from("admin_users")
+          .select("id, username, created_at")
+          .order("created_at", { ascending: false }),
+      ]);
+      if (e1) throw e1;
+      if (e2) throw e2;
+      setCadastros((ent as Cadastro[]) || []);
+      setAdmins((ad as AdminUser[]) || []);
+    } catch (err: any) {
       console.error(err);
-      toast.error("Erro ao carregar dados do banco.");
+      toast.error("Erro ao carregar dados.");
     } finally {
       setLoading(false);
     }
   }
 
-  const copyRecruiterLink = (id: string) => {
-    const url = `${window.location.origin}/?recruiter=${id}`;
-    navigator.clipboard.writeText(url);
-    toast.success("Link personalizado copiado!");
-  };
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
+  function handleLogout() {
+    localStorage.removeItem("admin_session");
     navigate({ to: "/login" });
-  };
+  }
+
+  async function createAdmin() {
+    if (!newAdmin.username.trim() || newAdmin.password.length < 6) {
+      toast.error("Usuário e senha (mín 6 caracteres) são obrigatórios.");
+      return;
+    }
+    setSavingAdmin(true);
+    try {
+      const { error } = await supabase.rpc("admin_create_user", {
+        p_username: newAdmin.username.trim(),
+        p_password: newAdmin.password,
+      });
+      if (error) throw error;
+      toast.success("Administrador criado!");
+      setNewAdmin({ username: "", password: "" });
+      setNewAdminOpen(false);
+      fetchAll();
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao criar administrador.");
+    } finally {
+      setSavingAdmin(false);
+    }
+  }
+
+  const filtered = cadastros.filter((c) => {
+    if (!search) return true;
+    const s = search.toLowerCase();
+    return (
+      (c.full_name || "").toLowerCase().includes(s) ||
+      (c.whatsapp || "").toLowerCase().includes(s) ||
+      (c.city || "").toLowerCase().includes(s)
+    );
+  });
+
+  if (!session) {
+    return (
+      <div className="min-h-[100dvh] flex items-center justify-center bg-[#fff5f8]">
+        <p className="text-pink-500 font-bold">Carregando...</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-[#fcfcfc] flex flex-col md:flex-row">
-      {/* Sidebar / Bottom Nav for Mobile */}
-      <div className="w-full md:w-72 bg-white border-b md:border-r flex flex-col shadow-xl z-20 sticky top-0 md:h-screen">
-        <div className="p-4 md:p-8 border-b bg-gray-50/50 flex md:flex-col items-center justify-between md:justify-start gap-4">
-          <img src="https://rede.deputadasarelli.com.br/assets/logo-sarelli-Cg7sc1zQ.webp" alt="Logo" className="h-8 md:h-10" />
-          <div className="flex items-center gap-3 p-2 md:p-3 bg-white rounded-xl md:rounded-2xl shadow-sm border border-pink-50">
-            <div className="w-8 h-8 md:w-12 md:h-12 rounded-lg md:rounded-xl bg-[#e91e63] flex items-center justify-center text-white font-black text-sm md:text-xl shadow-lg shadow-pink-100">
-              A
+    <div className="min-h-[100dvh] bg-[#fcfcfc] flex flex-col pb-20">
+      {/* Header */}
+      <header
+        className="px-5 pt-6 pb-8 text-white relative"
+        style={{
+          background: "linear-gradient(180deg,#ec407a 0%,#e91e63 100%)",
+          borderBottomLeftRadius: 28,
+          borderBottomRightRadius: 28,
+        }}
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-11 h-11 rounded-2xl bg-white/15 backdrop-blur flex items-center justify-center font-black text-lg">
+              {session.username[0]?.toUpperCase()}
             </div>
-            <div className="hidden md:block">
-              <p className="text-sm font-black text-gray-900 uppercase tracking-tighter">Administrador</p>
-              <Badge className="bg-pink-50 text-pink-600 border-none text-[10px] font-bold px-2">SUPER ADMIN</Badge>
-            </div>
-          </div>
-        </div>
-        
-        <nav className="flex md:flex-col p-2 md:p-6 gap-1 md:gap-2 overflow-x-auto md:overflow-x-visible no-scrollbar">
-          <button 
-            onClick={() => setActiveTab("dashboard")}
-            className={cn(
-              "flex-1 md:w-full flex items-center justify-center md:justify-start gap-2 md:gap-4 px-4 md:px-5 py-3 md:py-4 rounded-xl md:rounded-2xl transition-all duration-300 font-bold whitespace-nowrap",
-              activeTab === "dashboard" ? "bg-[#e91e63] text-white shadow-lg md:shadow-xl shadow-pink-100" : "hover:bg-pink-50 text-gray-500"
-            )}
-          >
-            <LayoutDashboard size={20} />
-            <span className="text-sm md:text-base">Geral</span>
-          </button>
-          <button 
-            onClick={() => setActiveTab("interviews")}
-            className={cn(
-              "flex-1 md:w-full flex items-center justify-center md:justify-start gap-2 md:gap-4 px-4 md:px-5 py-3 md:py-4 rounded-xl md:rounded-2xl transition-all duration-300 font-bold whitespace-nowrap",
-              activeTab === "interviews" ? "bg-[#e91e63] text-white shadow-lg md:shadow-xl shadow-pink-100" : "hover:bg-pink-50 text-gray-500"
-            )}
-          >
-            <MessageSquare size={20} />
-            <span className="text-sm md:text-base">Pesquisas</span>
-          </button>
-          <button 
-            onClick={() => setActiveTab("users")}
-            className={cn(
-              "flex-1 md:w-full flex items-center justify-center md:justify-start gap-2 md:gap-4 px-4 md:px-5 py-3 md:py-4 rounded-xl md:rounded-2xl transition-all duration-300 font-bold whitespace-nowrap",
-              activeTab === "users" ? "bg-[#e91e63] text-white shadow-lg md:shadow-xl shadow-pink-100" : "hover:bg-pink-50 text-gray-500"
-            )}
-          >
-            <Users size={20} />
-            <span className="text-sm md:text-base">Equipe</span>
-          </button>
-          <button 
-            onClick={handleLogout}
-            className="md:hidden flex items-center justify-center p-3 text-red-500"
-          >
-            <LogOut size={20} />
-          </button>
-        </nav>
-
-        <div className="hidden md:block p-6 border-t bg-gray-50/50">
-          <button 
-            onClick={handleLogout}
-            className="w-full flex items-center gap-4 px-5 py-4 rounded-2xl hover:bg-red-50 text-red-500 transition-all font-bold"
-          >
-            <LogOut size={22} />
-            Sair do Sistema
-          </button>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-x-hidden">
-        <header className="hidden md:flex h-20 bg-white/80 backdrop-blur-md border-b px-10 items-center justify-between z-10">
-          <h2 className="text-2xl font-black text-gray-900 uppercase tracking-tighter">
-            {activeTab === "dashboard" ? "Resumo Geral" : activeTab === "users" ? "Recrutadores" : "Pesquisas Realizadas"}
-          </h2>
-          <div className="flex items-center gap-6">
-            <div className="w-12 h-12 rounded-full border-2 border-pink-100 p-1">
-              <img src="https://rede.deputadasarelli.com.br/assets/fernanda-sarelli-BrFuKmdI.webp" className="w-full h-full object-cover rounded-full" alt="User" />
+            <div>
+              <p className="text-[10px] font-bold tracking-[0.3em] uppercase opacity-80">
+                Painel
+              </p>
+              <p className="font-black text-base leading-tight">{session.username}</p>
             </div>
           </div>
-        </header>
+          <button
+            onClick={handleLogout}
+            className="w-10 h-10 rounded-xl bg-white/15 backdrop-blur flex items-center justify-center active:scale-95"
+            aria-label="Sair"
+          >
+            <LogOut size={18} />
+          </button>
+        </div>
 
-        <main className="p-4 md:p-10 overflow-y-auto bg-[#fcfcfc] pb-20">
-          {activeTab === "dashboard" && (
-            <div className="space-y-8">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium text-slate-500 uppercase">Total de Entrevistas</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-3xl font-bold">1,284</div>
-                    <p className="text-xs text-green-500 mt-1 flex items-center">+12% este mês</p>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium text-slate-500 uppercase">Recrutadores Ativos</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-3xl font-bold">42</div>
-                    <p className="text-xs text-slate-500 mt-1">Em 8 cidades</p>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium text-slate-500 uppercase">Meta Mensal</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-3xl font-bold">85%</div>
-                    <div className="w-full bg-slate-100 h-2 rounded-full mt-2">
-                      <div className="bg-primary h-full rounded-full" style={{ width: "85%" }}></div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
+        {/* Stats */}
+        <div className="grid grid-cols-2 gap-3 mt-6">
+          <div className="bg-white/15 backdrop-blur rounded-2xl p-4">
+            <p className="text-[9px] font-bold tracking-[0.25em] uppercase opacity-80">
+              Cadastros
+            </p>
+            <p className="text-2xl font-black mt-1">{cadastros.length}</p>
+          </div>
+          <div className="bg-white/15 backdrop-blur rounded-2xl p-4">
+            <p className="text-[9px] font-bold tracking-[0.25em] uppercase opacity-80">
+              Admins
+            </p>
+            <p className="text-2xl font-black mt-1">{admins.length}</p>
+          </div>
+        </div>
+      </header>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>Entrevistas Recentes</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Candidata</TableHead>
-                        <TableHead>Data</TableHead>
-                        <TableHead>Entrevistador</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead className="text-right">Ações</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {interviews.map((item) => (
-                        <TableRow key={item.id}>
-                          <TableCell className="font-medium">{item.nome}</TableCell>
-                          <TableCell>{item.data}</TableCell>
-                          <TableCell>{item.entrevistador}</TableCell>
-                          <TableCell>
-                            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                              {item.status}
-                            </Badge>
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <Button 
-                              variant="ghost" 
-                              size="sm" 
-                              className="text-pink-600 hover:text-pink-700 hover:bg-pink-50 font-bold gap-2"
-                              onClick={() => setSelectedInterview(item)}
-                            >
-                              <Eye size={16} />
-                              Ver Respostas
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </CardContent>
-              </Card>
+      {/* Tabs */}
+      <nav className="px-4 -mt-5 relative z-10">
+        <div className="bg-white rounded-2xl shadow-lg shadow-pink-100/50 p-1.5 flex gap-1">
+          {[
+            { id: "dashboard", label: "Geral", icon: LayoutDashboard },
+            { id: "cadastros", label: "Cadastros", icon: MessageSquare },
+            { id: "admins", label: "Admins", icon: Shield },
+          ].map((t) => {
+            const Icon = t.icon;
+            const active = activeTab === t.id;
+            return (
+              <button
+                key={t.id}
+                onClick={() => setActiveTab(t.id as any)}
+                className={cn(
+                  "flex-1 flex flex-col items-center gap-1 py-2.5 rounded-xl transition-all",
+                  active
+                    ? "bg-gradient-to-br from-[#e91e63] to-[#ec407a] text-white shadow-md"
+                    : "text-gray-500",
+                )}
+              >
+                <Icon size={16} />
+                <span className="text-[10px] font-black tracking-wider uppercase">
+                  {t.label}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </nav>
 
-              {/* Interview Details Dialog */}
-              <Dialog open={!!selectedInterview} onOpenChange={() => setSelectedInterview(null)}>
-                <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto rounded-3xl">
-                  <DialogHeader>
-                    <DialogTitle className="text-2xl font-black text-gray-900 uppercase tracking-tighter">Respostas da Pesquisa</DialogTitle>
-                    <DialogDescription className="text-pink-600 font-bold">
-                      Candidata: {selectedInterview?.nome} • Entrevistador: {selectedInterview?.entrevistador}
-                    </DialogDescription>
-                  </DialogHeader>
-                  <div className="mt-6 space-y-6">
-                    <div className="bg-gray-50 p-6 rounded-2xl border border-gray-100">
-                      <p className="whitespace-pre-wrap text-gray-700 leading-relaxed font-medium">
-                        {selectedInterview?.detalhes}
-                      </p>
-                    </div>
+      <main className="flex-1 px-4 pt-5">
+        {loading && (
+          <p className="text-center text-gray-400 text-sm py-10">Carregando...</p>
+        )}
+
+        {!loading && activeTab === "dashboard" && (
+          <div className="space-y-3">
+            <h2 className="text-xs font-black uppercase tracking-[0.25em] text-gray-400 px-1">
+              Cadastros recentes
+            </h2>
+            {cadastros.slice(0, 8).map((c) => (
+              <CadastroCard key={c.id} c={c} onOpen={() => setSelected(c)} />
+            ))}
+            {cadastros.length === 0 && (
+              <EmptyState text="Nenhum cadastro ainda." />
+            )}
+          </div>
+        )}
+
+        {!loading && activeTab === "cadastros" && (
+          <div className="space-y-3">
+            <div className="relative">
+              <Search
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                size={16}
+              />
+              <Input
+                placeholder="Buscar por nome, WhatsApp..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="pl-11 h-12 rounded-2xl bg-white border-none shadow-sm"
+              />
+            </div>
+            {filtered.map((c) => (
+              <CadastroCard key={c.id} c={c} onOpen={() => setSelected(c)} />
+            ))}
+            {filtered.length === 0 && (
+              <EmptyState text="Nenhum cadastro encontrado." />
+            )}
+          </div>
+        )}
+
+        {!loading && activeTab === "admins" && (
+          <div className="space-y-3">
+            <Button
+              onClick={() => setNewAdminOpen(true)}
+              className="w-full h-12 rounded-2xl bg-gradient-to-r from-[#e91e63] to-[#ec407a] font-black uppercase tracking-[0.2em] text-xs shadow-lg shadow-pink-100"
+            >
+              <Plus size={16} className="mr-1" /> Novo administrador
+            </Button>
+
+            {admins.map((a) => (
+              <Card key={a.id} className="border-none shadow-sm rounded-2xl">
+                <CardContent className="p-4 flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-pink-50 text-[#e91e63] flex items-center justify-center font-black">
+                    {a.username[0]?.toUpperCase()}
                   </div>
-                  <div className="mt-8">
-                    <Button 
-                      className="w-full h-14 rounded-2xl bg-[#e91e63] font-bold"
-                      onClick={() => setSelectedInterview(null)}
-                    >
-                      FECHAR
-                    </Button>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-black text-sm text-gray-900 truncate">
+                      {a.username}
+                    </p>
+                    <p className="text-[11px] text-gray-400">
+                      Criado{" "}
+                      {new Date(a.created_at).toLocaleDateString("pt-BR")}
+                    </p>
                   </div>
-                </DialogContent>
-              </Dialog>
-            </div>
-          )}
-
-          {activeTab === "interviews" && (
-            <div className="space-y-6">
-              <div className="flex justify-between items-center">
-                <div className="relative flex-1 md:w-96">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                  <Input placeholder="Candidata ou recrutador..." className="pl-12 h-12 rounded-2xl border-none shadow-sm" />
-                </div>
-              </div>
-
-              <Card className="border-none shadow-xl rounded-3xl overflow-hidden">
-                <CardContent className="p-0">
-                  <Table>
-                    <TableHeader className="bg-gray-50/50">
-                      <TableRow className="hover:bg-transparent border-b">
-                        <TableHead className="pl-4 md:pl-8 h-12 md:h-14 text-[10px] md:text-xs font-bold uppercase text-gray-400">Candidata</TableHead>
-                        <TableHead className="hidden md:table-cell h-14 text-xs font-bold uppercase text-gray-400">Data</TableHead>
-                        <TableHead className="h-12 md:h-14 text-[10px] md:text-xs font-bold uppercase text-gray-400">Entrevistador</TableHead>
-                        <TableHead className="hidden md:table-cell h-14 text-xs font-bold uppercase text-gray-400">Status</TableHead>
-                        <TableHead className="text-right pr-4 md:pr-8 h-12 md:h-14 text-[10px] md:text-xs font-bold uppercase text-gray-400">Ações</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {interviews.map((item) => (
-                        <TableRow key={item.id} className="hover:bg-pink-50/30 transition-colors border-b">
-                          <TableCell className="pl-4 md:pl-8 font-bold text-gray-900 text-sm md:text-base">{item.nome}</TableCell>
-                          <TableCell className="hidden md:table-cell text-gray-500 font-medium">{item.data}</TableCell>
-                          <TableCell className="text-gray-600 font-bold text-sm md:text-base">{item.entrevistador}</TableCell>
-                          <TableCell className="hidden md:table-cell">
-                            <Badge variant="outline" className="bg-green-50 text-green-600 border-green-100 font-bold px-3 py-1">
-                              {item.status}
-                            </Badge>
-                          </TableCell>
-                          <TableCell className="text-right pr-4 md:pr-8">
-                            <Button 
-                              variant="ghost" 
-                              size="sm" 
-                              className="text-pink-600 hover:text-pink-700 hover:bg-pink-100 font-bold gap-1 md:gap-2 px-2 md:px-4"
-                              onClick={() => setSelectedInterview(item)}
-                            >
-                              <Eye size={16} />
-                              <span className="hidden md:inline">Ver Respostas</span>
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                  {a.id === session.id && (
+                    <Badge className="bg-pink-50 text-[#e91e63] border-none text-[9px] font-bold">
+                      VOCÊ
+                    </Badge>
+                  )}
                 </CardContent>
               </Card>
-            </div>
-          )}
+            ))}
+          </div>
+        )}
+      </main>
 
-          {activeTab === "users" && (
-            <div className="space-y-6">
-              <div className="flex justify-between items-center">
-                <div className="relative w-64">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                  <Input placeholder="Buscar recrutadores..." className="pl-10 h-12 rounded-xl border-none shadow-sm" />
-                </div>
-                <Button className="gap-2 bg-[#e91e63] rounded-xl h-12 px-6 font-bold shadow-lg shadow-pink-100">
-                  <Plus size={18} /> Novo Recrutador
-                </Button>
+      {/* Cadastro Detail */}
+      <Dialog open={!!selected} onOpenChange={() => setSelected(null)}>
+        <DialogContent className="max-w-md max-h-[85vh] overflow-y-auto rounded-3xl">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-black uppercase tracking-tight">
+              {selected?.full_name || "Cadastro"}
+            </DialogTitle>
+            <DialogDescription className="text-pink-600 font-bold text-xs uppercase tracking-widest">
+              {selected && new Date(selected.created_at).toLocaleString("pt-BR")}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3 mt-2 text-sm">
+            {selected?.whatsapp && (
+              <Field label="WhatsApp" value={selected.whatsapp} />
+            )}
+            {selected?.cpf && <Field label="CPF" value={selected.cpf} />}
+            {selected?.instagram && (
+              <Field label="Instagram" value={selected.instagram} />
+            )}
+            {selected?.city && <Field label="Origem" value={selected.city} />}
+            {selected?.message && (
+              <div className="bg-gray-50 p-4 rounded-2xl">
+                <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">
+                  Respostas
+                </p>
+                <p className="whitespace-pre-wrap text-gray-700 text-sm leading-relaxed">
+                  {selected.message}
+                </p>
               </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
 
-              <Card>
-                <CardContent className="p-0">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead className="pl-4 md:pl-8 text-xs font-bold uppercase text-gray-400">Recrutador</TableHead>
-                        <TableHead className="hidden md:table-cell text-xs font-bold uppercase text-gray-400">Tipo</TableHead>
-                        <TableHead className="text-xs font-bold uppercase text-gray-400">Entrevistas</TableHead>
-                        <TableHead className="text-xs font-bold uppercase text-gray-400">Link</TableHead>
-                        <TableHead className="text-right pr-4 md:pr-8 text-xs font-bold uppercase text-gray-400">Ações</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {users.map((user) => (
-                        <TableRow key={user.id} className="hover:bg-pink-50/30 transition-colors border-b">
-                          <TableCell className="pl-4 md:pl-8 font-bold text-gray-900">{user.nome}</TableCell>
-                          <TableCell className="hidden md:table-cell">
-                            <Badge variant="secondary" className="bg-gray-100 text-gray-600 border-none font-bold">{user.tipo}</Badge>
-                          </TableCell>
-                          <TableCell className="font-bold text-pink-600">{user.entrevistas}</TableCell>
-                          <TableCell>
-                            <div className="flex items-center gap-1">
-                              <button 
-                                onClick={() => copyRecruiterLink(user.id)}
-                                className="p-2 hover:bg-pink-100 rounded-lg text-pink-600 transition-colors"
-                                title="Copiar link de recrutamento"
-                              >
-                                <Copy size={18} />
-                              </button>
-                            </div>
-                          </TableCell>
-                          <TableCell className="text-right pr-4 md:pr-8">
-                            <Button variant="ghost" size="sm" className="font-bold text-gray-400 hover:text-pink-600">Editar</Button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </CardContent>
-              </Card>
+      {/* New admin dialog */}
+      <Dialog open={newAdminOpen} onOpenChange={setNewAdminOpen}>
+        <DialogContent className="max-w-md rounded-3xl">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-black uppercase tracking-tight">
+              Novo administrador
+            </DialogTitle>
+            <DialogDescription>
+              Crie credenciais para um novo acesso ao painel.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3 mt-2">
+            <div className="space-y-1.5">
+              <Label className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">
+                Usuário
+              </Label>
+              <Input
+                value={newAdmin.username}
+                onChange={(e) =>
+                  setNewAdmin({ ...newAdmin, username: e.target.value })
+                }
+                className="h-12 rounded-2xl bg-gray-50 border-none px-4"
+                placeholder="ex: maria"
+              />
             </div>
-          )}
-        </main>
-      </div>
+            <div className="space-y-1.5">
+              <Label className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">
+                Senha (mín 6)
+              </Label>
+              <Input
+                type="text"
+                value={newAdmin.password}
+                onChange={(e) =>
+                  setNewAdmin({ ...newAdmin, password: e.target.value })
+                }
+                className="h-12 rounded-2xl bg-gray-50 border-none px-4"
+                placeholder="••••••"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              onClick={createAdmin}
+              disabled={savingAdmin}
+              className="w-full h-12 rounded-2xl bg-gradient-to-r from-[#e91e63] to-[#ec407a] font-black uppercase tracking-[0.2em] text-xs"
+            >
+              {savingAdmin ? "Salvando..." : "Criar"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
 
-function cn(...inputs: any[]) {
-  return inputs.filter(Boolean).join(" ");
+function CadastroCard({ c, onOpen }: { c: Cadastro; onOpen: () => void }) {
+  return (
+    <Card
+      className="border-none shadow-sm rounded-2xl active:scale-[0.99] transition cursor-pointer"
+      onClick={onOpen}
+    >
+      <CardContent className="p-4 flex items-center gap-3">
+        <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-pink-50 to-pink-100 text-[#e91e63] flex items-center justify-center font-black">
+          {(c.full_name || "?")[0].toUpperCase()}
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="font-black text-sm text-gray-900 truncate">
+            {c.full_name || "Sem nome"}
+          </p>
+          <p className="text-[11px] text-gray-400 truncate">
+            {c.whatsapp || "—"} ·{" "}
+            {new Date(c.created_at).toLocaleDateString("pt-BR")}
+          </p>
+        </div>
+        <Eye size={16} className="text-pink-400" />
+      </CardContent>
+    </Card>
+  );
+}
+
+function Field({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-center justify-between bg-gray-50 px-4 py-3 rounded-xl">
+      <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">
+        {label}
+      </span>
+      <span className="font-bold text-gray-900 text-sm">{value}</span>
+    </div>
+  );
+}
+
+function EmptyState({ text }: { text: string }) {
+  return (
+    <div className="text-center py-12 text-gray-400">
+      <Users className="mx-auto mb-2 opacity-40" size={32} />
+      <p className="text-sm font-medium">{text}</p>
+    </div>
+  );
 }

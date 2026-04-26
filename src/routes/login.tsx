@@ -3,11 +3,10 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Card, CardContent } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Lock } from "lucide-react";
 
 export const Route = createFileRoute("/login")({
   component: LoginComponent,
@@ -23,126 +22,140 @@ function LoginComponent() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
     try {
-      // For this project, we might be using the hierarquia_usuarios or sindspag_usuarios tables for custom login
-      // or standard Supabase Auth. The user requested replicating the specific visual style.
-      
-      // Let's try standard auth first if applicable, but the user mentioned "name and password" created by admin.
-      // Looking at the database types, there are tables like `usuarios_painel` and `sindspag_usuarios` with `senha_hash`.
-      
-      // I'll implement a login that checks both standard Supabase Auth (for ease of use) 
-      // and potentially the custom tables if we want to follow the "name/password" literally.
-      
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: `${username}@app.com`, // Workaround if username-only is preferred
-        password,
+      const { data, error } = await supabase.rpc("admin_check_password", {
+        p_username: username.trim(),
+        p_password: password,
       });
 
-      if (error) {
-        // Fallback to custom check if using specific tables
-        toast.error("Erro ao entrar. Verifique suas credenciais.");
-      } else {
-        toast.success("Login realizado com sucesso!");
-        navigate({ to: "/admin" });
+      if (error) throw error;
+
+      const row = Array.isArray(data) ? data[0] : null;
+      if (!row?.id) {
+        toast.error("Usuário ou senha inválidos.");
+        return;
       }
-    } catch (err) {
-      toast.error("Ocorreu um erro inesperado.");
+
+      localStorage.setItem(
+        "admin_session",
+        JSON.stringify({ id: row.id, username: row.username, ts: Date.now() }),
+      );
+      toast.success(`Bem-vinda, ${row.username}!`);
+      navigate({ to: "/admin" });
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err.message || "Erro ao entrar.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-[#f8f9fa]">
-      {/* Visual Side */}
-      <div className="hidden md:flex md:w-1/2 bg-[#e91e63] relative overflow-hidden items-center justify-center p-12">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#e91e63] to-[#880e4f] opacity-95" />
-        <div className="relative z-10 text-center text-white max-w-md">
-          <img 
-            src="https://rede.deputadasarelli.com.br/assets/logo-sarelli-Cg7sc1zQ.webp" 
-            alt="Logo Sarelli" 
-            className="h-24 mx-auto mb-8 filter brightness-0 invert"
+    <div className="min-h-[100dvh] w-full flex flex-col bg-white relative overflow-hidden">
+      {/* Pink background */}
+      <div
+        className="absolute top-0 left-0 right-0 h-[42%] z-0"
+        style={{
+          background:
+            "linear-gradient(180deg, #f8b5c4 0%, #f095aa 60%, #ec407a 100%)",
+        }}
+      />
+
+      <div className="relative z-10 flex flex-col items-center pt-10 px-6">
+        <div className="relative w-28 h-28">
+          <div
+            className="absolute -inset-[3px] rounded-full"
+            style={{ background: "linear-gradient(135deg,#ec407a,#e91e63)" }}
           />
-          <h2 className="text-4xl font-black mb-6 tracking-tight uppercase">Painel Administrativo</h2>
-          <p className="text-xl opacity-80 font-light leading-relaxed">
-            Gestão inteligente de pesquisas e recrutamento para a Dra. Fernanda Sarelli.
-          </p>
+          <img
+            src="/brand/fernanda-hd.jpeg"
+            alt="Dra. Fernanda Sarelli"
+            className="relative w-full h-full object-cover rounded-full"
+          />
         </div>
-        <div className="absolute top-[-20%] right-[-20%] w-[500px] h-[500px] bg-white/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-[-10%] left-[-10%] w-96 h-96 bg-black/10 rounded-full blur-3xl" />
+        <img
+          src="/brand/logo-sarelli.png"
+          alt="Logo"
+          className="h-12 mt-4 object-contain"
+        />
+        <p className="mt-2 text-[10px] font-bold tracking-[0.4em] text-white/90 uppercase">
+          Painel Administrativo
+        </p>
       </div>
 
-      {/* Login Side */}
-      <div className="w-full md:w-1/2 flex flex-col items-center justify-center p-8 bg-white">
-        <div className="w-full max-w-[400px] space-y-8">
-          <div className="text-center space-y-4">
-            <div className="relative mx-auto w-32 h-32 mb-6">
-              <div className="absolute inset-0 bg-pink-100 rounded-full blur-xl opacity-50" />
-              <img 
-                src="https://rede.deputadasarelli.com.br/assets/fernanda-sarelli-BrFuKmdI.webp" 
-                alt="Dra. Fernanda Sarelli" 
-                className="relative w-full h-full object-cover rounded-full border-4 border-white shadow-xl z-10"
-              />
+      <div className="relative z-10 flex-1 flex items-center px-5 pb-10 pt-8">
+        <Card className="w-full border-none shadow-[0_20px_50px_-12px_rgba(236,64,122,0.30)] rounded-[28px] bg-white">
+          <CardContent className="p-7">
+            <div className="flex items-center gap-2 mb-5">
+              <Lock className="h-4 w-4 text-[#e91e63]" />
+              <span className="text-[10px] font-black tracking-[0.35em] text-gray-700 uppercase">
+                Acesso Restrito
+              </span>
             </div>
-            <h1 className="text-3xl font-black text-gray-900 tracking-tighter uppercase">Bem-vindo(a)</h1>
-            <p className="text-gray-500">Acesse o sistema com suas credenciais.</p>
-          </div>
 
-          <Card className="border-none shadow-2xl rounded-3xl overflow-hidden bg-gray-50/50">
-            <CardContent className="p-8">
-              <form onSubmit={handleLogin} className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="username" className="text-xs font-bold uppercase tracking-wider text-gray-400 ml-1">Usuário</Label>
-                  <Input
-                    id="username"
-                    type="text"
-                    placeholder="Seu usuário"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    className="h-14 rounded-2xl border-none bg-white shadow-sm focus-visible:ring-pink-500 font-medium"
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="password" className="text-xs font-bold uppercase tracking-wider text-gray-400 ml-1">Senha</Label>
-                  <div className="relative">
-                    <Input
-                      id="password"
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Sua senha"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="h-14 rounded-2xl border-none bg-white shadow-sm focus-visible:ring-pink-500 pr-12 font-medium"
-                      required
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-pink-600 transition-colors"
-                    >
-                      {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                    </button>
-                  </div>
-                </div>
-
-                <Button 
-                  type="submit" 
-                  className="w-full h-16 rounded-2xl text-lg font-black bg-[#e91e63] hover:bg-[#c2185b] transition-all shadow-xl shadow-pink-100 mt-4" 
-                  disabled={loading}
+            <form onSubmit={handleLogin} className="space-y-4">
+              <div className="space-y-2">
+                <Label
+                  htmlFor="username"
+                  className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400"
                 >
-                  {loading ? "Entrando..." : "ENTRAR NO PAINEL"}
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
+                  Usuário
+                </Label>
+                <Input
+                  id="username"
+                  type="text"
+                  placeholder="Administrador"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className="h-14 rounded-2xl bg-gray-50 border-none px-5 text-base font-medium focus-visible:ring-2 focus-visible:ring-pink-300"
+                  required
+                  autoComplete="username"
+                />
+              </div>
 
-          <p className="text-center text-xs text-gray-400 font-medium tracking-widest uppercase pt-4">
-            Dra. Fernanda Sarelli
-          </p>
-        </div>
+              <div className="space-y-2">
+                <Label
+                  htmlFor="password"
+                  className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400"
+                >
+                  Senha
+                </Label>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="h-14 rounded-2xl bg-gray-50 border-none px-5 pr-12 text-base font-medium focus-visible:ring-2 focus-visible:ring-pink-300"
+                    required
+                    autoComplete="current-password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-pink-600"
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
+              </div>
+
+              <Button
+                type="submit"
+                disabled={loading}
+                className="w-full h-[54px] rounded-2xl text-[13px] font-black bg-gradient-to-r from-[#e91e63] via-[#ec407a] to-[#f06292] shadow-[0_10px_25px_-6px_rgba(233,30,99,0.50)] uppercase tracking-[0.25em] active:scale-[0.97]"
+              >
+                {loading ? "Entrando..." : "Entrar"}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
       </div>
+
+      <p className="relative z-10 text-center text-[10px] text-gray-400 font-medium tracking-[0.3em] uppercase pb-5">
+        Dra. Fernanda Sarelli · 2026
+      </p>
     </div>
   );
 }
