@@ -138,46 +138,64 @@ function QuestionnaireComponent() {
 
   if (step === 0) {
     return (
-      <div className="min-h-screen bg-white flex flex-col items-center justify-center relative overflow-hidden">
-        <div className="absolute top-[-5%] right-[-10%] w-64 h-64 bg-pink-50 rounded-full blur-3xl opacity-60" />
-        <div className="absolute bottom-[-5%] left-[-10%] w-64 h-64 bg-orange-50 rounded-full blur-3xl opacity-60" />
+      <div className="min-h-screen bg-[#fff5f8] flex flex-col items-center justify-center relative overflow-hidden">
+        {/* Network Pattern Background */}
+        <div 
+          className="absolute inset-0 opacity-[0.05] pointer-events-none" 
+          style={{ 
+            backgroundImage: `url('https://rede.deputadasarelli.com.br/assets/bg-pattern.svg')`,
+            backgroundSize: '400px',
+            backgroundRepeat: 'repeat'
+          }}
+        />
         
-        <div className="w-full max-w-sm px-6 flex flex-col items-center z-10">
-          <img 
-            src="https://rede.deputadasarelli.com.br/assets/logo-sarelli-Cg7sc1zQ.webp" 
-            alt="Logo Sarelli" 
-            className="h-14 mb-8"
-          />
+        {/* Glow Effects */}
+        <div className="absolute top-[-10%] right-[-15%] w-96 h-96 bg-pink-200 rounded-full blur-[120px] opacity-40 animate-pulse" />
+        <div className="absolute bottom-[-10%] left-[-15%] w-96 h-96 bg-orange-100 rounded-full blur-[120px] opacity-40 animate-pulse" />
+        
+        <div className="w-full max-w-sm px-8 flex flex-col items-center z-10 animate-in fade-in zoom-in duration-1000">
+          <div className="mb-12 flex flex-col items-center">
+            <img 
+              src="https://rede.deputadasarelli.com.br/assets/logo-sarelli-Cg7sc1zQ.webp" 
+              alt="Logo Sarelli" 
+              className="h-28 object-contain drop-shadow-xl"
+            />
+          </div>
           
-          <div className="relative w-56 h-56 mb-10">
-            <div className="absolute inset-0 bg-gradient-to-r from-[#e91e63] to-[#ff9800] rounded-full blur-2xl opacity-20 scale-110" />
+          <div className="relative w-64 h-64 mb-12 group">
+            <div className="absolute inset-0 bg-gradient-to-r from-[#e91e63] via-[#ffb347] to-[#e91e63] rounded-full blur-3xl opacity-20 scale-125 group-hover:opacity-30 transition-opacity" />
+            <div className="absolute -inset-1 bg-gradient-to-r from-[#e91e63] to-[#ffb347] rounded-full opacity-20 group-hover:opacity-40 transition-opacity" />
             <img 
               src="https://rede.deputadasarelli.com.br/assets/fernanda-sarelli-BrFuKmdI.webp" 
               alt="Dra. Fernanda Sarelli" 
-              className="relative w-full h-full object-cover rounded-full border-4 border-white shadow-2xl"
+              className="relative w-full h-full object-cover rounded-full border-4 border-white shadow-[0_20px_50px_rgba(233,30,99,0.3)] transform transition-transform group-hover:scale-[1.02] duration-500"
             />
           </div>
 
-          <div className="text-center space-y-3 mb-12">
-            <h1 className="text-3xl font-black text-gray-900 tracking-tighter uppercase leading-none">
-              Voz das Mulheres
+          <div className="text-center space-y-4 mb-12">
+            <h1 className="text-4xl font-black text-gray-900 tracking-tighter uppercase leading-[0.9] drop-shadow-sm">
+              Voz das <br />
+              <span className="text-[#e91e63] bg-clip-text">Mulheres</span>
             </h1>
-            <p className="text-gray-500 text-base font-medium px-4">
-              Sua opinião é a força que transforma nossa comunidade.
+            <div className="w-12 h-1 bg-gradient-to-r from-[#e91e63] to-[#ffb347] mx-auto rounded-full" />
+            <p className="text-gray-500 text-lg font-medium px-4 leading-tight">
+              Sua opinião é a força que <br />transforma nossa comunidade.
             </p>
           </div>
 
           <Button 
             onClick={() => setStep(1)} 
-            className="w-full h-16 rounded-2xl text-lg font-black bg-gradient-to-r from-[#e91e63] via-[#ffb347] to-[#e91e63] bg-[length:200%_auto] hover:bg-right transition-all duration-500 shadow-xl shadow-pink-100 border-none text-white active:scale-95"
+            className="w-full h-20 rounded-[2rem] text-xl font-black bg-gradient-to-r from-[#e91e63] via-[#ffb347] to-[#e91e63] bg-[length:200%_auto] hover:bg-right transition-all duration-700 shadow-[0_15px_30px_rgba(233,30,99,0.25)] border-none text-white active:scale-95 uppercase tracking-wider"
           >
-            COMEÇAR PESQUISA
-            <ChevronRight className="ml-2 h-5 w-5" />
+            COMEÇAR
+            <ChevronRight className="ml-2 h-6 w-6" />
           </Button>
 
-          <p className="mt-12 text-[10px] text-gray-400 font-bold tracking-[0.2em] uppercase">
-            Dra. Fernanda Sarelli
-          </p>
+          <div className="mt-16 flex items-center gap-3">
+            <div className="w-8 h-[1px] bg-pink-100" />
+            <span className="text-[10px] text-pink-300 font-bold tracking-[0.3em] uppercase">OFICIAL</span>
+            <div className="w-8 h-[1px] bg-pink-100" />
+          </div>
         </div>
       </div>
     );
@@ -185,18 +203,32 @@ function QuestionnaireComponent() {
 
   if (step === 7) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center p-6">
-        <div className="w-full max-w-sm text-center space-y-8 animate-in fade-in zoom-in duration-500">
-          <div className="w-24 h-24 bg-green-50 text-green-500 rounded-full flex items-center justify-center mx-auto shadow-inner">
-            <Send size={40} />
+      <div className="min-h-screen bg-[#fff5f8] flex items-center justify-center p-6 relative overflow-hidden">
+        {/* Pattern */}
+        <div 
+          className="absolute inset-0 opacity-[0.05] pointer-events-none" 
+          style={{ 
+            backgroundImage: `url('https://rede.deputadasarelli.com.br/assets/bg-pattern.svg')`,
+            backgroundSize: '400px',
+            backgroundRepeat: 'repeat'
+          }}
+        />
+        
+        <div className="w-full max-w-sm text-center space-y-10 animate-in fade-in zoom-in duration-700 z-10">
+          <div className="relative mx-auto w-32 h-32 bg-white rounded-full flex items-center justify-center shadow-2xl shadow-pink-100">
+            <div className="absolute inset-0 bg-green-500 rounded-full animate-ping opacity-20" />
+            <Send className="text-green-500" size={48} strokeWidth={3} />
           </div>
-          <div className="space-y-2">
-            <h2 className="text-3xl font-black text-gray-900 uppercase tracking-tighter">Muito obrigado!</h2>
-            <p className="text-gray-500 font-medium">Sua participação é fundamental para construirmos um futuro melhor.</p>
+          
+          <div className="space-y-4">
+            <h2 className="text-4xl font-black text-gray-900 uppercase tracking-tighter leading-none">Muito<br/>obrigado!</h2>
+            <div className="w-12 h-1 bg-green-500 mx-auto rounded-full" />
+            <p className="text-gray-500 font-medium text-lg leading-tight">Sua participação é fundamental para construirmos um futuro melhor.</p>
           </div>
+
           <Button 
             onClick={() => window.location.reload()} 
-            className="w-full h-16 rounded-2xl text-lg font-bold bg-[#e91e63] shadow-lg shadow-pink-100 active:scale-95 transition-transform"
+            className="w-full h-20 rounded-[2rem] text-xl font-black bg-gradient-to-r from-[#e91e63] to-[#ff9800] shadow-xl shadow-pink-100 active:scale-95 transition-transform uppercase tracking-wider"
           >
             Nova Entrevista
           </Button>
@@ -206,16 +238,26 @@ function QuestionnaireComponent() {
   }
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
-      <header className="px-6 py-4 flex flex-col items-center bg-white border-b border-gray-50 sticky top-0 z-20">
+    <div className="min-h-screen bg-[#fff5f8] flex flex-col relative overflow-hidden">
+      {/* Subtle Background Pattern */}
+      <div 
+        className="absolute inset-0 opacity-[0.03] pointer-events-none" 
+        style={{ 
+          backgroundImage: `url('https://rede.deputadasarelli.com.br/assets/bg-pattern.svg')`,
+          backgroundSize: '300px',
+          backgroundRepeat: 'repeat'
+        }}
+      />
+
+      <header className="px-6 py-6 flex flex-col items-center bg-white/80 backdrop-blur-md border-b border-pink-50 sticky top-0 z-20 shadow-sm">
         <img 
           src="https://rede.deputadasarelli.com.br/assets/logo-sarelli-Cg7sc1zQ.webp" 
           alt="Sarelli" 
-          className="h-8 mb-2"
+          className="h-12 mb-4"
         />
-        <div className="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden mt-2">
+        <div className="w-full max-w-xs bg-pink-50 h-2 rounded-full overflow-hidden">
           <div 
-            className="h-full bg-gradient-to-r from-[#e91e63] to-[#ff9800] transition-all duration-500" 
+            className="h-full bg-gradient-to-r from-[#e91e63] to-[#ff9800] transition-all duration-700 ease-out" 
             style={{ width: `${(step / 6) * 100}%` }}
           />
         </div>
@@ -234,73 +276,75 @@ function QuestionnaireComponent() {
 
           {step === 1 && (
             <div className="space-y-6 animate-in slide-in-from-right duration-500 pb-10">
-              <div className="space-y-2">
-                <Label className="text-xs font-bold uppercase tracking-wider text-gray-400">Quem está entrevistando?</Label>
-                <div className="relative">
-                  <select 
-                    value={selectedUserId} 
-                    onChange={e => setSelectedUserId(e.target.value)}
-                    className="w-full h-14 pl-4 pr-10 rounded-2xl bg-gray-50 border-none appearance-none font-bold text-gray-900 shadow-sm focus:ring-2 focus:ring-pink-500 transition-all"
-                  >
-                    <option value="">Selecione...</option>
-                    {users.map(user => (
-                      <option key={user.id} value={user.id}>{user.nome}</option>
-                    ))}
-                  </select>
-                  <ChevronRight className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 rotate-90 pointer-events-none" />
-                </div>
-              </div>
-
-              <div className="space-y-4 pt-2">
-                <div className="space-y-2">
-                  <Label className="text-xs font-bold uppercase tracking-wider text-gray-400">Nome Completo</Label>
-                  <Input 
-                    value={formData.nome} 
-                    onChange={e => setFormData({...formData, nome: e.target.value})}
-                    placeholder="Nome"
-                    className="h-14 rounded-2xl bg-gray-50 border-none shadow-sm"
-                  />
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label className="text-xs font-bold uppercase tracking-wider text-gray-400">CPF</Label>
-                    <Input 
-                      value={formData.cpf} 
-                      onChange={e => setFormData({...formData, cpf: e.target.value})}
-                      placeholder="000.000..."
-                      className="h-14 rounded-2xl bg-gray-50 border-none shadow-sm"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-xs font-bold uppercase tracking-wider text-gray-400">WhatsApp</Label>
-                    <Input 
-                      value={formData.whatsapp} 
-                      onChange={e => setFormData({...formData, whatsapp: e.target.value})}
-                      placeholder="(00) 00000..."
-                      className="h-14 rounded-2xl bg-gray-50 border-none shadow-sm"
-                    />
+              <div className="bg-white/70 backdrop-blur-md p-6 rounded-[2rem] border border-pink-50 shadow-sm space-y-6">
+                <div className="space-y-3">
+                  <Label className="text-xs font-black uppercase tracking-[0.2em] text-pink-400">Quem está entrevistando?</Label>
+                  <div className="relative">
+                    <select 
+                      value={selectedUserId} 
+                      onChange={e => setSelectedUserId(e.target.value)}
+                      className="w-full h-16 pl-6 pr-12 rounded-2xl bg-white border border-pink-50 appearance-none font-bold text-gray-900 shadow-sm focus:ring-4 focus:ring-pink-100 transition-all text-lg"
+                    >
+                      <option value="">Selecione...</option>
+                      {users.map(user => (
+                        <option key={user.id} value={user.id}>{user.nome}</option>
+                      ))}
+                    </select>
+                    <ChevronRight className="absolute right-5 top-1/2 -translate-y-1/2 h-6 w-6 text-pink-400 rotate-90 pointer-events-none" />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label className="text-xs font-bold uppercase tracking-wider text-gray-400">Nascimento</Label>
+                <div className="space-y-5 pt-2">
+                  <div className="space-y-3">
+                    <Label className="text-xs font-black uppercase tracking-[0.2em] text-pink-400">Nome Completo</Label>
                     <Input 
-                      type="date"
-                      value={formData.dataNascimento} 
-                      onChange={e => setFormData({...formData, dataNascimento: e.target.value})}
-                      className="h-14 rounded-2xl bg-gray-50 border-none shadow-sm"
+                      value={formData.nome} 
+                      onChange={e => setFormData({...formData, nome: e.target.value})}
+                      placeholder="Nome da entrevistada"
+                      className="h-16 rounded-2xl bg-white border-pink-50 shadow-sm px-6 text-lg font-medium focus:ring-4 focus:ring-pink-100"
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label className="text-xs font-bold uppercase tracking-wider text-gray-400">Instagram</Label>
-                    <Input 
-                      value={formData.instagram} 
-                      onChange={e => setFormData({...formData, instagram: e.target.value})}
-                      placeholder="@perfil"
-                      className="h-14 rounded-2xl bg-gray-50 border-none shadow-sm"
-                    />
+                  
+                  <div className="grid grid-cols-1 gap-5">
+                    <div className="space-y-3">
+                      <Label className="text-xs font-black uppercase tracking-[0.2em] text-pink-400">CPF</Label>
+                      <Input 
+                        value={formData.cpf} 
+                        onChange={e => setFormData({...formData, cpf: e.target.value})}
+                        placeholder="000.000.000-00"
+                        className="h-16 rounded-2xl bg-white border-pink-50 shadow-sm px-6 text-lg font-medium focus:ring-4 focus:ring-pink-100"
+                      />
+                    </div>
+                    <div className="space-y-3">
+                      <Label className="text-xs font-black uppercase tracking-[0.2em] text-pink-400">WhatsApp</Label>
+                      <Input 
+                        value={formData.whatsapp} 
+                        onChange={e => setFormData({...formData, whatsapp: e.target.value})}
+                        placeholder="(00) 00000-0000"
+                        className="h-16 rounded-2xl bg-white border-pink-50 shadow-sm px-6 text-lg font-medium focus:ring-4 focus:ring-pink-100"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-5">
+                    <div className="space-y-3">
+                      <Label className="text-xs font-black uppercase tracking-[0.2em] text-pink-400">Data de Nascimento</Label>
+                      <Input 
+                        type="date"
+                        value={formData.dataNascimento} 
+                        onChange={e => setFormData({...formData, dataNascimento: e.target.value})}
+                        className="h-16 rounded-2xl bg-white border-pink-50 shadow-sm px-6 text-lg font-medium focus:ring-4 focus:ring-pink-100"
+                      />
+                    </div>
+                    <div className="space-y-3">
+                      <Label className="text-xs font-black uppercase tracking-[0.2em] text-pink-400">Instagram</Label>
+                      <Input 
+                        value={formData.instagram} 
+                        onChange={e => setFormData({...formData, instagram: e.target.value})}
+                        placeholder="@perfil"
+                        className="h-16 rounded-2xl bg-white border-pink-50 shadow-sm px-6 text-lg font-medium focus:ring-4 focus:ring-pink-100"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -309,11 +353,13 @@ function QuestionnaireComponent() {
 
           {step >= 2 && step <= 6 && (
             <div className="space-y-6 animate-in slide-in-from-right duration-500">
-              <p className="text-xl font-bold leading-snug text-gray-900">
-                {QUESTIONS[step - 2].question}
-              </p>
+              <div className="bg-white/60 backdrop-blur-sm p-6 rounded-[2rem] border border-pink-50 shadow-sm">
+                <p className="text-xl font-black leading-tight text-gray-900 uppercase tracking-tighter">
+                  {QUESTIONS[step - 2].question}
+                </p>
+              </div>
               <textarea
-                className="w-full min-h-[200px] p-6 rounded-3xl bg-gray-50 border-none focus:ring-2 focus:ring-pink-500 transition-all text-lg font-medium resize-none shadow-inner"
+                className="w-full min-h-[250px] p-8 rounded-[2rem] bg-white border-none focus:ring-4 focus:ring-pink-100 transition-all text-lg font-medium resize-none shadow-xl shadow-pink-50/50 placeholder:text-gray-300"
                 placeholder={QUESTIONS[step - 2].placeholder}
                 value={answers[step - 2] || ""}
                 onChange={e => setAnswers({...answers, [step - 2]: e.target.value})}
@@ -323,25 +369,25 @@ function QuestionnaireComponent() {
         </div>
       </main>
 
-      <footer className="p-6 bg-white border-t border-gray-50 fixed bottom-0 w-full z-20">
+      <footer className="p-6 bg-white/80 backdrop-blur-md border-t border-pink-50 fixed bottom-0 w-full z-20">
         <div className="max-w-md mx-auto flex gap-4">
           {step > 1 && (
             <Button 
               variant="outline" 
               onClick={handleBack} 
-              className="h-16 w-20 rounded-2xl border-none bg-gray-50 text-gray-400 active:scale-95"
+              className="h-20 w-24 rounded-[1.5rem] border-none bg-pink-50 text-pink-400 active:scale-95 hover:bg-pink-100 transition-colors"
             >
-              <ChevronLeft size={28} />
+              <ChevronLeft size={32} strokeWidth={3} />
             </Button>
           )}
           
           <Button 
             onClick={step === 6 ? handleSubmit : handleNext} 
-            className="h-16 flex-1 rounded-2xl text-lg font-black bg-gradient-to-r from-[#e91e63] to-[#ff9800] shadow-xl shadow-pink-100 border-none text-white active:scale-95"
+            className="h-20 flex-1 rounded-[1.5rem] text-xl font-black bg-gradient-to-r from-[#e91e63] to-[#ff9800] shadow-[0_10px_20px_rgba(233,30,99,0.2)] border-none text-white active:scale-95 uppercase tracking-wider"
             disabled={loading}
           >
             {loading ? "ENVIANDO..." : step === 6 ? "FINALIZAR" : "CONTINUAR"}
-            {step < 6 && <ChevronRight size={24} className="ml-2" />}
+            {step < 6 && <ChevronRight size={28} strokeWidth={3} className="ml-2" />}
           </Button>
         </div>
       </footer>
