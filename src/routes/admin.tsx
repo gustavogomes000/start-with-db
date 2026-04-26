@@ -416,6 +416,45 @@ function AdminLayout() {
                       VOCÊ
                     </Badge>
                   )}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button
+                        className="w-9 h-9 rounded-xl hover:bg-gray-50 flex items-center justify-center text-gray-400"
+                        aria-label="Ações"
+                      >
+                        <MoreVertical size={18} />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="rounded-2xl">
+                      <DropdownMenuItem
+                        onClick={() => {
+                          setEditAdmin(a);
+                          setEditUsername(a.username);
+                        }}
+                      >
+                        <Pencil size={14} className="mr-2" /> Editar nome
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => {
+                          setPwdAdmin(a);
+                          setNewPassword("");
+                        }}
+                      >
+                        <KeyRound size={14} className="mr-2" /> Trocar senha
+                      </DropdownMenuItem>
+                      {a.id !== session.id && (
+                        <>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            onClick={() => deleteAdmin(a)}
+                            className="text-red-600 focus:text-red-600"
+                          >
+                            <Trash2 size={14} className="mr-2" /> Excluir
+                          </DropdownMenuItem>
+                        </>
+                      )}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </CardContent>
               </Card>
             ))}
