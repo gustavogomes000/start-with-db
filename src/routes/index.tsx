@@ -470,7 +470,7 @@ function QuestionnaireComponent() {
 
       <footer className="p-6 bg-white/80 backdrop-blur-md border-t border-pink-50 fixed bottom-0 w-full z-20">
         <div className="max-w-md mx-auto flex gap-4">
-          {(step > 1 || (step === 3 && questionIndex > 0)) && (
+          {(step > 1 || (step === 2 && questionIndex > 0)) && (
             <Button
               variant="outline"
               onClick={handleBack}
