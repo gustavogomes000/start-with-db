@@ -224,16 +224,26 @@ function QuestionnaireComponent() {
   }
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
-      <header className="px-6 py-4 flex flex-col items-center bg-white border-b border-gray-50 sticky top-0 z-20">
+    <div className="min-h-screen bg-[#fff5f8] flex flex-col relative overflow-hidden">
+      {/* Subtle Background Pattern */}
+      <div 
+        className="absolute inset-0 opacity-[0.03] pointer-events-none" 
+        style={{ 
+          backgroundImage: `url('https://rede.deputadasarelli.com.br/assets/bg-pattern.svg')`,
+          backgroundSize: '300px',
+          backgroundRepeat: 'repeat'
+        }}
+      />
+
+      <header className="px-6 py-6 flex flex-col items-center bg-white/80 backdrop-blur-md border-b border-pink-50 sticky top-0 z-20 shadow-sm">
         <img 
           src="https://rede.deputadasarelli.com.br/assets/logo-sarelli-Cg7sc1zQ.webp" 
           alt="Sarelli" 
-          className="h-8 mb-2"
+          className="h-12 mb-4"
         />
-        <div className="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden mt-2">
+        <div className="w-full max-w-xs bg-pink-50 h-2 rounded-full overflow-hidden">
           <div 
-            className="h-full bg-gradient-to-r from-[#e91e63] to-[#ff9800] transition-all duration-500" 
+            className="h-full bg-gradient-to-r from-[#e91e63] to-[#ff9800] transition-all duration-700 ease-out" 
             style={{ width: `${(step / 6) * 100}%` }}
           />
         </div>
