@@ -337,11 +337,13 @@ function QuestionnaireComponent() {
 
           {step >= 2 && step <= 6 && (
             <div className="space-y-6 animate-in slide-in-from-right duration-500">
-              <p className="text-xl font-bold leading-snug text-gray-900">
-                {QUESTIONS[step - 2].question}
-              </p>
+              <div className="bg-white/60 backdrop-blur-sm p-6 rounded-[2rem] border border-pink-50 shadow-sm">
+                <p className="text-xl font-black leading-tight text-gray-900 uppercase tracking-tighter">
+                  {QUESTIONS[step - 2].question}
+                </p>
+              </div>
               <textarea
-                className="w-full min-h-[200px] p-6 rounded-3xl bg-gray-50 border-none focus:ring-2 focus:ring-pink-500 transition-all text-lg font-medium resize-none shadow-inner"
+                className="w-full min-h-[250px] p-8 rounded-[2rem] bg-white border-none focus:ring-4 focus:ring-pink-100 transition-all text-lg font-medium resize-none shadow-xl shadow-pink-50/50 placeholder:text-gray-300"
                 placeholder={QUESTIONS[step - 2].placeholder}
                 value={answers[step - 2] || ""}
                 onChange={e => setAnswers({...answers, [step - 2]: e.target.value})}
@@ -351,25 +353,25 @@ function QuestionnaireComponent() {
         </div>
       </main>
 
-      <footer className="p-6 bg-white border-t border-gray-50 fixed bottom-0 w-full z-20">
+      <footer className="p-6 bg-white/80 backdrop-blur-md border-t border-pink-50 fixed bottom-0 w-full z-20">
         <div className="max-w-md mx-auto flex gap-4">
           {step > 1 && (
             <Button 
               variant="outline" 
               onClick={handleBack} 
-              className="h-16 w-20 rounded-2xl border-none bg-gray-50 text-gray-400 active:scale-95"
+              className="h-20 w-24 rounded-[1.5rem] border-none bg-pink-50 text-pink-400 active:scale-95 hover:bg-pink-100 transition-colors"
             >
-              <ChevronLeft size={28} />
+              <ChevronLeft size={32} strokeWidth={3} />
             </Button>
           )}
           
           <Button 
             onClick={step === 6 ? handleSubmit : handleNext} 
-            className="h-16 flex-1 rounded-2xl text-lg font-black bg-gradient-to-r from-[#e91e63] to-[#ff9800] shadow-xl shadow-pink-100 border-none text-white active:scale-95"
+            className="h-20 flex-1 rounded-[1.5rem] text-xl font-black bg-gradient-to-r from-[#e91e63] to-[#ff9800] shadow-[0_10px_20px_rgba(233,30,99,0.2)] border-none text-white active:scale-95 uppercase tracking-wider"
             disabled={loading}
           >
             {loading ? "ENVIANDO..." : step === 6 ? "FINALIZAR" : "CONTINUAR"}
-            {step < 6 && <ChevronRight size={24} className="ml-2" />}
+            {step < 6 && <ChevronRight size={28} strokeWidth={3} className="ml-2" />}
           </Button>
         </div>
       </footer>
