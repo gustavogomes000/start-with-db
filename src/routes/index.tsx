@@ -87,12 +87,11 @@ function QuestionnaireComponent() {
         toast.error("Selecione quem está entrevistando.");
         return;
       }
-    } else if (step === 2) {
       if (!formData.nome || !formData.whatsapp || !formData.dataNascimento || !formData.cpf || !formData.instagram) {
         toast.error("Preencha todos os campos.");
         return;
       }
-    } else if (step === 3) {
+    } else if (step === 2) {
       if (!answers[questionIndex] || answers[questionIndex].trim().length < 5) {
         toast.error("Responda com mais detalhes.");
         return;
@@ -101,7 +100,6 @@ function QuestionnaireComponent() {
         setQuestionIndex(questionIndex + 1);
         return;
       }
-      // last question -> submit
       handleSubmit();
       return;
     }
@@ -109,7 +107,7 @@ function QuestionnaireComponent() {
   };
 
   const handleBack = () => {
-    if (step === 3 && questionIndex > 0) {
+    if (step === 2 && questionIndex > 0) {
       setQuestionIndex(questionIndex - 1);
       return;
     }
@@ -145,7 +143,7 @@ function QuestionnaireComponent() {
       });
 
       toast.success("Respostas enviadas!");
-      setStep(4);
+      setStep(3);
     } catch (err: any) {
       console.error(err);
       toast.error(`Erro ao salvar: ${err.message}`);
@@ -285,7 +283,7 @@ function QuestionnaireComponent() {
     );
   }
 
-  if (step === 4) {
+  if (step === 3) {
     return (
       <div className="min-h-screen bg-[#fff5f8] flex items-center justify-center p-6 relative overflow-hidden">
         <div
@@ -321,16 +319,14 @@ function QuestionnaireComponent() {
     );
   }
 
-  // Steps 1, 2, 3
+  // Steps 1, 2
   const stepTitle =
     step === 1
-      ? "Quem está entrevistando?"
-      : step === 2
-        ? "Dados da Entrevistada"
-        : `Pergunta ${questionIndex + 1} de ${QUESTIONS.length}`;
+      ? "Dados da Entrevistada"
+      : `Pergunta ${questionIndex + 1} de ${QUESTIONS.length}`;
   const progress =
-    step === 1 ? 0.15 : step === 2 ? 0.4 : 0.4 + ((questionIndex + 1) / QUESTIONS.length) * 0.6;
-  const isLastQuestion = step === 3 && questionIndex === QUESTIONS.length - 1;
+    step === 1 ? 0.3 : 0.3 + ((questionIndex + 1) / QUESTIONS.length) * 0.7;
+  const isLastQuestion = step === 2 && questionIndex === QUESTIONS.length - 1;
 
   return (
     <div className="min-h-screen bg-[#fff5f8] flex flex-col relative overflow-hidden">
@@ -357,7 +353,7 @@ function QuestionnaireComponent() {
         <div className="max-w-md mx-auto space-y-8">
           <div className="space-y-1">
             <span className="text-[10px] font-black text-pink-600 uppercase tracking-widest">
-              Etapa {step} de 3
+              Etapa {step} de 2
             </span>
             <h2 className="text-2xl font-black text-gray-900 uppercase tracking-tighter">
               {stepTitle}
@@ -365,43 +361,41 @@ function QuestionnaireComponent() {
           </div>
 
           {step === 1 && (
-            <div className="space-y-6 animate-in slide-in-from-right duration-500">
-              <div className="bg-white/80 backdrop-blur-md p-6 rounded-[2rem] border border-pink-50 shadow-sm space-y-4">
-                <div className="flex items-center gap-3 mb-2">
-                  <User className="text-pink-500" size={24} />
+            <div className="space-y-5 animate-in slide-in-from-right duration-500 pb-10">
+              <div className="bg-white/80 backdrop-blur-md p-6 rounded-[2rem] border border-pink-50 shadow-sm space-y-5">
+                <div className="flex items-center gap-3 mb-1">
+                  <User className="text-pink-500" size={22} />
                   <span className="text-sm font-bold text-gray-700">
                     Identifique o entrevistador responsável
                   </span>
                 </div>
-                <Label className="text-xs font-black uppercase tracking-[0.2em] text-pink-400">
-                  Selecione o entrevistador
-                </Label>
-                <div className="relative">
-                  <select
-                    value={selectedUserId}
-                    onChange={(e) => setSelectedUserId(e.target.value)}
-                    className="w-full h-16 pl-6 pr-12 rounded-2xl bg-white border border-pink-100 appearance-none font-bold text-gray-900 shadow-sm focus:ring-4 focus:ring-pink-100 transition-all text-lg"
-                  >
-                    <option value="">Selecione...</option>
-                    {users.map((user) => (
-                      <option key={user.id} value={user.id}>
-                        {user.nome}
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronRight className="absolute right-5 top-1/2 -translate-y-1/2 h-6 w-6 text-pink-400 rotate-90 pointer-events-none" />
+                <div className="space-y-2">
+                  <Label className="text-xs font-black uppercase tracking-[0.2em] text-pink-400">
+                    Selecione o entrevistador
+                  </Label>
+                  <div className="relative">
+                    <select
+                      value={selectedUserId}
+                      onChange={(e) => setSelectedUserId(e.target.value)}
+                      className="w-full h-14 pl-5 pr-12 rounded-2xl bg-white border border-pink-100 appearance-none font-bold text-gray-900 shadow-sm focus:ring-4 focus:ring-pink-100 transition-all text-base"
+                    >
+                      <option value="">Selecione...</option>
+                      {users.map((user) => (
+                        <option key={user.id} value={user.id}>
+                          {user.nome}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronRight className="absolute right-5 top-1/2 -translate-y-1/2 h-6 w-6 text-pink-400 rotate-90 pointer-events-none" />
+                  </div>
+                  {users.length === 0 && (
+                    <p className="text-xs text-gray-400 italic">Carregando entrevistadores...</p>
+                  )}
                 </div>
-                {users.length === 0 && (
-                  <p className="text-xs text-gray-400 italic">Carregando entrevistadores...</p>
-                )}
-              </div>
-            </div>
-          )}
 
-          {step === 2 && (
-            <div className="space-y-6 animate-in slide-in-from-right duration-500 pb-10">
-              <div className="bg-white/80 backdrop-blur-md p-6 rounded-[2rem] border border-pink-50 shadow-sm space-y-5">
-                <div className="space-y-3">
+                <div className="h-px bg-pink-50 my-2" />
+
+                <div className="space-y-2">
                   <Label className="text-xs font-black uppercase tracking-[0.2em] text-pink-400">Nome Completo</Label>
                   <Input
                     value={formData.nome}
@@ -410,7 +404,7 @@ function QuestionnaireComponent() {
                     className="h-14 rounded-2xl bg-white border-pink-100 shadow-sm px-5 text-base font-medium focus:ring-4 focus:ring-pink-100"
                   />
                 </div>
-                <div className="space-y-3">
+                <div className="space-y-2">
                   <Label className="text-xs font-black uppercase tracking-[0.2em] text-pink-400">CPF</Label>
                   <Input
                     value={formData.cpf}
@@ -419,7 +413,7 @@ function QuestionnaireComponent() {
                     className="h-14 rounded-2xl bg-white border-pink-100 shadow-sm px-5 text-base font-medium focus:ring-4 focus:ring-pink-100"
                   />
                 </div>
-                <div className="space-y-3">
+                <div className="space-y-2">
                   <Label className="text-xs font-black uppercase tracking-[0.2em] text-pink-400">WhatsApp</Label>
                   <Input
                     value={formData.whatsapp}
@@ -428,7 +422,7 @@ function QuestionnaireComponent() {
                     className="h-14 rounded-2xl bg-white border-pink-100 shadow-sm px-5 text-base font-medium focus:ring-4 focus:ring-pink-100"
                   />
                 </div>
-                <div className="space-y-3">
+                <div className="space-y-2">
                   <Label className="text-xs font-black uppercase tracking-[0.2em] text-pink-400">Data de Nascimento</Label>
                   <Input
                     type="date"
@@ -437,7 +431,7 @@ function QuestionnaireComponent() {
                     className="h-14 rounded-2xl bg-white border-pink-100 shadow-sm px-5 text-base font-medium focus:ring-4 focus:ring-pink-100"
                   />
                 </div>
-                <div className="space-y-3">
+                <div className="space-y-2">
                   <Label className="text-xs font-black uppercase tracking-[0.2em] text-pink-400">Instagram</Label>
                   <Input
                     value={formData.instagram}
@@ -450,7 +444,7 @@ function QuestionnaireComponent() {
             </div>
           )}
 
-          {step === 3 && (
+          {step === 2 && (
             <div className="space-y-6 animate-in slide-in-from-right duration-500">
               <div className="bg-white/70 backdrop-blur-sm p-6 rounded-[2rem] border border-pink-50 shadow-sm">
                 <div className="flex items-center gap-2 mb-3">
@@ -476,7 +470,7 @@ function QuestionnaireComponent() {
 
       <footer className="p-6 bg-white/80 backdrop-blur-md border-t border-pink-50 fixed bottom-0 w-full z-20">
         <div className="max-w-md mx-auto flex gap-4">
-          {(step > 1 || (step === 3 && questionIndex > 0)) && (
+          {(step > 1 || (step === 2 && questionIndex > 0)) && (
             <Button
               variant="outline"
               onClick={handleBack}
