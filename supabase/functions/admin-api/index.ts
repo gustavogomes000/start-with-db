@@ -84,6 +84,49 @@ Deno.serve(async (req) => {
       return json({ ok: true });
     }
 
+    if (action === "update_admin_username") {
+      const { id, username } = payload ?? {};
+      if (!id || !username || !username.trim())
+        return json({ error: "invalid input" }, 400);
+      // Check duplicate
+      const { data: existing } = await admin
+        .from("admin_users")
+        .select("id")
+        .eq("username", username.trim())
+        .maybeSingle();
+      if (existing && existing.id !== id)
+        return json({ error: "Nome de usuário já em uso." }, 400);
+      const { error } = await admin
+        .from("admin_users")
+        .update({ username: username.trim() })
+        .eq("id", id);
+      if (error) return json({ error: error.message }, 400);
+      return json({ ok: true });
+    }
+
+    if (action === "update_admin_password") {
+      const { id, password } = payload ?? {};
+      if (!id || !password || password.length < 6)
+        return json({ error: "Senha deve ter ao menos 6 caracteres." }, 400);
+      const salt = await bcrypt.genSalt(10);
+      const hash = await bcrypt.hash(password, salt);
+      const { error } = await admin
+        .from("admin_users")
+        .update({ password_hash: hash })
+        .eq("id", id);
+      if (error) return json({ error: error.message }, 400);
+      return json({ ok: true });
+    }
+
+    if (action === "delete_admin") {
+      const { id } = payload ?? {};
+      if (!id) return json({ error: "missing id" }, 400);
+      if (id === admin_id) return json({ error: "Não é possível excluir você mesmo." }, 400);
+      const { error } = await admin.from("admin_users").delete().eq("id", id);
+      if (error) return json({ error: error.message }, 400);
+      return json({ ok: true });
+    }
+
     return json({ error: "unknown action" }, 400);
   } catch (e: any) {
     return json({ error: e?.message || "server error" }, 500);
