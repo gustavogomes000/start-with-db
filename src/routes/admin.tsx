@@ -117,56 +117,62 @@ function AdminLayout() {
   };
 
   return (
-    <div className="min-h-screen bg-[#fcfcfc] flex">
-      {/* Sidebar */}
-      <div className="w-72 bg-white border-r flex flex-col shadow-xl z-20">
-        <div className="p-8 border-b bg-gray-50/50">
-          <img src="https://rede.deputadasarelli.com.br/assets/logo-sarelli-Cg7sc1zQ.webp" alt="Logo" className="h-10 mx-auto" />
-          <div className="mt-6 flex items-center gap-3 p-3 bg-white rounded-2xl shadow-sm border border-pink-50">
-            <div className="w-12 h-12 rounded-xl bg-[#e91e63] flex items-center justify-center text-white font-black text-xl shadow-lg shadow-pink-100">
+    <div className="min-h-screen bg-[#fcfcfc] flex flex-col md:flex-row">
+      {/* Sidebar / Bottom Nav for Mobile */}
+      <div className="w-full md:w-72 bg-white border-b md:border-r flex flex-col shadow-xl z-20 sticky top-0 md:h-screen">
+        <div className="p-4 md:p-8 border-b bg-gray-50/50 flex md:flex-col items-center justify-between md:justify-start gap-4">
+          <img src="https://rede.deputadasarelli.com.br/assets/logo-sarelli-Cg7sc1zQ.webp" alt="Logo" className="h-8 md:h-10" />
+          <div className="flex items-center gap-3 p-2 md:p-3 bg-white rounded-xl md:rounded-2xl shadow-sm border border-pink-50">
+            <div className="w-8 h-8 md:w-12 md:h-12 rounded-lg md:rounded-xl bg-[#e91e63] flex items-center justify-center text-white font-black text-sm md:text-xl shadow-lg shadow-pink-100">
               A
             </div>
-            <div>
+            <div className="hidden md:block">
               <p className="text-sm font-black text-gray-900 uppercase tracking-tighter">Administrador</p>
               <Badge className="bg-pink-50 text-pink-600 border-none text-[10px] font-bold px-2">SUPER ADMIN</Badge>
             </div>
           </div>
         </div>
         
-        <nav className="flex-1 p-6 space-y-2">
+        <nav className="flex md:flex-col p-2 md:p-6 gap-1 md:gap-2 overflow-x-auto md:overflow-x-visible no-scrollbar">
           <button 
             onClick={() => setActiveTab("dashboard")}
             className={cn(
-              "w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300 font-bold",
-              activeTab === "dashboard" ? "bg-[#e91e63] text-white shadow-xl shadow-pink-100" : "hover:bg-pink-50 text-gray-500 hover:text-[#e91e63]"
+              "flex-1 md:w-full flex items-center justify-center md:justify-start gap-2 md:gap-4 px-4 md:px-5 py-3 md:py-4 rounded-xl md:rounded-2xl transition-all duration-300 font-bold whitespace-nowrap",
+              activeTab === "dashboard" ? "bg-[#e91e63] text-white shadow-lg md:shadow-xl shadow-pink-100" : "hover:bg-pink-50 text-gray-500"
             )}
           >
-            <LayoutDashboard size={22} />
-            Dashboard
+            <LayoutDashboard size={20} />
+            <span className="text-sm md:text-base">Geral</span>
           </button>
           <button 
             onClick={() => setActiveTab("interviews")}
             className={cn(
-              "w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300 font-bold",
-              activeTab === "interviews" ? "bg-[#e91e63] text-white shadow-xl shadow-pink-100" : "hover:bg-pink-50 text-gray-500 hover:text-[#e91e63]"
+              "flex-1 md:w-full flex items-center justify-center md:justify-start gap-2 md:gap-4 px-4 md:px-5 py-3 md:py-4 rounded-xl md:rounded-2xl transition-all duration-300 font-bold whitespace-nowrap",
+              activeTab === "interviews" ? "bg-[#e91e63] text-white shadow-lg md:shadow-xl shadow-pink-100" : "hover:bg-pink-50 text-gray-500"
             )}
           >
-            <MessageSquare size={22} />
-            Pesquisas
+            <MessageSquare size={20} />
+            <span className="text-sm md:text-base">Pesquisas</span>
           </button>
           <button 
             onClick={() => setActiveTab("users")}
             className={cn(
-              "w-full flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-300 font-bold",
-              activeTab === "users" ? "bg-[#e91e63] text-white shadow-xl shadow-pink-100" : "hover:bg-pink-50 text-gray-500 hover:text-[#e91e63]"
+              "flex-1 md:w-full flex items-center justify-center md:justify-start gap-2 md:gap-4 px-4 md:px-5 py-3 md:py-4 rounded-xl md:rounded-2xl transition-all duration-300 font-bold whitespace-nowrap",
+              activeTab === "users" ? "bg-[#e91e63] text-white shadow-lg md:shadow-xl shadow-pink-100" : "hover:bg-pink-50 text-gray-500"
             )}
           >
-            <Users size={22} />
-            Recrutadores
+            <Users size={20} />
+            <span className="text-sm md:text-base">Equipe</span>
+          </button>
+          <button 
+            onClick={handleLogout}
+            className="md:hidden flex items-center justify-center p-3 text-red-500"
+          >
+            <LogOut size={20} />
           </button>
         </nav>
 
-        <div className="p-6 border-t bg-gray-50/50 space-y-2">
+        <div className="hidden md:block p-6 border-t bg-gray-50/50">
           <button 
             onClick={handleLogout}
             className="w-full flex items-center gap-4 px-5 py-4 rounded-2xl hover:bg-red-50 text-red-500 transition-all font-bold"
@@ -178,23 +184,19 @@ function AdminLayout() {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="h-20 bg-white/80 backdrop-blur-md border-b px-10 flex items-center justify-between z-10">
+      <div className="flex-1 flex flex-col overflow-x-hidden">
+        <header className="hidden md:flex h-20 bg-white/80 backdrop-blur-md border-b px-10 items-center justify-between z-10">
           <h2 className="text-2xl font-black text-gray-900 uppercase tracking-tighter">
             {activeTab === "dashboard" ? "Resumo Geral" : activeTab === "users" ? "Recrutadores" : "Pesquisas Realizadas"}
           </h2>
           <div className="flex items-center gap-6">
-            <div className="text-right hidden sm:block">
-              <p className="text-sm font-black text-gray-900">Dra. Fernanda Sarelli</p>
-              <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Portal da Mulher</p>
-            </div>
             <div className="w-12 h-12 rounded-full border-2 border-pink-100 p-1">
               <img src="https://rede.deputadasarelli.com.br/assets/fernanda-sarelli-BrFuKmdI.webp" className="w-full h-full object-cover rounded-full" alt="User" />
             </div>
           </div>
         </header>
 
-        <main className="p-10 overflow-y-auto bg-[#fcfcfc]">
+        <main className="p-4 md:p-10 overflow-y-auto bg-[#fcfcfc] pb-20">
           {activeTab === "dashboard" && (
             <div className="space-y-8">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
