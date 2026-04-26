@@ -87,12 +87,11 @@ function QuestionnaireComponent() {
         toast.error("Selecione quem está entrevistando.");
         return;
       }
-    } else if (step === 2) {
       if (!formData.nome || !formData.whatsapp || !formData.dataNascimento || !formData.cpf || !formData.instagram) {
         toast.error("Preencha todos os campos.");
         return;
       }
-    } else if (step === 3) {
+    } else if (step === 2) {
       if (!answers[questionIndex] || answers[questionIndex].trim().length < 5) {
         toast.error("Responda com mais detalhes.");
         return;
@@ -101,7 +100,6 @@ function QuestionnaireComponent() {
         setQuestionIndex(questionIndex + 1);
         return;
       }
-      // last question -> submit
       handleSubmit();
       return;
     }
@@ -109,7 +107,7 @@ function QuestionnaireComponent() {
   };
 
   const handleBack = () => {
-    if (step === 3 && questionIndex > 0) {
+    if (step === 2 && questionIndex > 0) {
       setQuestionIndex(questionIndex - 1);
       return;
     }
