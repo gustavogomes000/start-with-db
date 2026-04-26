@@ -41,6 +41,7 @@ const QUESTIONS = [
 ];
 
 function QuestionnaireComponent() {
+  const navigate = useNavigate();
   const [step, setStep] = useState(0); 
   const [users, setUsers] = useState<any[]>([]);
   const [selectedUserId, setSelectedUserId] = useState<string>("");
