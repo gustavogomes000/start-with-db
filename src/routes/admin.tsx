@@ -547,6 +547,75 @@ function AdminLayout() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Edit username dialog */}
+      <Dialog open={!!editAdmin} onOpenChange={(o) => !o && setEditAdmin(null)}>
+        <DialogContent className="max-w-md rounded-3xl">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-black uppercase tracking-tight">
+              Editar nome
+            </DialogTitle>
+            <DialogDescription>
+              Altere o nome de usuário do administrador.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-1.5 mt-2">
+            <Label className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">
+              Usuário
+            </Label>
+            <Input
+              value={editUsername}
+              onChange={(e) => setEditUsername(e.target.value)}
+              className="h-12 rounded-2xl bg-gray-50 border-none px-4"
+            />
+          </div>
+          <DialogFooter>
+            <Button
+              onClick={saveUsername}
+              disabled={savingEdit}
+              className="w-full h-12 rounded-2xl bg-gradient-to-r from-[#e91e63] to-[#ec407a] font-black uppercase tracking-[0.2em] text-xs"
+            >
+              {savingEdit ? "Salvando..." : "Salvar"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Change password dialog */}
+      <Dialog open={!!pwdAdmin} onOpenChange={(o) => !o && setPwdAdmin(null)}>
+        <DialogContent className="max-w-md rounded-3xl">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-black uppercase tracking-tight">
+              Trocar senha
+            </DialogTitle>
+            <DialogDescription>
+              Defina uma nova senha para{" "}
+              <span className="font-bold">{pwdAdmin?.username}</span>.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-1.5 mt-2">
+            <Label className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">
+              Nova senha (mín 6)
+            </Label>
+            <Input
+              type="text"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              className="h-12 rounded-2xl bg-gray-50 border-none px-4"
+              placeholder="••••••"
+            />
+          </div>
+          <DialogFooter>
+            <Button
+              onClick={savePassword}
+              disabled={savingEdit}
+              className="w-full h-12 rounded-2xl bg-gradient-to-r from-[#e91e63] to-[#ec407a] font-black uppercase tracking-[0.2em] text-xs"
+            >
+              {savingEdit ? "Salvando..." : "Salvar nova senha"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
