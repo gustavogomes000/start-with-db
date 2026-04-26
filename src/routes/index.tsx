@@ -143,7 +143,7 @@ function QuestionnaireComponent() {
       });
 
       toast.success("Respostas enviadas!");
-      setStep(4);
+      setStep(3);
     } catch (err: any) {
       console.error(err);
       toast.error(`Erro ao salvar: ${err.message}`);
@@ -283,7 +283,7 @@ function QuestionnaireComponent() {
     );
   }
 
-  if (step === 4) {
+  if (step === 3) {
     return (
       <div className="min-h-screen bg-[#fff5f8] flex items-center justify-center p-6 relative overflow-hidden">
         <div
@@ -319,16 +319,14 @@ function QuestionnaireComponent() {
     );
   }
 
-  // Steps 1, 2, 3
+  // Steps 1, 2
   const stepTitle =
     step === 1
-      ? "Quem está entrevistando?"
-      : step === 2
-        ? "Dados da Entrevistada"
-        : `Pergunta ${questionIndex + 1} de ${QUESTIONS.length}`;
+      ? "Dados da Entrevistada"
+      : `Pergunta ${questionIndex + 1} de ${QUESTIONS.length}`;
   const progress =
-    step === 1 ? 0.15 : step === 2 ? 0.4 : 0.4 + ((questionIndex + 1) / QUESTIONS.length) * 0.6;
-  const isLastQuestion = step === 3 && questionIndex === QUESTIONS.length - 1;
+    step === 1 ? 0.3 : 0.3 + ((questionIndex + 1) / QUESTIONS.length) * 0.7;
+  const isLastQuestion = step === 2 && questionIndex === QUESTIONS.length - 1;
 
   return (
     <div className="min-h-screen bg-[#fff5f8] flex flex-col relative overflow-hidden">
@@ -355,7 +353,7 @@ function QuestionnaireComponent() {
         <div className="max-w-md mx-auto space-y-8">
           <div className="space-y-1">
             <span className="text-[10px] font-black text-pink-600 uppercase tracking-widest">
-              Etapa {step} de 3
+              Etapa {step} de 2
             </span>
             <h2 className="text-2xl font-black text-gray-900 uppercase tracking-tighter">
               {stepTitle}
