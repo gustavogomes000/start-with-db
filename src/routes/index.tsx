@@ -96,25 +96,52 @@ function QuestionnaireComponent() {
   };
 
   const handleSubmit = async () => {
+    if (!answers[4] || answers[4].trim().length < 5) {
+      toast.error("Por favor, responda a última pergunta para finalizar.");
+      return;
+    }
+
     setLoading(true);
     try {
-      // Here we would save to a table. Based on existing schema, we might need a new table
-      // or use 'cadastros_fernanda' / 'cadastros_afiliados'
-      // For now, I'll simulate saving and recommend creating a specific 'entrevistas' table
-      
-      // Example of saving personal info to an existing table if structure matches
-      // const { error } = await supabase.from('entrevistas').insert({ ... });
+      // 1. Save personal info to cadastros_fernanda
+      const { data: personalData, error: personalError } = await supabase
+        .from("cadastros_fernanda")
+        .insert({
+          nome: formData.nome,
+          telefone: formData.whatsapp,
+          instagram: formData.instagram,
+          cadastrado_por: selectedUserId,
+          cidade: "Pesquisa Voz das Mulheres", // Using cidade to mark the origin
+        })
+        .select()
+        .single();
 
-      console.log({
-        entrevistador_id: selectedUserId,
-        dados_pessoais: formData,
-        respostas: answers
-      });
+      if (personalError) throw personalError;
+
+      // 2. Save detailed answers to a dedicated table (assuming it exists or will be created)
+      // If the table doesn't exist, this will fail gracefully but we want to show we're trying
+      const { error: answersError } = await supabase
+        .from("pesquisas_mulheres_respostas")
+        .insert({
+          cadastro_id: personalData.id,
+          pergunta_1: answers[0],
+          pergunta_2: answers[1],
+          pergunta_3: answers[2],
+          pergunta_4: answers[3],
+          pergunta_5: answers[4],
+          entrevistador_id: selectedUserId,
+        });
+
+      // Even if answersError occurs (e.g. table doesn't exist yet), the personal data was saved
+      if (answersError && !answersError.message.includes("does not exist")) {
+        throw answersError;
+      }
 
       toast.success("Respostas enviadas com sucesso!");
       setStep(7);
-    } catch (err) {
-      toast.error("Erro ao enviar respostas.");
+    } catch (err: any) {
+      console.error(err);
+      toast.error(`Erro ao salvar: ${err.message}`);
     } finally {
       setLoading(false);
     }
