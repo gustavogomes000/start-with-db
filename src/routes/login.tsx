@@ -21,26 +21,27 @@ function LoginComponent() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    const u = username.trim();
+    const p = password;
+    if (!u || !p) {
+      toast.error("Preencha usuário e senha.");
+      return;
+    }
     setLoading(true);
     try {
-      const { data, error } = await supabase.rpc("admin_check_password", {
-        p_username: username.trim(),
-        p_password: password,
+      const { data, error } = await supabase.functions.invoke("admin-api", {
+        body: { action: "login", payload: { username: u, password: p } },
       });
-
       if (error) throw error;
-
-      const row = Array.isArray(data) ? data[0] : null;
-      if (!row?.id) {
-        toast.error("Usuário ou senha inválidos.");
+      if (!data?.id) {
+        toast.error(data?.error === "invalid_credentials" ? "Usuário ou senha inválidos." : (data?.error || "Falha no login."));
         return;
       }
-
       localStorage.setItem(
         "admin_session",
-        JSON.stringify({ id: row.id, username: row.username, ts: Date.now() }),
+        JSON.stringify({ id: data.id, username: data.username, ts: Date.now() }),
       );
-      toast.success(`Bem-vinda, ${row.username}!`);
+      toast.success(`Bem-vinda, ${data.username}!`);
       navigate({ to: "/admin" });
     } catch (err: any) {
       console.error(err);
@@ -52,7 +53,6 @@ function LoginComponent() {
 
   return (
     <div className="min-h-[100dvh] w-full flex flex-col bg-white relative overflow-hidden">
-      {/* Pink background */}
       <div
         className="absolute top-0 left-0 right-0 h-[42%] z-0"
         style={{
@@ -148,6 +148,10 @@ function LoginComponent() {
               >
                 {loading ? "Entrando..." : "Entrar"}
               </Button>
+
+              <p className="text-center text-[10px] text-gray-400 pt-2">
+                Dica: <span className="font-bold text-gray-600">Administrador</span> / <span className="font-bold text-gray-600">Sarelli123@</span>
+              </p>
             </form>
           </CardContent>
         </Card>
