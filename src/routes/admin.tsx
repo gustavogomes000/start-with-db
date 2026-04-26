@@ -302,15 +302,67 @@ function AdminLayout() {
             </div>
           )}
 
+          {activeTab === "interviews" && (
+            <div className="space-y-6">
+              <div className="flex justify-between items-center">
+                <div className="relative w-96">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                  <Input placeholder="Buscar por candidata ou entrevistador..." className="pl-12 h-14 rounded-2xl border-none shadow-sm" />
+                </div>
+              </div>
+
+              <Card className="border-none shadow-xl rounded-3xl overflow-hidden">
+                <CardContent className="p-0">
+                  <Table>
+                    <TableHeader className="bg-gray-50/50">
+                      <TableRow className="hover:bg-transparent border-b">
+                        <TableHead className="pl-8 h-14 text-xs font-bold uppercase text-gray-400">Candidata</TableHead>
+                        <TableHead className="h-14 text-xs font-bold uppercase text-gray-400">Data</TableHead>
+                        <TableHead className="h-14 text-xs font-bold uppercase text-gray-400">Entrevistador</TableHead>
+                        <TableHead className="h-14 text-xs font-bold uppercase text-gray-400">Status</TableHead>
+                        <TableHead className="text-right pr-8 h-14 text-xs font-bold uppercase text-gray-400">Ações</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {interviews.map((item) => (
+                        <TableRow key={item.id} className="hover:bg-pink-50/30 transition-colors border-b">
+                          <TableCell className="pl-8 font-bold text-gray-900">{item.nome}</TableCell>
+                          <TableCell className="text-gray-500 font-medium">{item.data}</TableCell>
+                          <TableCell className="text-gray-600 font-bold">{item.entrevistador}</TableCell>
+                          <TableCell>
+                            <Badge variant="outline" className="bg-green-50 text-green-600 border-green-100 font-bold px-3 py-1">
+                              {item.status}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-right pr-8">
+                            <Button 
+                              variant="ghost" 
+                              size="sm" 
+                              className="text-pink-600 hover:text-pink-700 hover:bg-pink-100 font-bold gap-2"
+                              onClick={() => setSelectedInterview(item)}
+                            >
+                              <Eye size={16} />
+                              Ver Respostas
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
           {activeTab === "users" && (
             <div className="space-y-6">
               <div className="flex justify-between items-center">
                 <div className="relative w-64">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                  <Input placeholder="Buscar usuários..." className="pl-10" />
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                  <Input placeholder="Buscar recrutadores..." className="pl-10 h-12 rounded-xl border-none shadow-sm" />
                 </div>
-                <Button className="gap-2">
-                  <Plus size={18} /> Novo Usuário
+                <Button className="gap-2 bg-[#e91e63] rounded-xl h-12 px-6 font-bold shadow-lg shadow-pink-100">
+                  <Plus size={18} /> Novo Recrutador
                 </Button>
               </div>
 
