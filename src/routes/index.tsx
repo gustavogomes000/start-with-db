@@ -40,10 +40,17 @@ const QUESTIONS = [
   },
 ];
 
+// Steps:
+// 0 = welcome
+// 1 = quem está entrevistando (select)
+// 2 = dados pessoais da entrevistada
+// 3 = perguntas (sub-pergunta atual em questionIndex)
+// 4 = sucesso
 function QuestionnaireComponent() {
   const navigate = useNavigate();
-  const [step, setStep] = useState(0); 
-  const [users, setUsers] = useState<any[]>([]);
+  const [step, setStep] = useState(0);
+  const [questionIndex, setQuestionIndex] = useState(0);
+  const [users, setUsers] = useState<{ id: string; nome: string }[]>([]);
   const [selectedUserId, setSelectedUserId] = useState<string>("");
   const [formData, setFormData] = useState({
     nome: "",
@@ -54,18 +61,21 @@ function QuestionnaireComponent() {
   });
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [loading, setLoading] = useState(false);
-  
-  const searchParams = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
+
+  const searchParams = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "");
   const recruiterId = searchParams.get("recruiter");
 
   useEffect(() => {
     async function fetchData() {
-      const { data } = await supabase.from("hierarquia_usuarios").select("id, nome").order("nome");
-      if (data) setUsers(data);
-      
+      // Load interviewers via edge function (bypasses RLS, always returns admin users)
+      const { data, error } = await supabase.functions.invoke("admin-api", {
+        body: { action: "list_interviewers" },
+      });
+      if (!error && data?.interviewers) {
+        setUsers(data.interviewers.map((u: any) => ({ id: u.id, nome: u.username })));
+      }
       if (recruiterId) {
         setSelectedUserId(recruiterId);
-        setStep(1);
       }
     }
     fetchData();
@@ -74,48 +84,53 @@ function QuestionnaireComponent() {
   const handleNext = () => {
     if (step === 1) {
       if (!selectedUserId) {
-        toast.error("Por favor, selecione quem está entrevistando.");
+        toast.error("Selecione quem está entrevistando.");
         return;
       }
+    } else if (step === 2) {
       if (!formData.nome || !formData.whatsapp || !formData.dataNascimento || !formData.cpf || !formData.instagram) {
-        toast.error("Todos os campos são obrigatórios.");
+        toast.error("Preencha todos os campos.");
         return;
       }
-    } else if (step >= 2 && step <= 6) {
-      if (!answers[step - 2] || answers[step - 2].trim().length < 5) {
-        toast.error("Por favor, responda a pergunta com mais detalhes.");
+    } else if (step === 3) {
+      if (!answers[questionIndex] || answers[questionIndex].trim().length < 5) {
+        toast.error("Responda com mais detalhes.");
         return;
       }
+      if (questionIndex < QUESTIONS.length - 1) {
+        setQuestionIndex(questionIndex + 1);
+        return;
+      }
+      // last question -> submit
+      handleSubmit();
+      return;
     }
     setStep(step + 1);
   };
 
   const handleBack = () => {
+    if (step === 3 && questionIndex > 0) {
+      setQuestionIndex(questionIndex - 1);
+      return;
+    }
     setStep(step - 1);
   };
 
   const handleSubmit = async () => {
-    if (!answers[4] || answers[4].trim().length < 5) {
-      toast.error("Por favor, responda a última pergunta.");
-      return;
-    }
-
     setLoading(true);
     try {
       const allAnswers = QUESTIONS.map((q, i) => `${q.id}. ${q.question}\nR: ${answers[i] || ""}`).join("\n\n");
-      
-      const { error } = await supabase
-        .from("promotion_entries")
-        .insert({
-          full_name: formData.nome,
-          whatsapp: formData.whatsapp,
-          phone: formData.whatsapp,
-          cpf: formData.cpf,
-          instagram: formData.instagram,
-          city: "Voz das Mulheres",
-          promotion_id: recruiterId || selectedUserId,
-          message: allAnswers,
-        });
+
+      const { error } = await supabase.from("promotion_entries").insert({
+        full_name: formData.nome,
+        whatsapp: formData.whatsapp,
+        phone: formData.whatsapp,
+        cpf: formData.cpf,
+        instagram: formData.instagram,
+        city: "Voz das Mulheres",
+        promotion_id: recruiterId || selectedUserId,
+        message: allAnswers,
+      });
 
       if (error) throw error;
 
@@ -127,8 +142,8 @@ function QuestionnaireComponent() {
         cidade: "Pesquisa Voz das Mulheres",
       });
 
-      toast.success("Respostas enviadas com sucesso!");
-      setStep(7);
+      toast.success("Respostas enviadas!");
+      setStep(4);
     } catch (err: any) {
       console.error(err);
       toast.error(`Erro ao salvar: ${err.message}`);
@@ -136,6 +151,7 @@ function QuestionnaireComponent() {
       setLoading(false);
     }
   };
+
 
   if (step === 0) {
     return (
