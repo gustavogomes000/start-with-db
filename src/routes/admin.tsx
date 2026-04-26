@@ -57,11 +57,11 @@ function AdminLayout() {
       
       if (userError) throw userError;
 
-      // Fetch real survey results (using cadastros_fernanda as base for now)
+      // Fetch real survey results from promotion_entries
       const { data: surveyData, error: surveyError } = await supabase
-        .from("cadastros_fernanda")
-        .select("id, nome, criado_em, cadastrado_por, telefone")
-        .order("criado_em", { ascending: false });
+        .from("promotion_entries")
+        .select("id, full_name, created_at, promotion_id, whatsapp, message")
+        .order("created_at", { ascending: false });
 
       if (surveyError) throw surveyError;
       
@@ -70,17 +70,18 @@ function AdminLayout() {
         id: u.id,
         nome: u.nome,
         tipo: u.tipo,
-        entrevistas: surveyData.filter(s => s.cadastrado_por === u.id).length
+        entrevistas: surveyData.filter(s => s.promotion_id === u.id).length
       }));
 
       const mappedInterviews = surveyData.map(s => {
-        const recruiter = userData.find(u => u.id === s.cadastrado_por);
+        const recruiter = userData.find(u => u.id === s.promotion_id);
         return {
           id: s.id,
-          nome: s.nome,
-          data: new Date(s.criado_em).toLocaleDateString('pt-BR'),
+          nome: s.full_name,
+          data: new Date(s.created_at).toLocaleDateString('pt-BR'),
           status: "Completo",
-          entrevistador: recruiter ? recruiter.nome : "Desconhecido"
+          entrevistador: recruiter ? recruiter.nome : "Link Direto / Outro",
+          detalhes: s.message
         };
       });
 
