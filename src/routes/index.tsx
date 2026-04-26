@@ -103,39 +103,32 @@ function QuestionnaireComponent() {
 
     setLoading(true);
     try {
-      // 1. Save personal info to cadastros_fernanda
-      const { data: personalData, error: personalError } = await supabase
-        .from("cadastros_fernanda")
+      // Use promotion_entries as it has all the necessary fields including a message field for answers
+      const allAnswers = QUESTIONS.map((q, i) => `${q.id}. ${q.question}\nR: ${answers[i] || ""}`).join("\n\n");
+      
+      const { error } = await supabase
+        .from("promotion_entries")
         .insert({
-          nome: formData.nome,
-          telefone: formData.whatsapp,
+          full_name: formData.nome,
+          whatsapp: formData.whatsapp,
+          phone: formData.whatsapp,
+          cpf: formData.cpf,
           instagram: formData.instagram,
-          cadastrado_por: selectedUserId,
-          cidade: "Pesquisa Voz das Mulheres", // Using cidade to mark the origin
-        })
-        .select()
-        .single();
-
-      if (personalError) throw personalError;
-
-      // 2. Save detailed answers to a dedicated table (assuming it exists or will be created)
-      // If the table doesn't exist, this will fail gracefully but we want to show we're trying
-      const { error: answersError } = await supabase
-        .from("pesquisas_mulheres_respostas")
-        .insert({
-          cadastro_id: personalData.id,
-          pergunta_1: answers[0],
-          pergunta_2: answers[1],
-          pergunta_3: answers[2],
-          pergunta_4: answers[3],
-          pergunta_5: answers[4],
-          entrevistador_id: selectedUserId,
+          city: "Voz das Mulheres",
+          promotion_id: recruiterId || selectedUserId, // Using this to track who did the interview
+          message: allAnswers,
         });
 
-      // Even if answersError occurs (e.g. table doesn't exist yet), the personal data was saved
-      if (answersError && !answersError.message.includes("does not exist")) {
-        throw answersError;
-      }
+      if (error) throw error;
+
+      // Also save to cadastros_fernanda for the general contact list
+      await supabase.from("cadastros_fernanda").insert({
+        nome: formData.nome,
+        telefone: formData.whatsapp,
+        instagram: formData.instagram,
+        cadastrado_por: selectedUserId,
+        cidade: "Pesquisa Voz das Mulheres",
+      });
 
       toast.success("Respostas enviadas com sucesso!");
       setStep(7);
