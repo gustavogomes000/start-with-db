@@ -138,46 +138,64 @@ function QuestionnaireComponent() {
 
   if (step === 0) {
     return (
-      <div className="min-h-screen bg-white flex flex-col items-center justify-center relative overflow-hidden">
-        <div className="absolute top-[-5%] right-[-10%] w-64 h-64 bg-pink-50 rounded-full blur-3xl opacity-60" />
-        <div className="absolute bottom-[-5%] left-[-10%] w-64 h-64 bg-orange-50 rounded-full blur-3xl opacity-60" />
+      <div className="min-h-screen bg-[#fff5f8] flex flex-col items-center justify-center relative overflow-hidden">
+        {/* Network Pattern Background */}
+        <div 
+          className="absolute inset-0 opacity-[0.05] pointer-events-none" 
+          style={{ 
+            backgroundImage: `url('https://rede.deputadasarelli.com.br/assets/bg-pattern.svg')`,
+            backgroundSize: '400px',
+            backgroundRepeat: 'repeat'
+          }}
+        />
         
-        <div className="w-full max-w-sm px-6 flex flex-col items-center z-10">
-          <img 
-            src="https://rede.deputadasarelli.com.br/assets/logo-sarelli-Cg7sc1zQ.webp" 
-            alt="Logo Sarelli" 
-            className="h-14 mb-8"
-          />
+        {/* Glow Effects */}
+        <div className="absolute top-[-10%] right-[-15%] w-96 h-96 bg-pink-200 rounded-full blur-[120px] opacity-40 animate-pulse" />
+        <div className="absolute bottom-[-10%] left-[-15%] w-96 h-96 bg-orange-100 rounded-full blur-[120px] opacity-40 animate-pulse" />
+        
+        <div className="w-full max-w-sm px-8 flex flex-col items-center z-10 animate-in fade-in zoom-in duration-1000">
+          <div className="mb-12 flex flex-col items-center">
+            <img 
+              src="https://rede.deputadasarelli.com.br/assets/logo-sarelli-Cg7sc1zQ.webp" 
+              alt="Logo Sarelli" 
+              className="h-28 object-contain drop-shadow-xl"
+            />
+          </div>
           
-          <div className="relative w-56 h-56 mb-10">
-            <div className="absolute inset-0 bg-gradient-to-r from-[#e91e63] to-[#ff9800] rounded-full blur-2xl opacity-20 scale-110" />
+          <div className="relative w-64 h-64 mb-12 group">
+            <div className="absolute inset-0 bg-gradient-to-r from-[#e91e63] via-[#ffb347] to-[#e91e63] rounded-full blur-3xl opacity-20 scale-125 group-hover:opacity-30 transition-opacity" />
+            <div className="absolute -inset-1 bg-gradient-to-r from-[#e91e63] to-[#ffb347] rounded-full opacity-20 group-hover:opacity-40 transition-opacity" />
             <img 
               src="https://rede.deputadasarelli.com.br/assets/fernanda-sarelli-BrFuKmdI.webp" 
               alt="Dra. Fernanda Sarelli" 
-              className="relative w-full h-full object-cover rounded-full border-4 border-white shadow-2xl"
+              className="relative w-full h-full object-cover rounded-full border-4 border-white shadow-[0_20px_50px_rgba(233,30,99,0.3)] transform transition-transform group-hover:scale-[1.02] duration-500"
             />
           </div>
 
-          <div className="text-center space-y-3 mb-12">
-            <h1 className="text-3xl font-black text-gray-900 tracking-tighter uppercase leading-none">
-              Voz das Mulheres
+          <div className="text-center space-y-4 mb-12">
+            <h1 className="text-4xl font-black text-gray-900 tracking-tighter uppercase leading-[0.9] drop-shadow-sm">
+              Voz das <br />
+              <span className="text-[#e91e63] bg-clip-text">Mulheres</span>
             </h1>
-            <p className="text-gray-500 text-base font-medium px-4">
-              Sua opinião é a força que transforma nossa comunidade.
+            <div className="w-12 h-1 bg-gradient-to-r from-[#e91e63] to-[#ffb347] mx-auto rounded-full" />
+            <p className="text-gray-500 text-lg font-medium px-4 leading-tight">
+              Sua opinião é a força que <br />transforma nossa comunidade.
             </p>
           </div>
 
           <Button 
             onClick={() => setStep(1)} 
-            className="w-full h-16 rounded-2xl text-lg font-black bg-gradient-to-r from-[#e91e63] via-[#ffb347] to-[#e91e63] bg-[length:200%_auto] hover:bg-right transition-all duration-500 shadow-xl shadow-pink-100 border-none text-white active:scale-95"
+            className="w-full h-20 rounded-[2rem] text-xl font-black bg-gradient-to-r from-[#e91e63] via-[#ffb347] to-[#e91e63] bg-[length:200%_auto] hover:bg-right transition-all duration-700 shadow-[0_15px_30px_rgba(233,30,99,0.25)] border-none text-white active:scale-95 uppercase tracking-wider"
           >
-            COMEÇAR PESQUISA
-            <ChevronRight className="ml-2 h-5 w-5" />
+            COMEÇAR
+            <ChevronRight className="ml-2 h-6 w-6" />
           </Button>
 
-          <p className="mt-12 text-[10px] text-gray-400 font-bold tracking-[0.2em] uppercase">
-            Dra. Fernanda Sarelli
-          </p>
+          <div className="mt-16 flex items-center gap-3">
+            <div className="w-8 h-[1px] bg-pink-100" />
+            <span className="text-[10px] text-pink-300 font-bold tracking-[0.3em] uppercase">OFICIAL</span>
+            <div className="w-8 h-[1px] bg-pink-100" />
+          </div>
         </div>
       </div>
     );
