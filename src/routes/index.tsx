@@ -78,13 +78,13 @@ function QuestionnaireComponent() {
         toast.error("Por favor, selecione quem está entrevistando.");
         return;
       }
-      if (!formData.nome || !formData.whatsapp || !formData.dataNascimento) {
-        toast.error("Nome, WhatsApp e Data de Nascimento são obrigatórios.");
+      if (!formData.nome || !formData.whatsapp || !formData.dataNascimento || !formData.cpf || !formData.instagram) {
+        toast.error("Todos os campos são obrigatórios (Nome, CPF, Nascimento, WhatsApp e Instagram).");
         return;
       }
     } else if (step >= 2 && step <= 6) {
       if (!answers[step - 2] || answers[step - 2].trim().length < 5) {
-        toast.error("Por favor, responda a pergunta para continuar.");
+        toast.error("Por favor, responda a pergunta com mais detalhes para continuar.");
         return;
       }
     }
