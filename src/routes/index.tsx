@@ -276,73 +276,75 @@ function QuestionnaireComponent() {
 
           {step === 1 && (
             <div className="space-y-6 animate-in slide-in-from-right duration-500 pb-10">
-              <div className="space-y-2">
-                <Label className="text-xs font-bold uppercase tracking-wider text-gray-400">Quem está entrevistando?</Label>
-                <div className="relative">
-                  <select 
-                    value={selectedUserId} 
-                    onChange={e => setSelectedUserId(e.target.value)}
-                    className="w-full h-14 pl-4 pr-10 rounded-2xl bg-gray-50 border-none appearance-none font-bold text-gray-900 shadow-sm focus:ring-2 focus:ring-pink-500 transition-all"
-                  >
-                    <option value="">Selecione...</option>
-                    {users.map(user => (
-                      <option key={user.id} value={user.id}>{user.nome}</option>
-                    ))}
-                  </select>
-                  <ChevronRight className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 rotate-90 pointer-events-none" />
-                </div>
-              </div>
-
-              <div className="space-y-4 pt-2">
-                <div className="space-y-2">
-                  <Label className="text-xs font-bold uppercase tracking-wider text-gray-400">Nome Completo</Label>
-                  <Input 
-                    value={formData.nome} 
-                    onChange={e => setFormData({...formData, nome: e.target.value})}
-                    placeholder="Nome"
-                    className="h-14 rounded-2xl bg-gray-50 border-none shadow-sm"
-                  />
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label className="text-xs font-bold uppercase tracking-wider text-gray-400">CPF</Label>
-                    <Input 
-                      value={formData.cpf} 
-                      onChange={e => setFormData({...formData, cpf: e.target.value})}
-                      placeholder="000.000..."
-                      className="h-14 rounded-2xl bg-gray-50 border-none shadow-sm"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-xs font-bold uppercase tracking-wider text-gray-400">WhatsApp</Label>
-                    <Input 
-                      value={formData.whatsapp} 
-                      onChange={e => setFormData({...formData, whatsapp: e.target.value})}
-                      placeholder="(00) 00000..."
-                      className="h-14 rounded-2xl bg-gray-50 border-none shadow-sm"
-                    />
+              <div className="bg-white/70 backdrop-blur-md p-6 rounded-[2rem] border border-pink-50 shadow-sm space-y-6">
+                <div className="space-y-3">
+                  <Label className="text-xs font-black uppercase tracking-[0.2em] text-pink-400">Quem está entrevistando?</Label>
+                  <div className="relative">
+                    <select 
+                      value={selectedUserId} 
+                      onChange={e => setSelectedUserId(e.target.value)}
+                      className="w-full h-16 pl-6 pr-12 rounded-2xl bg-white border border-pink-50 appearance-none font-bold text-gray-900 shadow-sm focus:ring-4 focus:ring-pink-100 transition-all text-lg"
+                    >
+                      <option value="">Selecione...</option>
+                      {users.map(user => (
+                        <option key={user.id} value={user.id}>{user.nome}</option>
+                      ))}
+                    </select>
+                    <ChevronRight className="absolute right-5 top-1/2 -translate-y-1/2 h-6 w-6 text-pink-400 rotate-90 pointer-events-none" />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label className="text-xs font-bold uppercase tracking-wider text-gray-400">Nascimento</Label>
+                <div className="space-y-5 pt-2">
+                  <div className="space-y-3">
+                    <Label className="text-xs font-black uppercase tracking-[0.2em] text-pink-400">Nome Completo</Label>
                     <Input 
-                      type="date"
-                      value={formData.dataNascimento} 
-                      onChange={e => setFormData({...formData, dataNascimento: e.target.value})}
-                      className="h-14 rounded-2xl bg-gray-50 border-none shadow-sm"
+                      value={formData.nome} 
+                      onChange={e => setFormData({...formData, nome: e.target.value})}
+                      placeholder="Nome da entrevistada"
+                      className="h-16 rounded-2xl bg-white border-pink-50 shadow-sm px-6 text-lg font-medium focus:ring-4 focus:ring-pink-100"
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label className="text-xs font-bold uppercase tracking-wider text-gray-400">Instagram</Label>
-                    <Input 
-                      value={formData.instagram} 
-                      onChange={e => setFormData({...formData, instagram: e.target.value})}
-                      placeholder="@perfil"
-                      className="h-14 rounded-2xl bg-gray-50 border-none shadow-sm"
-                    />
+                  
+                  <div className="grid grid-cols-1 gap-5">
+                    <div className="space-y-3">
+                      <Label className="text-xs font-black uppercase tracking-[0.2em] text-pink-400">CPF</Label>
+                      <Input 
+                        value={formData.cpf} 
+                        onChange={e => setFormData({...formData, cpf: e.target.value})}
+                        placeholder="000.000.000-00"
+                        className="h-16 rounded-2xl bg-white border-pink-50 shadow-sm px-6 text-lg font-medium focus:ring-4 focus:ring-pink-100"
+                      />
+                    </div>
+                    <div className="space-y-3">
+                      <Label className="text-xs font-black uppercase tracking-[0.2em] text-pink-400">WhatsApp</Label>
+                      <Input 
+                        value={formData.whatsapp} 
+                        onChange={e => setFormData({...formData, whatsapp: e.target.value})}
+                        placeholder="(00) 00000-0000"
+                        className="h-16 rounded-2xl bg-white border-pink-50 shadow-sm px-6 text-lg font-medium focus:ring-4 focus:ring-pink-100"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-5">
+                    <div className="space-y-3">
+                      <Label className="text-xs font-black uppercase tracking-[0.2em] text-pink-400">Data de Nascimento</Label>
+                      <Input 
+                        type="date"
+                        value={formData.dataNascimento} 
+                        onChange={e => setFormData({...formData, dataNascimento: e.target.value})}
+                        className="h-16 rounded-2xl bg-white border-pink-50 shadow-sm px-6 text-lg font-medium focus:ring-4 focus:ring-pink-100"
+                      />
+                    </div>
+                    <div className="space-y-3">
+                      <Label className="text-xs font-black uppercase tracking-[0.2em] text-pink-400">Instagram</Label>
+                      <Input 
+                        value={formData.instagram} 
+                        onChange={e => setFormData({...formData, instagram: e.target.value})}
+                        placeholder="@perfil"
+                        className="h-16 rounded-2xl bg-white border-pink-50 shadow-sm px-6 text-lg font-medium focus:ring-4 focus:ring-pink-100"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
