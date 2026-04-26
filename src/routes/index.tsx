@@ -42,7 +42,7 @@ const QUESTIONS = [
 ];
 
 function QuestionnaireComponent() {
-  const [step, setStep] = useState(0); // 0: User selection, 1: Personal info, 2-6: Questions, 7: Success
+  const [step, setStep] = useState(1); // Starting directly at Personal Info (step 1)
   const [users, setUsers] = useState<any[]>([]);
   const [selectedUserId, setSelectedUserId] = useState<string>("");
   const [formData, setFormData] = useState({
@@ -73,10 +73,11 @@ function QuestionnaireComponent() {
   }, [recruiterId]);
 
   const handleNext = () => {
-    if (step === 0 && !selectedUserId) {
-      toast.error("Por favor, selecione quem está entrevistando.");
-      return;
-    }
+    if (step === 1) {
+      if (!selectedUserId) {
+        toast.error("Por favor, selecione quem está entrevistando.");
+        return;
+      }
     if (step === 1) {
       if (!formData.nome || !formData.whatsapp) {
         toast.error("Nome e WhatsApp são obrigatórios.");
@@ -153,45 +154,34 @@ function QuestionnaireComponent() {
         
         <CardHeader className="pt-8 px-8">
           <CardTitle className="text-2xl font-bold flex items-center gap-3">
-            {step === 0 && <span className="p-2 bg-primary/10 rounded-lg"><User className="text-primary" /></span>}
             {step === 1 && <span className="p-2 bg-primary/10 rounded-lg"><User className="text-primary" /></span>}
             {step >= 2 && step <= 6 && <span className="p-2 bg-primary/10 rounded-lg"><MessageSquare className="text-primary" /></span>}
             
-            {step === 0 ? "Quem está entrevistando?" : 
-             step === 1 ? "Seus Dados" : 
+            {step === 1 ? "Início da Pesquisa" : 
              `Pergunta ${step - 1} de 5`}
           </CardTitle>
         </CardHeader>
 
         <CardContent className="p-8">
           <div className="space-y-6">
-            {step === 0 && (
-              <div className="space-y-4">
-                <p className="text-muted-foreground">Selecione o seu nome na lista abaixo para começar:</p>
-                <div className="grid grid-cols-1 gap-2 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
-                  {users.map(user => (
-                    <button
-                      key={user.id}
-                      onClick={() => setSelectedUserId(user.id)}
-                      className={cn(
-                        "flex items-center p-4 rounded-xl border-2 transition-all text-left",
-                        selectedUserId === user.id 
-                          ? "border-primary bg-primary/5 text-primary font-bold shadow-sm" 
-                          : "border-transparent bg-muted hover:bg-muted/80"
-                      )}
-                    >
-                      <User size={18} className="mr-3 opacity-50" />
-                      {user.nome}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
             {step === 1 && (
               <div className="space-y-5 animate-in slide-in-from-right duration-300">
                 <div className="space-y-2">
-                  <Label className="flex items-center gap-2"><User size={16} /> Nome Completo</Label>
+                  <Label className="flex items-center gap-2 font-bold text-gray-700">Quem está entrevistando?</Label>
+                  <select 
+                    value={selectedUserId} 
+                    onChange={e => setSelectedUserId(e.target.value)}
+                    className="w-full h-12 px-4 rounded-xl bg-muted border-none focus:ring-2 focus:ring-primary appearance-none cursor-pointer font-medium"
+                  >
+                    <option value="">Selecione a pessoa...</option>
+                    {users.map(user => (
+                      <option key={user.id} value={user.id}>{user.nome}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-2 font-bold text-gray-700"><User size={16} /> Nome Completo</Label>
                   <Input 
                     value={formData.nome} 
                     onChange={e => setFormData({...formData, nome: e.target.value})}
@@ -253,7 +243,7 @@ function QuestionnaireComponent() {
             )}
 
             <div className="flex gap-3 pt-4">
-              {step > 0 && (
+              {step > 1 && (
                 <Button 
                   variant="outline" 
                   onClick={handleBack} 
