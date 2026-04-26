@@ -373,34 +373,34 @@ function AdminLayout() {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead className="pl-6">Nome</TableHead>
-                        <TableHead>Tipo</TableHead>
-                        <TableHead>Entrevistas</TableHead>
-                        <TableHead>Link Personalizado</TableHead>
-                        <TableHead className="text-right pr-6">Ações</TableHead>
+                        <TableHead className="pl-4 md:pl-8 text-xs font-bold uppercase text-gray-400">Recrutador</TableHead>
+                        <TableHead className="hidden md:table-cell text-xs font-bold uppercase text-gray-400">Tipo</TableHead>
+                        <TableHead className="text-xs font-bold uppercase text-gray-400">Entrevistas</TableHead>
+                        <TableHead className="text-xs font-bold uppercase text-gray-400">Link</TableHead>
+                        <TableHead className="text-right pr-4 md:pr-8 text-xs font-bold uppercase text-gray-400">Ações</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {users.map((user) => (
-                        <TableRow key={user.id}>
-                          <TableCell className="pl-6 font-medium">{user.nome}</TableCell>
-                          <TableCell>
-                            <Badge variant="secondary">{user.tipo}</Badge>
+                        <TableRow key={user.id} className="hover:bg-pink-50/30 transition-colors border-b">
+                          <TableCell className="pl-4 md:pl-8 font-bold text-gray-900">{user.nome}</TableCell>
+                          <TableCell className="hidden md:table-cell">
+                            <Badge variant="secondary" className="bg-gray-100 text-gray-600 border-none font-bold">{user.tipo}</Badge>
                           </TableCell>
-                          <TableCell>{user.entrevistas}</TableCell>
+                          <TableCell className="font-bold text-pink-600">{user.entrevistas}</TableCell>
                           <TableCell>
-                            <div className="flex items-center gap-2">
-                              <code className="bg-slate-100 px-2 py-1 rounded text-xs">.../recruiter={user.id}</code>
+                            <div className="flex items-center gap-1">
                               <button 
                                 onClick={() => copyRecruiterLink(user.id)}
-                                className="p-1 hover:bg-slate-100 rounded text-primary transition-colors"
+                                className="p-2 hover:bg-pink-100 rounded-lg text-pink-600 transition-colors"
+                                title="Copiar link de recrutamento"
                               >
-                                <Copy size={16} />
+                                <Copy size={18} />
                               </button>
                             </div>
                           </TableCell>
-                          <TableCell className="text-right pr-6">
-                            <Button variant="ghost" size="sm">Editar</Button>
+                          <TableCell className="text-right pr-4 md:pr-8">
+                            <Button variant="ghost" size="sm" className="font-bold text-gray-400 hover:text-pink-600">Editar</Button>
                           </TableCell>
                         </TableRow>
                       ))}
