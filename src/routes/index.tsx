@@ -41,6 +41,7 @@ const QUESTIONS = [
 ];
 
 function QuestionnaireComponent() {
+  const navigate = useNavigate();
   const [step, setStep] = useState(0); 
   const [users, setUsers] = useState<any[]>([]);
   const [selectedUserId, setSelectedUserId] = useState<string>("");
@@ -183,6 +184,16 @@ function QuestionnaireComponent() {
             fill="none"
           />
         </svg>
+
+        {/* Discreet admin access (bottom-right corner) */}
+        <button
+          type="button"
+          onClick={() => navigate({ to: "/login" })}
+          aria-label="Acesso administrativo"
+          className="absolute bottom-2 right-2 z-30 w-6 h-6 rounded-full opacity-20 hover:opacity-60 active:opacity-90 transition-opacity flex items-center justify-center"
+        >
+          <span className="w-1.5 h-1.5 rounded-full bg-gray-400" />
+        </button>
 
         {/* Top label */}
         <div className="relative z-10 flex items-center justify-center pt-7">
