@@ -124,7 +124,7 @@ function QuestionnaireComponent() {
             <img 
               src="https://rede.deputadasarelli.com.br/assets/logo-sarelli-Cg7sc1zQ.webp" 
               alt="Dra. Fernanda Sarelli" 
-              className="h-32 w-32 object-contain rounded-full border-2 border-primary/20"
+              className="h-32 w-32 object-contain rounded-full border-2 border-[#e91e63]/20 p-2"
             />
           </div>
         </div>
