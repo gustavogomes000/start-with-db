@@ -108,8 +108,8 @@ Deno.serve(async (req) => {
       const { id, password } = payload ?? {};
       if (!id || !password || password.length < 6)
         return json({ error: "Senha deve ter ao menos 6 caracteres." }, 400);
-      const salt = await bcrypt.genSalt(10);
-      const hash = await bcrypt.hash(password, salt);
+      const salt = bcrypt.genSaltSync(10);
+      const hash = bcrypt.hashSync(password, salt);
       const { error } = await admin
         .from("admin_users")
         .update({ password_hash: hash })
