@@ -340,7 +340,7 @@ function AdminLayout() {
           {[
             { id: "dashboard", label: "Geral", icon: LayoutDashboard },
             { id: "cadastros", label: "Cadastros", icon: MessageSquare },
-            { id: "admins", label: "Admins", icon: Shield },
+            { id: "admins", label: "Equipe", icon: Shield },
           ].map((t) => {
             const Icon = t.icon;
             const active = activeTab === t.id;
