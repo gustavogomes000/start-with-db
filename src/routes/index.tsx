@@ -566,27 +566,52 @@ function QuestionnaireComponent() {
   );
 }
 function SuccessScreen() {
+  useEffect(() => {
+    // Redirecionamento após 3.5 segundos
+    const timer = setTimeout(() => {
+      window.location.href = "https://www.instagram.com/drafernandasarelli/";
+    }, 3500);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <div className="min-h-[100dvh] w-full bg-gray-50 flex items-center justify-center p-0 sm:p-6 font-sans">
-      <div className="w-full max-w-[420px] h-[100dvh] sm:h-[800px] sm:rounded-[40px] sm:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] bg-[#f8f9fb] flex flex-col items-center justify-center p-6 relative overflow-hidden">
-        <div className="w-full text-center space-y-6 animate-in fade-in zoom-in duration-500">
-          <div className="relative mx-auto w-24 h-24">
-            <div className="absolute inset-0 bg-green-500/20 rounded-full animate-ping" />
-            <div className="relative w-24 h-24 bg-green-500 rounded-full flex items-center justify-center shadow-[0_8px_24px_rgba(34,197,94,0.35)]">
-              <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="20 6 9 17 4 12" />
-              </svg>
-            </div>
-          </div>
-          <div className="space-y-2">
-            <h2 className="text-3xl font-semibold text-gray-900 tracking-tight">
-              Pesquisa Concluída!
-            </h2>
-            <p className="text-gray-500 text-[15px] leading-relaxed">
-              Muito obrigado pela sua participação. Suas respostas foram registradas com sucesso.
-            </p>
+    <div className="min-h-[100dvh] w-full bg-[#f0f4f9] flex items-center justify-center p-4 sm:p-6 font-sans relative overflow-hidden">
+      
+      {/* Decorative background elements matching step 0 */}
+      <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-green-200 rounded-full mix-blend-multiply filter blur-[80px] opacity-30 pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-teal-200 rounded-full mix-blend-multiply filter blur-[80px] opacity-30 pointer-events-none" />
+
+      {/* Main Card */}
+      <div className="w-full max-w-[500px] bg-white/95 backdrop-blur-xl rounded-[28px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden flex flex-col relative border border-white/50 z-10 p-10 sm:p-12 text-center animate-in zoom-in-95 duration-500">
+        
+        {/* Top colored accent line */}
+        <div className="absolute top-0 left-0 right-0 h-2.5 w-full bg-gradient-to-r from-green-400 via-green-500 to-teal-500" />
+
+        <div className="relative mx-auto w-24 h-24 mb-8 mt-4">
+          <div className="absolute inset-0 bg-green-500/20 rounded-full animate-ping" />
+          <div className="relative w-24 h-24 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center shadow-[0_8px_24px_rgba(34,197,94,0.35)] transform transition-transform hover:scale-105">
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
           </div>
         </div>
+
+        <div className="space-y-4">
+          <h2 className="text-[2rem] leading-tight font-black text-gray-900 tracking-tight">
+            Pesquisa Concluída!
+          </h2>
+          <p className="text-gray-500 text-[15px] leading-relaxed font-medium px-2">
+            Muito obrigado pela sua participação. Suas respostas foram registradas com sucesso e são fundamentais para nós.
+          </p>
+        </div>
+
+        <div className="mt-10 flex flex-col items-center gap-3">
+          <div className="w-7 h-7 border-4 border-green-100 border-t-green-500 rounded-full animate-spin" />
+          <p className="text-[12px] font-bold text-green-600 uppercase tracking-widest">
+            Redirecionando
+          </p>
+        </div>
+
       </div>
     </div>
   );
