@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { ChevronRight, ChevronLeft, Send, User, MessageSquare } from "lucide-react";
+import { ChevronRight, ChevronLeft, Send, User, MessageSquare, Lock } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   component: QuestionnaireComponent,
@@ -207,6 +207,15 @@ function QuestionnaireComponent() {
           }}
         />
 
+        {/* Acesso discreto ao painel */}
+        <Link
+          to="/login"
+          aria-label="Acesso ao painel"
+          className="absolute top-3 right-3 z-30 w-8 h-8 rounded-full flex items-center justify-center bg-white/15 backdrop-blur-sm text-white/60 hover:text-white hover:bg-white/30 active:scale-95 transition"
+        >
+          <Lock size={13} strokeWidth={2.2} />
+        </Link>
+
         {/* Soft white glow on the pink */}
         <div
           className="absolute -top-32 left-1/2 -translate-x-1/2 w-[120%] h-80 z-[1] pointer-events-none"
@@ -349,11 +358,20 @@ function QuestionnaireComponent() {
               <span className="text-[13px] font-semibold text-gray-800">Voz das Mulheres</span>
             </div>
           </div>
-          <div className="flex items-center gap-1.5 bg-pink-50 px-2.5 py-1 rounded-full">
-            <div className="w-1.5 h-1.5 rounded-full bg-pink-500 animate-pulse" />
-            <span className="text-[11px] font-semibold text-pink-700">
-              {step === 1 ? "Cadastro" : `${questionIndex + 1}/${QUESTIONS.length}`}
-            </span>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 bg-pink-50 px-2.5 py-1 rounded-full">
+              <div className="w-1.5 h-1.5 rounded-full bg-pink-500 animate-pulse" />
+              <span className="text-[11px] font-semibold text-pink-700">
+                {step === 1 ? "Cadastro" : `${questionIndex + 1}/${QUESTIONS.length}`}
+              </span>
+            </div>
+            <Link
+              to="/login"
+              aria-label="Acesso ao painel"
+              className="w-7 h-7 rounded-full flex items-center justify-center text-gray-300 hover:text-pink-600 hover:bg-pink-50 transition"
+            >
+              <Lock size={12} strokeWidth={2.2} />
+            </Link>
           </div>
         </div>
         {/* linear progress (Material) */}
