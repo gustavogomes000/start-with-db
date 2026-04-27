@@ -286,39 +286,7 @@ function QuestionnaireComponent() {
   }
 
   if (step === 3) {
-    return (
-      <div className="min-h-screen bg-[#fff5f8] flex items-center justify-center p-6 relative overflow-hidden">
-        <div
-          className="absolute inset-0 opacity-[0.05] pointer-events-none"
-          style={{
-            backgroundImage: `url('https://rede.deputadasarelli.com.br/assets/bg-pattern.svg')`,
-            backgroundSize: "400px",
-            backgroundRepeat: "repeat",
-          }}
-        />
-        <div className="w-full max-w-sm text-center space-y-10 animate-in fade-in zoom-in duration-700 z-10">
-          <div className="relative mx-auto w-32 h-32 bg-white rounded-full flex items-center justify-center shadow-2xl shadow-pink-100">
-            <div className="absolute inset-0 bg-green-500 rounded-full animate-ping opacity-20" />
-            <Send className="text-green-500" size={48} strokeWidth={3} />
-          </div>
-          <div className="space-y-4">
-            <h2 className="text-4xl font-black text-gray-900 uppercase tracking-tighter leading-none">
-              Muito<br />obrigado!
-            </h2>
-            <div className="w-12 h-1 bg-green-500 mx-auto rounded-full" />
-            <p className="text-gray-500 font-medium text-lg leading-tight">
-              Sua participação é fundamental para construirmos um futuro melhor.
-            </p>
-          </div>
-          <Button
-            onClick={() => window.location.reload()}
-            className="w-full h-20 rounded-[2rem] text-xl font-black bg-gradient-to-r from-[#e91e63] to-[#ff9800] shadow-xl shadow-pink-100 active:scale-95 transition-transform uppercase tracking-wider"
-          >
-            Nova Entrevista
-          </Button>
-        </div>
-      </div>
-    );
+    return <SuccessScreen />;
   }
 
   // Steps 1, 2
@@ -336,7 +304,7 @@ function QuestionnaireComponent() {
       <header className="bg-white border-b border-gray-100 sticky top-0 z-20">
         <div className="max-w-md mx-auto px-5 py-3.5 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img src="/brand/logo-sarelli.png" alt="Sarelli" className="h-8" />
+            <img src="/brand/logo-sarelli.png" alt="Sarelli" className="h-12" />
             <div className="flex flex-col leading-none">
               <span className="text-[10px] font-medium text-gray-400 tracking-wide">Pesquisa Oficial</span>
               <span className="text-[13px] font-semibold text-gray-800">Voz das Mulheres</span>
@@ -504,6 +472,66 @@ function QuestionnaireComponent() {
           </Button>
         </div>
       </footer>
+    </div>
+  );
+}
+function SuccessScreen() {
+  const INSTAGRAM_URL = "https://www.instagram.com/drafernandasarelli/";
+  const [countdown, setCountdown] = useState(3);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCountdown((c) => (c > 0 ? c - 1 : 0));
+    }, 1000);
+    const timeout = setTimeout(() => {
+      window.location.href = INSTAGRAM_URL;
+    }, 2500);
+    return () => {
+      clearInterval(interval);
+      clearTimeout(timeout);
+    };
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-[#f8f9fb] flex items-center justify-center p-6">
+      <div className="w-full max-w-sm text-center space-y-6 animate-in fade-in zoom-in duration-500">
+        <div className="relative mx-auto w-24 h-24">
+          <div className="absolute inset-0 bg-green-500/20 rounded-full animate-ping" />
+          <div className="relative w-24 h-24 bg-green-500 rounded-full flex items-center justify-center shadow-[0_8px_24px_rgba(34,197,94,0.35)]">
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+          </div>
+        </div>
+        <div className="space-y-2">
+          <h2 className="text-3xl font-semibold text-gray-900 tracking-tight">
+            Cadastro realizado!
+          </h2>
+          <p className="text-gray-500 text-[15px] leading-relaxed">
+            Tudo certo. Sua participação foi registrada com sucesso.
+          </p>
+        </div>
+        <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+          <p className="text-[13px] text-gray-500">
+            Redirecionando para o Instagram da
+          </p>
+          <p className="text-[14px] font-semibold text-pink-600 mt-0.5">
+            @drafernandasarelli
+          </p>
+          <div className="mt-3 flex items-center justify-center gap-2">
+            <div className="w-3.5 h-3.5 rounded-full border-2 border-pink-200 border-t-pink-500 animate-spin" />
+            <span className="text-[12px] font-medium text-gray-400 tabular-nums">
+              em {countdown}s
+            </span>
+          </div>
+        </div>
+        <a
+          href={INSTAGRAM_URL}
+          className="inline-block text-[13px] font-medium text-gray-400 hover:text-pink-600 transition-colors"
+        >
+          Ir agora →
+        </a>
+      </div>
     </div>
   );
 }
