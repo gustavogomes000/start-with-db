@@ -54,9 +54,15 @@ type Cadastro = {
   city: string | null;
   message: string | null;
   created_at: string;
+  recruiter_id?: string | null;
+  recruiter_name?: string | null;
 };
 
 type AdminUser = { id: string; username: string; created_at: string };
+
+function isAdminMaster(username: string) {
+  return (username || "").toLowerCase().startsWith("administrador");
+}
 
 function AdminLayout() {
   const navigate = useNavigate();
@@ -66,9 +72,14 @@ function AdminLayout() {
   const [admins, setAdmins] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [filterRecruiter, setFilterRecruiter] = useState<string>("all");
   const [selected, setSelected] = useState<Cadastro | null>(null);
   const [newAdminOpen, setNewAdminOpen] = useState(false);
-  const [newAdmin, setNewAdmin] = useState({ username: "", password: "" });
+  const [newAdmin, setNewAdmin] = useState<{ username: string; password: string; role: "interviewer" | "admin" }>({
+    username: "",
+    password: "",
+    role: "interviewer",
+  });
   const [savingAdmin, setSavingAdmin] = useState(false);
   const [editAdmin, setEditAdmin] = useState<AdminUser | null>(null);
   const [editUsername, setEditUsername] = useState("");
