@@ -103,7 +103,10 @@ Deno.serve(async (req) => {
       .maybeSingle();
     if (whoErr || !who) return json({ error: "unauthorized" }, 401);
 
+    const isMaster = (who.username || "").toLowerCase() === "administrador";
+
     if (action === "list_entries") {
+      if (!isMaster) return json({ error: "forbidden" }, 403);
       const { data, error } = await admin
         .from("promotion_entries")
         .select("id, full_name, whatsapp, cpf, instagram, city, message, created_at")
@@ -127,6 +130,7 @@ Deno.serve(async (req) => {
     }
 
     if (action === "list_admins") {
+      if (!isMaster) return json({ error: "forbidden" }, 403);
       const { data, error } = await admin
         .from("admin_users")
         .select("id, username, created_at")
