@@ -31,18 +31,33 @@ function LoginComponent() {
     try {
       const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/admin-api`;
       const anon = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
-      const res = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          apikey: anon,
-          Authorization: `Bearer ${anon}`,
-        },
-        body: JSON.stringify({ action: "login", payload: { username: u, password: p } }),
-      });
-      const data = await res.json().catch(() => ({}));
+      let res: Response;
+      try {
+        res = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            apikey: anon,
+            Authorization: `Bearer ${anon}`,
+          },
+          body: JSON.stringify({ action: "login", payload: { username: u, password: p } }),
+        });
+      } catch {
+        toast.error("Sem conexão. Verifique sua internet e tente novamente.");
+        setLoading(false);
+        return;
+      }
 
-      if (data?.error === "invalid_credentials" || !data?.id) {
+      const data = await res.json().catch(() => ({} as any));
+
+      // Servidor temporariamente fora do ar (5xx) ou outro erro inesperado sem payload válido
+      if (!res.ok && !data?.error) {
+        toast.error("Servidor indisponível no momento. Tente novamente em instantes.");
+        setLoading(false);
+        return;
+      }
+
+      if (data?.error || !data?.id) {
         toast.error(
           data?.error === "invalid_credentials"
             ? "Usuário ou senha inválidos."
