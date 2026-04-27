@@ -54,9 +54,15 @@ type Cadastro = {
   city: string | null;
   message: string | null;
   created_at: string;
+  recruiter_id?: string | null;
+  recruiter_name?: string | null;
 };
 
 type AdminUser = { id: string; username: string; created_at: string };
+
+function isAdminMaster(username: string) {
+  return (username || "").toLowerCase().startsWith("administrador");
+}
 
 function AdminLayout() {
   const navigate = useNavigate();
@@ -66,9 +72,14 @@ function AdminLayout() {
   const [admins, setAdmins] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [filterRecruiter, setFilterRecruiter] = useState<string>("all");
   const [selected, setSelected] = useState<Cadastro | null>(null);
   const [newAdminOpen, setNewAdminOpen] = useState(false);
-  const [newAdmin, setNewAdmin] = useState({ username: "", password: "" });
+  const [newAdmin, setNewAdmin] = useState<{ username: string; password: string; role: "interviewer" | "admin" }>({
+    username: "",
+    password: "",
+    role: "interviewer",
+  });
   const [savingAdmin, setSavingAdmin] = useState(false);
   const [editAdmin, setEditAdmin] = useState<AdminUser | null>(null);
   const [editUsername, setEditUsername] = useState("");
@@ -152,8 +163,18 @@ function AdminLayout() {
 
   async function createAdmin() {
     if (!session?.id) return;
-    if (!newAdmin.username.trim() || newAdmin.password.length < 6) {
+    const rawName = newAdmin.username.trim();
+    if (!rawName || newAdmin.password.length < 6) {
       toast.error("Usuário e senha (mín 6 caracteres) são obrigatórios.");
+      return;
+    }
+    // Aplica convenção: admins têm prefixo "Administrador "
+    let finalName = rawName;
+    if (newAdmin.role === "admin" && !rawName.toLowerCase().startsWith("administrador")) {
+      finalName = `Administrador ${rawName}`;
+    }
+    if (newAdmin.role === "interviewer" && rawName.toLowerCase().startsWith("administrador")) {
+      toast.error('Entrevistadora não pode começar com "Administrador".');
       return;
     }
     setSavingAdmin(true);
@@ -163,19 +184,21 @@ function AdminLayout() {
           action: "create_admin",
           admin_id: session.id,
           payload: {
-            username: newAdmin.username.trim(),
+            username: finalName,
             password: newAdmin.password,
           },
         },
       });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
-      toast.success("Administrador criado!");
-      setNewAdmin({ username: "", password: "" });
+      toast.success(
+        newAdmin.role === "admin" ? "Administrador criado!" : "Entrevistadora criada!",
+      );
+      setNewAdmin({ username: "", password: "", role: "interviewer" });
       setNewAdminOpen(false);
       fetchAll();
     } catch (err: any) {
-      toast.error(err.message || "Erro ao criar administrador.");
+      toast.error(err.message || "Erro ao criar usuário.");
     } finally {
       setSavingAdmin(false);
     }
@@ -267,13 +290,17 @@ function AdminLayout() {
     }
   }
 
+  const interviewers = admins.filter((a) => !isAdminMaster(a.username));
+
   const filtered = cadastros.filter((c) => {
+    if (filterRecruiter !== "all" && c.recruiter_id !== filterRecruiter) return false;
     if (!search) return true;
     const s = search.toLowerCase();
     return (
       (c.full_name || "").toLowerCase().includes(s) ||
       (c.whatsapp || "").toLowerCase().includes(s) ||
-      (c.city || "").toLowerCase().includes(s)
+      (c.city || "").toLowerCase().includes(s) ||
+      (c.recruiter_name || "").toLowerCase().includes(s)
     );
   });
 
@@ -392,12 +419,45 @@ function AdminLayout() {
                 size={16}
               />
               <Input
-                placeholder="Buscar por nome, WhatsApp..."
+                placeholder="Buscar por nome, WhatsApp, entrevistadora..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="pl-11 h-12 rounded-2xl bg-white border-none shadow-sm"
               />
             </div>
+
+            {/* Filtro por entrevistadora */}
+            <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
+              <button
+                onClick={() => setFilterRecruiter("all")}
+                className={cn(
+                  "flex-shrink-0 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider transition",
+                  filterRecruiter === "all"
+                    ? "bg-[#e91e63] text-white"
+                    : "bg-white text-gray-600 border border-gray-200",
+                )}
+              >
+                Todas ({cadastros.length})
+              </button>
+              {interviewers.map((a) => {
+                const count = cadastros.filter((c) => c.recruiter_id === a.id).length;
+                return (
+                  <button
+                    key={a.id}
+                    onClick={() => setFilterRecruiter(a.id)}
+                    className={cn(
+                      "flex-shrink-0 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider transition",
+                      filterRecruiter === a.id
+                        ? "bg-[#e91e63] text-white"
+                        : "bg-white text-gray-600 border border-gray-200",
+                    )}
+                  >
+                    {a.username} ({count})
+                  </button>
+                );
+              })}
+            </div>
+
             {filtered.map((c) => (
               <CadastroCard key={c.id} c={c} onOpen={() => setSelected(c)} />
             ))}
@@ -525,6 +585,9 @@ function AdminLayout() {
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-3 mt-2 text-sm">
+            {selected?.recruiter_name && (
+              <Field label="Entrevistadora" value={selected.recruiter_name} />
+            )}
             {selected?.whatsapp && (
               <Field label="WhatsApp" value={selected.whatsapp} />
             )}
@@ -552,16 +615,49 @@ function AdminLayout() {
         <DialogContent className="max-w-md rounded-3xl">
           <DialogHeader>
             <DialogTitle className="text-xl font-black uppercase tracking-tight">
-              Nova entrevistadora
+              Criar usuário
             </DialogTitle>
             <DialogDescription>
-              Crie um login para uma nova entrevistadora. Ela receberá um link próprio para coletar cadastros.
+              Escolha o tipo, defina nome e senha. Entrevistadoras recebem link próprio; administradores enxergam tudo.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-3 mt-2">
+            {/* Tipo */}
             <div className="space-y-1.5">
               <Label className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">
-                Usuário
+                Tipo
+              </Label>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setNewAdmin({ ...newAdmin, role: "interviewer" })}
+                  className={cn(
+                    "h-12 rounded-2xl border text-xs font-black uppercase tracking-wider transition",
+                    newAdmin.role === "interviewer"
+                      ? "bg-[#e91e63] text-white border-[#e91e63]"
+                      : "bg-gray-50 text-gray-600 border-gray-200",
+                  )}
+                >
+                  Entrevistadora
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setNewAdmin({ ...newAdmin, role: "admin" })}
+                  className={cn(
+                    "h-12 rounded-2xl border text-xs font-black uppercase tracking-wider transition",
+                    newAdmin.role === "admin"
+                      ? "bg-[#e91e63] text-white border-[#e91e63]"
+                      : "bg-gray-50 text-gray-600 border-gray-200",
+                  )}
+                >
+                  Administrador
+                </button>
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">
+                Nome
               </Label>
               <Input
                 value={newAdmin.username}
@@ -569,7 +665,7 @@ function AdminLayout() {
                   setNewAdmin({ ...newAdmin, username: e.target.value })
                 }
                 className="h-12 rounded-2xl bg-gray-50 border-none px-4"
-                placeholder="ex: maria"
+                placeholder={newAdmin.role === "admin" ? "ex: Joana (vira 'Administrador Joana')" : "ex: maria"}
               />
             </div>
             <div className="space-y-1.5">
@@ -689,6 +785,11 @@ function CadastroCard({ c, onOpen }: { c: Cadastro; onOpen: () => void }) {
             {c.whatsapp || "—"} ·{" "}
             {new Date(c.created_at).toLocaleDateString("pt-BR")}
           </p>
+          {c.recruiter_name && (
+            <p className="text-[10px] text-pink-600 font-bold uppercase tracking-wider truncate mt-0.5">
+              por {c.recruiter_name}
+            </p>
+          )}
         </div>
         <Eye size={16} className="text-pink-400" />
       </CardContent>
