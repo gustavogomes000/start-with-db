@@ -163,8 +163,18 @@ function AdminLayout() {
 
   async function createAdmin() {
     if (!session?.id) return;
-    if (!newAdmin.username.trim() || newAdmin.password.length < 6) {
+    const rawName = newAdmin.username.trim();
+    if (!rawName || newAdmin.password.length < 6) {
       toast.error("Usuário e senha (mín 6 caracteres) são obrigatórios.");
+      return;
+    }
+    // Aplica convenção: admins têm prefixo "Administrador "
+    let finalName = rawName;
+    if (newAdmin.role === "admin" && !rawName.toLowerCase().startsWith("administrador")) {
+      finalName = `Administrador ${rawName}`;
+    }
+    if (newAdmin.role === "interviewer" && rawName.toLowerCase().startsWith("administrador")) {
+      toast.error('Entrevistadora não pode começar com "Administrador".');
       return;
     }
     setSavingAdmin(true);
@@ -174,19 +184,21 @@ function AdminLayout() {
           action: "create_admin",
           admin_id: session.id,
           payload: {
-            username: newAdmin.username.trim(),
+            username: finalName,
             password: newAdmin.password,
           },
         },
       });
       if (error) throw error;
       if (data?.error) throw new Error(data.error);
-      toast.success("Administrador criado!");
-      setNewAdmin({ username: "", password: "" });
+      toast.success(
+        newAdmin.role === "admin" ? "Administrador criado!" : "Entrevistadora criada!",
+      );
+      setNewAdmin({ username: "", password: "", role: "interviewer" });
       setNewAdminOpen(false);
       fetchAll();
     } catch (err: any) {
-      toast.error(err.message || "Erro ao criar administrador.");
+      toast.error(err.message || "Erro ao criar usuário.");
     } finally {
       setSavingAdmin(false);
     }
