@@ -72,6 +72,18 @@ function LoginComponent() {
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-pink-50 via-white to-pink-100 px-4 py-8 relative overflow-hidden">
+      {loading && (
+        <div className="fixed inset-0 z-[60] bg-white/85 backdrop-blur-sm flex flex-col items-center justify-center gap-4">
+          <div className="relative w-20 h-20">
+            <div className="absolute inset-0 rounded-full border-4 border-pink-100" />
+            <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-[#e91e63] animate-spin" />
+            <Loader2 className="absolute inset-0 m-auto w-8 h-8 text-[#e91e63] animate-pulse" />
+          </div>
+          <p className="text-[11px] font-black tracking-[0.3em] text-gray-700 uppercase">
+            Entrando...
+          </p>
+        </div>
+      )}
       {/* Decorative background blobs */}
       <div className="absolute top-0 left-0 w-72 h-72 bg-pink-200/40 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-pink-300/30 rounded-full blur-3xl translate-x-1/3 translate-y-1/3" />
