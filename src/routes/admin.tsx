@@ -749,6 +749,11 @@ function CadastroCard({ c, onOpen }: { c: Cadastro; onOpen: () => void }) {
             {c.whatsapp || "—"} ·{" "}
             {new Date(c.created_at).toLocaleDateString("pt-BR")}
           </p>
+          {c.recruiter_name && (
+            <p className="text-[10px] text-pink-600 font-bold uppercase tracking-wider truncate mt-0.5">
+              por {c.recruiter_name}
+            </p>
+          )}
         </div>
         <Eye size={16} className="text-pink-400" />
       </CardContent>
