@@ -198,15 +198,15 @@ function QuestionnaireComponent() {
       });
       const payload = await res.json().catch(() => ({}));
 
-      if (!res.ok) {
-        if (payload?.error === "cpf_duplicate") {
-          toast.error("Este CPF já foi cadastrado anteriormente.");
-          return;
-        }
-        if (payload?.error === "cpf_invalid") {
-          toast.error("CPF inválido.");
-          return;
-        }
+      if (payload?.error === "cpf_duplicate") {
+        toast.error("Este CPF já foi cadastrado anteriormente.");
+        return;
+      }
+      if (payload?.error === "cpf_invalid") {
+        toast.error("CPF inválido.");
+        return;
+      }
+      if (payload?.error || !res.ok) {
         toast.error("Não foi possível enviar. Tente novamente.");
         return;
       }
