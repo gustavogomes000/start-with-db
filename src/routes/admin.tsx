@@ -290,13 +290,17 @@ function AdminLayout() {
     }
   }
 
+  const interviewers = admins.filter((a) => !isAdminMaster(a.username));
+
   const filtered = cadastros.filter((c) => {
+    if (filterRecruiter !== "all" && c.recruiter_id !== filterRecruiter) return false;
     if (!search) return true;
     const s = search.toLowerCase();
     return (
       (c.full_name || "").toLowerCase().includes(s) ||
       (c.whatsapp || "").toLowerCase().includes(s) ||
-      (c.city || "").toLowerCase().includes(s)
+      (c.city || "").toLowerCase().includes(s) ||
+      (c.recruiter_name || "").toLowerCase().includes(s)
     );
   });
 
