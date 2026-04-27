@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
+import { getAdminSession, removeAdminSession, setAdminSession } from "@/lib/safe-session";
 import { toast } from "sonner";
 import {
   Users,
@@ -105,21 +106,13 @@ function AdminLayout() {
   }
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    const raw = localStorage.getItem("admin_session");
-    if (!raw) {
+    const s = getAdminSession();
+    if (!s) {
       navigate({ to: "/login" });
       return;
     }
-    try {
-      const s = JSON.parse(raw);
-      if (!s?.id) throw new Error("invalid");
-      setSession({ id: s.id, username: s.username });
-      fetchAll(s.id);
-    } catch {
-      localStorage.removeItem("admin_session");
-      navigate({ to: "/login" });
-    }
+    setSession({ id: s.id, username: s.username });
+    fetchAll(s.id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -140,7 +133,7 @@ function AdminLayout() {
       if (adminsRes.error) throw adminsRes.error;
       if (entriesRes.data?.error || adminsRes.data?.error) {
         if (entriesRes.data?.error === "unauthorized" || adminsRes.data?.error === "unauthorized") {
-          localStorage.removeItem("admin_session");
+          removeAdminSession();
           navigate({ to: "/login" });
           return;
         }
@@ -157,7 +150,7 @@ function AdminLayout() {
   }
 
   function handleLogout() {
-    localStorage.removeItem("admin_session");
+    removeAdminSession();
     navigate({ to: "/login" });
   }
 
@@ -225,10 +218,7 @@ function AdminLayout() {
       if (editAdmin.id === session.id) {
         const updated = { ...session, username: editUsername.trim() };
         setSession(updated);
-        localStorage.setItem(
-          "admin_session",
-          JSON.stringify({ ...updated, ts: Date.now() }),
-        );
+        setAdminSession(updated);
       }
       setEditAdmin(null);
       fetchAll();
