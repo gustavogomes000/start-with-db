@@ -419,12 +419,45 @@ function AdminLayout() {
                 size={16}
               />
               <Input
-                placeholder="Buscar por nome, WhatsApp..."
+                placeholder="Buscar por nome, WhatsApp, entrevistadora..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="pl-11 h-12 rounded-2xl bg-white border-none shadow-sm"
               />
             </div>
+
+            {/* Filtro por entrevistadora */}
+            <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
+              <button
+                onClick={() => setFilterRecruiter("all")}
+                className={cn(
+                  "flex-shrink-0 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider transition",
+                  filterRecruiter === "all"
+                    ? "bg-[#e91e63] text-white"
+                    : "bg-white text-gray-600 border border-gray-200",
+                )}
+              >
+                Todas ({cadastros.length})
+              </button>
+              {interviewers.map((a) => {
+                const count = cadastros.filter((c) => c.recruiter_id === a.id).length;
+                return (
+                  <button
+                    key={a.id}
+                    onClick={() => setFilterRecruiter(a.id)}
+                    className={cn(
+                      "flex-shrink-0 px-3 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-wider transition",
+                      filterRecruiter === a.id
+                        ? "bg-[#e91e63] text-white"
+                        : "bg-white text-gray-600 border border-gray-200",
+                    )}
+                  >
+                    {a.username} ({count})
+                  </button>
+                );
+              })}
+            </div>
+
             {filtered.map((c) => (
               <CadastroCard key={c.id} c={c} onOpen={() => setSelected(c)} />
             ))}
