@@ -96,26 +96,20 @@ function QuestionnaireComponent() {
         toast.error("CPF inválido. Confira os números digitados.");
         return;
       }
-      // Validar data de nascimento (idade mínima 18 anos, não futura, ano plausível)
+      // Validar data de nascimento (não pode ser no futuro)
       const nasc = new Date(formData.dataNascimento);
       if (isNaN(nasc.getTime())) {
         toast.error("Data de nascimento inválida.");
         return;
       }
       const hoje = new Date();
+      hoje.setHours(23, 59, 59, 999);
       if (nasc > hoje) {
         toast.error("Data de nascimento não pode ser no futuro.");
         return;
       }
       if (nasc.getFullYear() < 1900) {
         toast.error("Data de nascimento inválida.");
-        return;
-      }
-      let idade = hoje.getFullYear() - nasc.getFullYear();
-      const m = hoje.getMonth() - nasc.getMonth();
-      if (m < 0 || (m === 0 && hoje.getDate() < nasc.getDate())) idade--;
-      if (idade < 18) {
-        toast.error("É necessário ter no mínimo 18 anos.");
         return;
       }
       // Checar CPF duplicado no servidor antes de prosseguir
