@@ -266,17 +266,20 @@ function QuestionnaireComponent() {
 
   if (step === 0) {
     return (
-      <div className="min-h-[100dvh] w-full bg-[#f0f4f9] flex items-center justify-center p-4 sm:p-6 font-sans relative overflow-hidden">
+      <div className="min-h-[100dvh] w-full bg-[#f8f9fa] flex items-center justify-center p-4 sm:p-6 font-sans relative overflow-hidden">
         
+        {/* Decorative Grid Background */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#e5e7eb_1px,transparent_1px),linear-gradient(to_bottom,#e5e7eb_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-60" />
+
         {/* Decorative background elements */}
-        <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-pink-200 rounded-full mix-blend-multiply filter blur-[80px] opacity-40 pointer-events-none" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-purple-200 rounded-full mix-blend-multiply filter blur-[80px] opacity-40 pointer-events-none" />
+        <div className="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] bg-pink-200/60 rounded-full mix-blend-multiply filter blur-[100px] opacity-60 pointer-events-none" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-purple-200/60 rounded-full mix-blend-multiply filter blur-[100px] opacity-60 pointer-events-none" />
 
         {/* Main Card */}
-        <div className="w-full max-w-[500px] bg-white/95 backdrop-blur-xl rounded-[28px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden flex flex-col relative border border-white/50 z-10">
+        <div className="w-full max-w-[500px] bg-white/95 backdrop-blur-2xl rounded-[32px] shadow-[0_20px_60px_-15px_rgba(236,72,153,0.15)] overflow-hidden flex flex-col relative border border-white z-10">
           
           {/* Top colored accent line */}
-          <div className="h-2.5 w-full bg-gradient-to-r from-pink-500 via-pink-400 to-pink-600" />
+          <div className="h-3 w-full bg-gradient-to-r from-pink-400 via-pink-500 to-pink-600" />
 
           {/* Discreet admin access */}
           <Link
@@ -575,21 +578,24 @@ function SuccessScreen() {
   }, []);
 
   return (
-    <div className="min-h-[100dvh] w-full bg-[#f0f4f9] flex items-center justify-center p-4 sm:p-6 font-sans relative overflow-hidden">
+    <div className="min-h-[100dvh] w-full bg-[#f8f9fa] flex items-center justify-center p-4 sm:p-6 font-sans relative overflow-hidden">
       
+      {/* Decorative Grid Background */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#e5e7eb_1px,transparent_1px),linear-gradient(to_bottom,#e5e7eb_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-60" />
+
       {/* Decorative background elements matching step 0 */}
-      <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-green-200 rounded-full mix-blend-multiply filter blur-[80px] opacity-30 pointer-events-none" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-teal-200 rounded-full mix-blend-multiply filter blur-[80px] opacity-30 pointer-events-none" />
+      <div className="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] bg-pink-200/60 rounded-full mix-blend-multiply filter blur-[100px] opacity-60 pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-purple-200/60 rounded-full mix-blend-multiply filter blur-[100px] opacity-60 pointer-events-none" />
 
       {/* Main Card */}
-      <div className="w-full max-w-[500px] bg-white/95 backdrop-blur-xl rounded-[28px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden flex flex-col relative border border-white/50 z-10 p-10 sm:p-12 text-center animate-in zoom-in-95 duration-500">
+      <div className="w-full max-w-[500px] bg-white/95 backdrop-blur-2xl rounded-[32px] shadow-[0_20px_60px_-15px_rgba(236,72,153,0.15)] overflow-hidden flex flex-col relative border border-white z-10 p-10 sm:p-12 text-center animate-in zoom-in-95 duration-500">
         
         {/* Top colored accent line */}
-        <div className="absolute top-0 left-0 right-0 h-2.5 w-full bg-gradient-to-r from-green-400 via-green-500 to-teal-500" />
+        <div className="absolute top-0 left-0 right-0 h-3 w-full bg-gradient-to-r from-pink-400 via-pink-500 to-pink-600" />
 
         <div className="relative mx-auto w-24 h-24 mb-8 mt-4">
-          <div className="absolute inset-0 bg-green-500/20 rounded-full animate-ping" />
-          <div className="relative w-24 h-24 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center shadow-[0_8px_24px_rgba(34,197,94,0.35)] transform transition-transform hover:scale-105">
+          <div className="absolute inset-0 bg-pink-500/20 rounded-full animate-ping" />
+          <div className="relative w-24 h-24 bg-gradient-to-br from-pink-400 to-pink-600 rounded-full flex items-center justify-center shadow-[0_8px_24px_rgba(236,72,153,0.35)] transform transition-transform hover:scale-105">
             <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="20 6 9 17 4 12" />
             </svg>
@@ -606,8 +612,8 @@ function SuccessScreen() {
         </div>
 
         <div className="mt-10 flex flex-col items-center gap-3">
-          <div className="w-7 h-7 border-4 border-green-100 border-t-green-500 rounded-full animate-spin" />
-          <p className="text-[12px] font-bold text-green-600 uppercase tracking-widest">
+          <div className="w-7 h-7 border-4 border-pink-100 border-t-pink-500 rounded-full animate-spin" />
+          <p className="text-[12px] font-bold text-pink-600 uppercase tracking-widest">
             Redirecionando
           </p>
         </div>
