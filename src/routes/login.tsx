@@ -154,10 +154,6 @@ function LoginComponent() {
           </CardContent>
         </Card>
       </div>
-
-      <p className="relative z-10 text-center text-[10px] text-gray-400 font-medium tracking-[0.3em] uppercase pb-5">
-        Dra. Fernanda Sarelli · 2026
-      </p>
     </div>
   );
 }
