@@ -1,5 +1,6 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import { Toaster } from "sonner";
+import { useEffect, useState } from "react";
 
 import appCss from "../styles.css?url";
 
@@ -63,10 +64,12 @@ function RootShell({ children }: { children: React.ReactNode }) {
 }
 
 function RootComponent() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
   return (
     <>
       <Outlet />
-      <Toaster position="top-center" richColors closeButton />
+      {mounted && <Toaster position="top-center" richColors closeButton />}
     </>
   );
 }
