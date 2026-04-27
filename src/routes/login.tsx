@@ -150,10 +150,6 @@ function LoginComponent() {
               >
                 {loading ? "Entrando..." : "Entrar"}
               </Button>
-
-              <p className="text-center text-[10px] text-gray-400 pt-2">
-                Dica: <span className="font-bold text-gray-600">Administrador</span> / <span className="font-bold text-gray-600">Sarelli123@</span>
-              </p>
             </form>
           </CardContent>
         </Card>
