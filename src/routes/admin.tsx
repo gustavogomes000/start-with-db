@@ -612,16 +612,49 @@ function AdminLayout() {
         <DialogContent className="max-w-md rounded-3xl">
           <DialogHeader>
             <DialogTitle className="text-xl font-black uppercase tracking-tight">
-              Nova entrevistadora
+              Criar usuário
             </DialogTitle>
             <DialogDescription>
-              Crie um login para uma nova entrevistadora. Ela receberá um link próprio para coletar cadastros.
+              Escolha o tipo, defina nome e senha. Entrevistadoras recebem link próprio; administradores enxergam tudo.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-3 mt-2">
+            {/* Tipo */}
             <div className="space-y-1.5">
               <Label className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">
-                Usuário
+                Tipo
+              </Label>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setNewAdmin({ ...newAdmin, role: "interviewer" })}
+                  className={cn(
+                    "h-12 rounded-2xl border text-xs font-black uppercase tracking-wider transition",
+                    newAdmin.role === "interviewer"
+                      ? "bg-[#e91e63] text-white border-[#e91e63]"
+                      : "bg-gray-50 text-gray-600 border-gray-200",
+                  )}
+                >
+                  Entrevistadora
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setNewAdmin({ ...newAdmin, role: "admin" })}
+                  className={cn(
+                    "h-12 rounded-2xl border text-xs font-black uppercase tracking-wider transition",
+                    newAdmin.role === "admin"
+                      ? "bg-[#e91e63] text-white border-[#e91e63]"
+                      : "bg-gray-50 text-gray-600 border-gray-200",
+                  )}
+                >
+                  Administrador
+                </button>
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">
+                Nome
               </Label>
               <Input
                 value={newAdmin.username}
@@ -629,7 +662,7 @@ function AdminLayout() {
                   setNewAdmin({ ...newAdmin, username: e.target.value })
                 }
                 className="h-12 rounded-2xl bg-gray-50 border-none px-4"
-                placeholder="ex: maria"
+                placeholder={newAdmin.role === "admin" ? "ex: Joana (vira 'Administrador Joana')" : "ex: maria"}
               />
             </div>
             <div className="space-y-1.5">
