@@ -207,6 +207,15 @@ function QuestionnaireComponent() {
           }}
         />
 
+        {/* Acesso discreto ao painel */}
+        <Link
+          to="/login"
+          aria-label="Acesso ao painel"
+          className="absolute top-3 right-3 z-30 w-8 h-8 rounded-full flex items-center justify-center bg-white/15 backdrop-blur-sm text-white/60 hover:text-white hover:bg-white/30 active:scale-95 transition"
+        >
+          <Lock size={13} strokeWidth={2.2} />
+        </Link>
+
         {/* Soft white glow on the pink */}
         <div
           className="absolute -top-32 left-1/2 -translate-x-1/2 w-[120%] h-80 z-[1] pointer-events-none"
