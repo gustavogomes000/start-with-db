@@ -416,18 +416,28 @@ function QuestionnaireComponent() {
                   { key: "whatsapp", label: "WhatsApp", placeholder: "(00) 00000-0000", type: "tel" },
                   { key: "dataNascimento", label: "Data de nascimento", placeholder: "", type: "date" },
                   { key: "instagram", label: "Instagram", placeholder: "@perfil", type: "text" },
-                ].map((field) => (
-                  <div key={field.key} className="space-y-1.5">
-                    <Label className="text-[12px] font-medium text-gray-600 px-1">{field.label}</Label>
-                    <Input
-                      type={field.type}
-                      value={(formData as any)[field.key]}
-                      onChange={(e) => setFormData({ ...formData, [field.key]: e.target.value })}
-                      placeholder={field.placeholder}
-                      className="h-12 rounded-xl bg-[#f3f4f6] border border-transparent px-4 text-[15px] font-medium text-gray-900 focus:outline-none focus-visible:ring-0 focus:border-pink-500 focus:bg-white transition-all"
-                    />
-                  </div>
-                ))}
+                ].map((field) => {
+                  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+                    let v = e.target.value;
+                    if (field.key === "cpf") v = maskCPF(v);
+                    else if (field.key === "whatsapp") v = maskPhone(v);
+                    setFormData({ ...formData, [field.key]: v });
+                  };
+                  const inputMode = field.key === "cpf" || field.key === "whatsapp" ? "numeric" : undefined;
+                  return (
+                    <div key={field.key} className="space-y-1.5">
+                      <Label className="text-[12px] font-medium text-gray-600 px-1">{field.label}</Label>
+                      <Input
+                        type={field.type}
+                        inputMode={inputMode}
+                        value={(formData as any)[field.key]}
+                        onChange={handleChange}
+                        placeholder={field.placeholder}
+                        className="h-12 rounded-xl bg-[#f3f4f6] border border-transparent px-4 text-[15px] font-medium text-gray-900 focus:outline-none focus-visible:ring-0 focus:border-pink-500 focus:bg-white transition-all"
+                      />
+                    </div>
+                  );
+                })}
               </div>
             </div>
           )}
