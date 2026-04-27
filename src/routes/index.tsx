@@ -475,3 +475,63 @@ function QuestionnaireComponent() {
     </div>
   );
 }
+function SuccessScreen() {
+  const INSTAGRAM_URL = "https://www.instagram.com/drafernandasarelli/";
+  const [countdown, setCountdown] = useState(3);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCountdown((c) => (c > 0 ? c - 1 : 0));
+    }, 1000);
+    const timeout = setTimeout(() => {
+      window.location.href = INSTAGRAM_URL;
+    }, 2500);
+    return () => {
+      clearInterval(interval);
+      clearTimeout(timeout);
+    };
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-[#f8f9fb] flex items-center justify-center p-6">
+      <div className="w-full max-w-sm text-center space-y-6 animate-in fade-in zoom-in duration-500">
+        <div className="relative mx-auto w-24 h-24">
+          <div className="absolute inset-0 bg-green-500/20 rounded-full animate-ping" />
+          <div className="relative w-24 h-24 bg-green-500 rounded-full flex items-center justify-center shadow-[0_8px_24px_rgba(34,197,94,0.35)]">
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+          </div>
+        </div>
+        <div className="space-y-2">
+          <h2 className="text-3xl font-semibold text-gray-900 tracking-tight">
+            Cadastro realizado!
+          </h2>
+          <p className="text-gray-500 text-[15px] leading-relaxed">
+            Tudo certo. Sua participação foi registrada com sucesso.
+          </p>
+        </div>
+        <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+          <p className="text-[13px] text-gray-500">
+            Redirecionando para o Instagram da
+          </p>
+          <p className="text-[14px] font-semibold text-pink-600 mt-0.5">
+            @drafernandasarelli
+          </p>
+          <div className="mt-3 flex items-center justify-center gap-2">
+            <div className="w-3.5 h-3.5 rounded-full border-2 border-pink-200 border-t-pink-500 animate-spin" />
+            <span className="text-[12px] font-medium text-gray-400 tabular-nums">
+              em {countdown}s
+            </span>
+          </div>
+        </div>
+        <a
+          href={INSTAGRAM_URL}
+          className="inline-block text-[13px] font-medium text-gray-400 hover:text-pink-600 transition-colors"
+        >
+          Ir agora →
+        </a>
+      </div>
+    </div>
+  );
+}
