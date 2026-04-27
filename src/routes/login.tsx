@@ -55,12 +55,20 @@ function LoginComponent() {
 
   return (
     <div className="h-[100dvh] w-full flex flex-col bg-white relative overflow-hidden">
-      {/* Top pink area */}
+      {/* Top pink area com fade suave no final */}
       <div
-        className="absolute top-0 left-0 right-0 h-[46%] z-0"
+        className="absolute top-0 left-0 right-0 h-[50%] z-0"
         style={{
           background:
-            "linear-gradient(180deg, #f8b5c4 0%, #f095aa 60%, #ec407a 100%)",
+            "linear-gradient(180deg, #f8b5c4 0%, #f095aa 55%, #ec407a 92%, #e91e63 100%)",
+        }}
+      />
+      {/* Brilho radial discreto */}
+      <div
+        className="absolute top-0 left-1/2 -translate-x-1/2 w-[140%] h-72 z-[1] pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(ellipse at center, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 70%)",
         }}
       />
 
@@ -68,7 +76,7 @@ function LoginComponent() {
       <div className="relative z-10 flex flex-col items-center pt-8 px-6">
         <div className="relative w-32 h-32">
           <div
-            className="absolute -inset-[3px] rounded-full"
+            className="absolute -inset-[3px] rounded-full shadow-[0_8px_24px_-6px_rgba(0,0,0,0.25)]"
             style={{ background: "linear-gradient(135deg,#ec407a,#e91e63)" }}
           />
           <img
@@ -80,18 +88,30 @@ function LoginComponent() {
         <img
           src="/brand/logo-sarelli.png"
           alt="Logo"
-          className="h-24 mt-4 object-contain"
+          className="h-24 mt-4 object-contain drop-shadow-[0_2px_6px_rgba(0,0,0,0.12)]"
         />
-        <p className="mt-1 text-[11px] font-semibold tracking-[0.45em] text-white uppercase">
+        <p className="mt-2 text-[11px] font-semibold tracking-[0.45em] text-white/95 uppercase">
           Painel Administrativo
         </p>
       </div>
 
-      {/* Card no estilo Material/Google — sem rolagem */}
-      <div className="relative z-10 flex-1 flex items-end px-4 pb-4">
-        <div className="w-full bg-white rounded-t-[32px] shadow-[0_-8px_24px_-12px_rgba(0,0,0,0.08)] px-6 pt-6 pb-5">
-          <div className="flex items-center gap-2 mb-4">
-            <Lock className="h-4 w-4 text-[#e91e63]" />
+      {/* Card com curva orgânica no topo (estilo app premium) */}
+      <div className="relative z-10 flex-1 flex flex-col justify-end pt-10">
+        {/* Onda SVG de transição rosa → branco */}
+        <svg
+          viewBox="0 0 400 40"
+          preserveAspectRatio="none"
+          className="block w-full h-8 -mb-px text-white"
+          aria-hidden
+        >
+          <path
+            d="M0,40 C100,0 300,0 400,40 Z"
+            fill="currentColor"
+          />
+        </svg>
+        <div className="bg-white px-6 pt-2 pb-5 -mt-px">
+          <div className="flex items-center justify-center gap-2 mb-5">
+            <Lock className="h-3.5 w-3.5 text-[#e91e63]" />
             <span className="text-[11px] font-black tracking-[0.32em] text-gray-700 uppercase">
               Acesso Restrito
             </span>
