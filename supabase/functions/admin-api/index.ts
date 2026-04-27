@@ -113,6 +113,19 @@ Deno.serve(async (req) => {
       return json({ entries: data ?? [] });
     }
 
+    // Entries created by THIS recruiter only (uses message tag we inject)
+    if (action === "list_my_entries") {
+      const tag = `(${admin_id})`;
+      const { data, error } = await admin
+        .from("promotion_entries")
+        .select("id, full_name, whatsapp, cpf, instagram, city, created_at, message")
+        .ilike("message", `%${tag}%`)
+        .order("created_at", { ascending: false })
+        .limit(1000);
+      if (error) return json({ error: error.message }, 400);
+      return json({ entries: data ?? [], username: who.username });
+    }
+
     if (action === "list_admins") {
       const { data, error } = await admin
         .from("admin_users")
