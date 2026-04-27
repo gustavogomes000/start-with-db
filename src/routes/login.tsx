@@ -78,7 +78,7 @@ function LoginComponent() {
         <img
           src="/brand/logo-sarelli.png"
           alt="Logo"
-          className="h-12 mt-4 object-contain"
+          className="h-20 mt-5 object-contain"
         />
         <p className="mt-2 text-[10px] font-bold tracking-[0.4em] text-white/90 uppercase">
           Painel Administrativo
