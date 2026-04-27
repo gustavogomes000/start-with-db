@@ -140,22 +140,30 @@ function QuestionnaireComponent() {
         },
       });
 
-      if (error) throw error;
-      if (data?.error === "cpf_duplicate") {
+      // Tenta extrair payload de erro mesmo quando o status é não-2xx
+      let payload: any = data;
+      if (error && (error as any).context?.json) {
+        try { payload = await (error as any).context.json(); } catch {}
+      } else if (error && (error as any).context?.text) {
+        try { payload = JSON.parse(await (error as any).context.text()); } catch {}
+      }
+
+      if (payload?.error === "cpf_duplicate") {
         toast.error("Este CPF já foi cadastrado anteriormente.");
         return;
       }
-      if (data?.error === "cpf_invalid") {
+      if (payload?.error === "cpf_invalid") {
         toast.error("CPF inválido.");
         return;
       }
-      if (data?.error) throw new Error(data.error);
+      if (error) throw error;
+      if (payload?.error) throw new Error(payload.error);
 
       toast.success("Respostas enviadas!");
       setStep(3);
     } catch (err: any) {
       console.error(err);
-      toast.error(`Erro ao salvar: ${err.message}`);
+      toast.error(`Erro ao salvar: ${err.message ?? "tente novamente"}`);
     } finally {
       setLoading(false);
     }
