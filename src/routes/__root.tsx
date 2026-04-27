@@ -125,8 +125,7 @@ function RootComponent() {
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
     setMounted(true);
-    
-    // Mostra feedback se acabamos de recuperar de um erro
+
     const url = new URL(window.location.href);
     if (url.searchParams.has(RECOVERY_QUERY_PARAM)) {
       toast.success("Sistema validado. Está tudo certo agora!", {
@@ -134,7 +133,11 @@ function RootComponent() {
       });
     }
 
-    forceFreshLoad();
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.getRegistrations().then((registrations) => {
+        registrations.forEach((registration) => registration.unregister());
+      });
+    }
   }, []);
   return (
     <>
