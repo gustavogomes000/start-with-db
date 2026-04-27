@@ -112,17 +112,22 @@ function QuestionnaireComponent() {
         toast.error("Data de nascimento inválida.");
         return;
       }
-      // Checar CPF duplicado no servidor antes de prosseguir
+      // Checar CPF duplicado no servidor antes de prosseguir (fetch direto p/ tratar 409 sem virar exceção)
       setLoading(true);
       try {
-        const { error } = await supabase.functions.invoke("admin-api", {
-          body: { action: "check_cpf", payload: { cpf: cpfDigits } },
+        const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/admin-api`;
+        const anon = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+        const res = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            apikey: anon,
+            Authorization: `Bearer ${anon}`,
+          },
+          body: JSON.stringify({ action: "check_cpf", payload: { cpf: cpfDigits } }),
         });
-        if (error) {
-          let payload: any = null;
-          if ((error as any).context?.json) {
-            try { payload = await (error as any).context.json(); } catch {}
-          }
+        if (!res.ok) {
+          const payload = await res.json().catch(() => ({}));
           if (payload?.error === "cpf_duplicate") {
             toast.error("Este CPF já foi cadastrado anteriormente.");
             return;
@@ -134,6 +139,9 @@ function QuestionnaireComponent() {
           toast.error("Não foi possível validar o CPF. Tente novamente.");
           return;
         }
+      } catch {
+        toast.error("Erro de conexão. Tente novamente.");
+        return;
       } finally {
         setLoading(false);
       }
