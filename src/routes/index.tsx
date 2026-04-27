@@ -245,7 +245,7 @@ function QuestionnaireComponent() {
           <img
             src="/brand/logo-sarelli.png"
             alt="Doutora Fernanda Sarelli — Chama a Doutora"
-            className="h-20 mt-5 object-contain drop-shadow-[0_2px_6px_rgba(0,0,0,0.08)]"
+            className="h-32 mt-5 object-contain drop-shadow-[0_2px_6px_rgba(0,0,0,0.08)]"
           />
         </div>
 
