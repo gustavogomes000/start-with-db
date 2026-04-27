@@ -475,10 +475,6 @@ function QuestionnaireComponent() {
                   />
                 </div>
               </div>
-
-              <p className="text-[12px] text-gray-400 mt-4 px-2 text-center">
-                Capture a fala da entrevistada com fidelidade.
-              </p>
             </div>
           )}
         </div>
