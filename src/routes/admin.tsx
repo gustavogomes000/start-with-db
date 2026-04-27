@@ -413,71 +413,102 @@ function AdminLayout() {
               onClick={() => setNewAdminOpen(true)}
               className="w-full h-12 rounded-2xl bg-gradient-to-r from-[#e91e63] to-[#ec407a] font-black uppercase tracking-[0.2em] text-xs shadow-lg shadow-pink-100"
             >
-              <Plus size={16} className="mr-1" /> Novo administrador
+              <Plus size={16} className="mr-1" /> Nova entrevistadora
             </Button>
 
-            {admins.map((a) => (
-              <Card key={a.id} className="border-none shadow-sm rounded-2xl">
-                <CardContent className="p-4 flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-pink-50 text-[#e91e63] flex items-center justify-center font-black">
-                    {a.username[0]?.toUpperCase()}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-black text-sm text-gray-900 truncate">
-                      {a.username}
-                    </p>
-                    <p className="text-[11px] text-gray-400">
-                      Criado{" "}
-                      {new Date(a.created_at).toLocaleDateString("pt-BR")}
-                    </p>
-                  </div>
-                  {a.id === session.id && (
-                    <Badge className="bg-pink-50 text-[#e91e63] border-none text-[9px] font-bold">
-                      VOCÊ
-                    </Badge>
-                  )}
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <button
-                        className="w-9 h-9 rounded-xl hover:bg-gray-50 flex items-center justify-center text-gray-400"
-                        aria-label="Ações"
-                      >
-                        <MoreVertical size={18} />
-                      </button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="rounded-2xl">
-                      <DropdownMenuItem
-                        onClick={() => {
-                          setEditAdmin(a);
-                          setEditUsername(a.username);
-                        }}
-                      >
-                        <Pencil size={14} className="mr-2" /> Editar nome
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => {
-                          setPwdAdmin(a);
-                          setNewPassword("");
-                        }}
-                      >
-                        <KeyRound size={14} className="mr-2" /> Trocar senha
-                      </DropdownMenuItem>
-                      {a.id !== session.id && (
-                        <>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            onClick={() => deleteAdmin(a)}
-                            className="text-red-600 focus:text-red-600"
-                          >
-                            <Trash2 size={14} className="mr-2" /> Excluir
-                          </DropdownMenuItem>
-                        </>
+            {admins.map((a) => {
+              const isMaster = (a.username || "").toLowerCase() === "administrador";
+              const link = buildLink(a.id);
+              return (
+                <Card key={a.id} className="border-none shadow-sm rounded-2xl">
+                  <CardContent className="p-4 space-y-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-pink-50 text-[#e91e63] flex items-center justify-center font-black">
+                        {a.username[0]?.toUpperCase()}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-black text-sm text-gray-900 truncate">
+                          {a.username}
+                        </p>
+                        <p className="text-[11px] text-gray-400">
+                          Criado{" "}
+                          {new Date(a.created_at).toLocaleDateString("pt-BR")}
+                        </p>
+                      </div>
+                      {a.id === session.id && (
+                        <Badge className="bg-pink-50 text-[#e91e63] border-none text-[9px] font-bold">
+                          VOCÊ
+                        </Badge>
                       )}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </CardContent>
-              </Card>
-            ))}
+                      {isMaster && a.id !== session.id && (
+                        <Badge className="bg-amber-50 text-amber-700 border-none text-[9px] font-bold">
+                          ADMIN
+                        </Badge>
+                      )}
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <button
+                            className="w-9 h-9 rounded-xl hover:bg-gray-50 flex items-center justify-center text-gray-400"
+                            aria-label="Ações"
+                          >
+                            <MoreVertical size={18} />
+                          </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="rounded-2xl">
+                          <DropdownMenuItem
+                            onClick={() => {
+                              setEditAdmin(a);
+                              setEditUsername(a.username);
+                            }}
+                          >
+                            <Pencil size={14} className="mr-2" /> Editar nome
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => {
+                              setPwdAdmin(a);
+                              setNewPassword("");
+                            }}
+                          >
+                            <KeyRound size={14} className="mr-2" /> Trocar senha
+                          </DropdownMenuItem>
+                          {a.id !== session.id && !isMaster && (
+                            <>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem
+                                onClick={() => deleteAdmin(a)}
+                                className="text-red-600 focus:text-red-600"
+                              >
+                                <Trash2 size={14} className="mr-2" /> Excluir
+                              </DropdownMenuItem>
+                            </>
+                          )}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+
+                    {!isMaster && (
+                      <div className="flex items-center gap-2 bg-[#f3f4f6] rounded-xl px-3 py-2">
+                        <Link2 size={13} className="text-pink-500 flex-shrink-0" />
+                        <span className="flex-1 truncate text-[11px] font-medium text-gray-600">
+                          {link}
+                        </span>
+                        <button
+                          onClick={() => copiarLink(a.id)}
+                          className="flex-shrink-0 w-8 h-8 rounded-lg bg-white border border-gray-200 flex items-center justify-center hover:border-pink-300 active:scale-95 transition"
+                          aria-label="Copiar link"
+                        >
+                          {copiedId === a.id ? (
+                            <Check size={14} className="text-green-600" />
+                          ) : (
+                            <Copy size={14} className="text-gray-600" />
+                          )}
+                        </button>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         )}
       </main>
