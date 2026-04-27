@@ -336,7 +336,7 @@ function QuestionnaireComponent() {
       <header className="bg-white border-b border-gray-100 sticky top-0 z-20">
         <div className="max-w-md mx-auto px-5 py-3.5 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img src="/brand/logo-sarelli.png" alt="Sarelli" className="h-8" />
+            <img src="/brand/logo-sarelli.png" alt="Sarelli" className="h-12" />
             <div className="flex flex-col leading-none">
               <span className="text-[10px] font-medium text-gray-400 tracking-wide">Pesquisa Oficial</span>
               <span className="text-[13px] font-semibold text-gray-800">Voz das Mulheres</span>
