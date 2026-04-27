@@ -354,9 +354,11 @@ function AdminLayout() {
           </div>
           <div className="bg-white/15 backdrop-blur rounded-2xl p-4">
             <p className="text-[9px] font-bold tracking-[0.25em] uppercase opacity-80">
-              Admins
+              Entrevistadoras
             </p>
-            <p className="text-2xl font-black mt-1">{admins.length}</p>
+            <p className="text-2xl font-black mt-1">
+              {admins.filter((a) => !a.username.toLowerCase().startsWith("administrador")).length}
+            </p>
           </div>
         </div>
       </header>
