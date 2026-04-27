@@ -20,12 +20,6 @@ function buildRecoveryUrl(targetPath?: string) {
   return recoveryUrl.toString();
 }
 
-async function installCleanupServiceWorker() {
-  if (typeof window === "undefined" || !("serviceWorker" in navigator)) return;
-
-  await navigator.serviceWorker.register(`/sw.js?cleanup=${Date.now()}`, { updateViaCache: "none" }).catch(() => null);
-}
-
 async function forceFreshLoad(options: { force?: boolean; targetPath?: string; userInitiated?: boolean } = {}) {
   if (typeof window === "undefined") return false;
 
@@ -35,8 +29,6 @@ async function forceFreshLoad(options: { force?: boolean; targetPath?: string; u
   if (options.userInitiated) {
     toast.info("Validando sistema e limpando cache...", { duration: 3000 });
   }
-
-  await installCleanupServiceWorker();
 
   const registrations =
     "serviceWorker" in navigator ? await navigator.serviceWorker.getRegistrations().catch(() => []) : [];
@@ -108,10 +100,6 @@ export const Route = createRootRoute({
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "manifest", href: "/manifest.json" },
-      { rel: "apple-touch-icon", href: "/icons/apple-touch-icon.png" },
-      { rel: "icon", type: "image/png", sizes: "192x192", href: "/icons/icon-192.png" },
-      { rel: "icon", type: "image/png", sizes: "512x512", href: "/icons/icon-512.png" },
     ],
   }),
   shellComponent: RootShell,
