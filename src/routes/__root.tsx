@@ -1,5 +1,5 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts, useNavigate } from "@tanstack/react-router";
-import { Toaster } from "sonner";
+import { Toaster, toast } from "sonner";
 import { useEffect, useState } from "react";
 
 import appCss from "../styles.css?url";
@@ -66,7 +66,7 @@ function NotFoundComponent() {
         <h1 className="text-7xl font-bold text-foreground">404</h1>
         <h2 className="mt-4 text-xl font-semibold text-foreground">Página não encontrada</h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          Toque no botão abaixo para voltar para a entrevista.
+          Estamos validando que está tudo certo. Se a página não carregar sozinha, toque no botão abaixo.
         </p>
         <div className="mt-6">
           <button
@@ -74,7 +74,7 @@ function NotFoundComponent() {
             onClick={() => forceFreshLoad({ force: true, targetPath: "/", userInitiated: true })}
             className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
           >
-            Forçar nova carga
+            Validar e carregar agora
           </button>
         </div>
       </div>
@@ -133,6 +133,14 @@ function RootComponent() {
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
     setMounted(true);
+    
+    // Mostra feedback se acabamos de recuperar de um erro
+    const url = new URL(window.location.href);
+    if (url.searchParams.has(RECOVERY_QUERY_PARAM)) {
+      toast.success("Sistema validado. Está tudo certo agora!", {
+        duration: 5000,
+      });
+    }
 
     forceFreshLoad();
   }, []);
