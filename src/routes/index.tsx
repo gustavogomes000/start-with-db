@@ -278,8 +278,11 @@ function QuestionnaireComponent() {
         {/* Main Card */}
         <div className="w-full max-w-[500px] bg-white/95 backdrop-blur-2xl rounded-[32px] shadow-[0_20px_60px_-15px_rgba(236,72,153,0.15)] overflow-hidden flex flex-col relative border border-white z-10">
           
+          {/* Subtle internal dotted pattern */}
+          <div className="absolute inset-0 bg-[radial-gradient(#fce7f3_1.5px,transparent_1.5px)] [background-size:20px_20px] opacity-40 pointer-events-none" />
+
           {/* Top colored accent line */}
-          <div className="h-3 w-full bg-gradient-to-r from-pink-400 via-pink-500 to-pink-600" />
+          <div className="h-3 w-full bg-gradient-to-r from-pink-400 via-pink-500 to-pink-600 relative z-20" />
 
           {/* Discreet admin access */}
           <Link
@@ -570,10 +573,10 @@ function QuestionnaireComponent() {
 }
 function SuccessScreen() {
   useEffect(() => {
-    // Redirecionamento após 3.5 segundos
+    // Redirecionamento após 5 segundos para tempo de leitura
     const timer = setTimeout(() => {
       window.location.href = "https://www.instagram.com/drafernandasarelli/";
-    }, 3500);
+    }, 5000);
     return () => clearTimeout(timer);
   }, []);
 
@@ -607,7 +610,7 @@ function SuccessScreen() {
             Pesquisa Concluída!
           </h2>
           <p className="text-gray-500 text-[15px] leading-relaxed font-medium px-2">
-            Muito obrigado pela sua participação. Suas respostas foram registradas com sucesso e são fundamentais para nós.
+            Muito obrigado pela sua participação! Suas respostas foram registradas. Agora, vamos redirecionar você para conhecer uma mulher que está disposta a lutar e defender esses ideais!
           </p>
         </div>
 
