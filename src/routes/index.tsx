@@ -577,6 +577,7 @@ function QuestionnaireComponent() {
         </div>
       </footer>
     </div>
+    </div>
   );
 }
 function SuccessScreen() {
