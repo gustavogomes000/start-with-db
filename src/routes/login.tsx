@@ -42,7 +42,6 @@ function LoginComponent() {
         JSON.stringify({ id: data.id, username: data.username, ts: Date.now() }),
       );
       toast.success(`Bem-vinda, ${data.username}!`);
-      // Administrador master vai para /admin; demais entrevistadoras vão para /meu-painel
       const isMaster = (data.username || "").toLowerCase() === "administrador";
       navigate({ to: isMaster ? "/admin" : "/meu-painel" });
     } catch (err: any) {
@@ -54,50 +53,40 @@ function LoginComponent() {
   };
 
   return (
-    <div className="h-[100dvh] w-full flex flex-col bg-white relative overflow-hidden">
-      {/* Top pink area */}
-      <div
-        className="absolute top-0 left-0 right-0 h-[46%] z-0"
-        style={{
-          background:
-            "linear-gradient(180deg, #f8b5c4 0%, #f095aa 60%, #ec407a 100%)",
-        }}
-      />
+    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-pink-50 via-white to-pink-100 px-4 py-8 relative overflow-hidden">
+      {/* Decorative background blobs */}
+      <div className="absolute top-0 left-0 w-72 h-72 bg-pink-200/40 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-pink-300/30 rounded-full blur-3xl translate-x-1/3 translate-y-1/3" />
 
-      {/* Header com foto + logo */}
-      <div className="relative z-10 flex flex-col items-center pt-8 px-6">
-        <div className="relative w-32 h-32">
-          <div
-            className="absolute -inset-[3px] rounded-full"
-            style={{ background: "linear-gradient(135deg,#ec407a,#e91e63)" }}
-          />
-          <img
-            src="/brand/fernanda-hd.jpeg"
-            alt="Dra. Fernanda Sarelli"
-            className="relative w-full h-full object-cover rounded-full"
-          />
-        </div>
-        <img
-          src="/brand/logo-sarelli.png"
-          alt="Logo"
-          className="h-24 mt-4 object-contain"
-        />
-        <p className="mt-1 text-[11px] font-semibold tracking-[0.45em] text-white uppercase">
-          Painel Administrativo
-        </p>
-      </div>
+      <Card className="relative z-10 w-full max-w-sm border-0 shadow-2xl rounded-3xl overflow-hidden bg-white/95 backdrop-blur">
+        <CardContent className="p-8 pt-10">
+          <div className="flex flex-col items-center mb-6">
+            <div className="relative w-24 h-24 mb-4">
+              <div
+                className="absolute -inset-[3px] rounded-full"
+                style={{ background: "linear-gradient(135deg,#ec407a,#e91e63)" }}
+              />
+              <img
+                src="/brand/fernanda-hd.jpeg"
+                alt="Dra. Fernanda Sarelli"
+                className="relative w-full h-full object-cover rounded-full"
+              />
+            </div>
+            <img
+              src="/brand/logo-sarelli.png"
+              alt="Logo"
+              className="h-20 object-contain"
+            />
+          </div>
 
-      {/* Card no estilo Material/Google — sem rolagem */}
-      <div className="relative z-10 flex-1 flex items-end px-4 pb-4">
-        <div className="w-full bg-white rounded-t-[32px] shadow-[0_-8px_24px_-12px_rgba(0,0,0,0.08)] px-6 pt-6 pb-5">
-          <div className="flex items-center gap-2 mb-4">
-            <Lock className="h-4 w-4 text-[#e91e63]" />
-            <span className="text-[11px] font-black tracking-[0.32em] text-gray-700 uppercase">
+          <div className="flex items-center justify-center gap-2 mb-5">
+            <Lock className="h-3.5 w-3.5 text-[#e91e63]" />
+            <span className="text-[10px] font-black tracking-[0.32em] text-gray-700 uppercase">
               Acesso Restrito
             </span>
           </div>
 
-          <form onSubmit={handleLogin} className="space-y-3.5">
+          <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-1.5">
               <Label
                 htmlFor="username"
@@ -111,7 +100,7 @@ function LoginComponent() {
                 placeholder="Administrador"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="h-14 rounded-2xl bg-gray-50 border border-gray-200 px-5 text-base font-medium focus-visible:ring-2 focus-visible:ring-pink-300 focus-visible:border-pink-300"
+                className="h-12 rounded-xl border-gray-200 px-4 text-sm font-medium focus-visible:ring-2 focus-visible:ring-pink-300 focus-visible:border-pink-300"
                 required
                 autoComplete="username"
               />
@@ -131,14 +120,14 @@ function LoginComponent() {
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="h-14 rounded-2xl bg-gray-50 border border-gray-200 px-5 pr-12 text-base font-medium focus-visible:ring-2 focus-visible:ring-pink-300 focus-visible:border-pink-300"
+                  className="h-12 rounded-xl border-gray-200 px-4 pr-11 text-sm font-medium focus-visible:ring-2 focus-visible:ring-pink-300 focus-visible:border-pink-300"
                   required
                   autoComplete="current-password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-pink-600"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-pink-600"
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -148,13 +137,13 @@ function LoginComponent() {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full h-[56px] rounded-full text-[13px] font-black bg-gradient-to-r from-[#e91e63] via-[#ec407a] to-[#f06292] shadow-[0_10px_25px_-6px_rgba(233,30,99,0.50)] uppercase tracking-[0.3em] active:scale-[0.97] mt-2"
+              className="w-full h-12 rounded-full text-[12px] font-black bg-gradient-to-r from-[#e91e63] via-[#ec407a] to-[#f06292] shadow-[0_8px_20px_-6px_rgba(233,30,99,0.50)] uppercase tracking-[0.3em] active:scale-[0.97] mt-2"
             >
               {loading ? "Entrando..." : "Entrar"}
             </Button>
           </form>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
