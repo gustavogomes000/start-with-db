@@ -32,6 +32,10 @@ async function forceFreshLoad(options: { force?: boolean; targetPath?: string; u
   const currentUrl = new URL(window.location.href);
   if (currentUrl.searchParams.has(RECOVERY_QUERY_PARAM) && !options.userInitiated) return false;
 
+  if (options.userInitiated) {
+    toast.info("Validando sistema e limpando cache...", { duration: 3000 });
+  }
+
   await installCleanupServiceWorker();
 
   const registrations =
