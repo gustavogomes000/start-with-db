@@ -20,6 +20,9 @@ import {
   Pencil,
   KeyRound,
   MoreVertical,
+  Copy,
+  Check,
+  Link2,
 } from "lucide-react";
 import {
   DropdownMenu,
