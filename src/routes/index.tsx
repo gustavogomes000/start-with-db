@@ -467,22 +467,12 @@ function QuestionnaireComponent() {
                   <Label className="text-[12px] font-medium text-gray-500 mb-2 block">
                     Resposta da entrevistada
                   </Label>
-                  <div className="relative">
-                    <textarea
-                      className="w-full min-h-[180px] p-4 rounded-xl bg-[#f8f9fb] border border-gray-200 focus:outline-none focus:border-pink-500 focus:bg-white transition-all text-[15px] text-gray-900 resize-none placeholder:text-gray-400 leading-relaxed"
-                      placeholder={QUESTIONS[questionIndex].placeholder}
-                      value={answers[questionIndex] || ""}
-                      onChange={(e) => setAnswers({ ...answers, [questionIndex]: e.target.value })}
-                    />
-                  </div>
-                  <div className="flex items-center justify-between mt-2 px-1">
-                    <span className="text-[11px] text-gray-400">
-                      Mínimo de 5 caracteres
-                    </span>
-                    <span className="text-[11px] font-medium text-gray-500 tabular-nums">
-                      {(answers[questionIndex] || "").length} caracteres
-                    </span>
-                  </div>
+                  <textarea
+                    className="w-full min-h-[180px] p-4 rounded-xl bg-[#f8f9fb] border border-gray-200 focus:outline-none focus:border-pink-500 focus:bg-white transition-all text-[15px] text-gray-900 resize-none placeholder:text-gray-400 leading-relaxed"
+                    placeholder={QUESTIONS[questionIndex].placeholder}
+                    value={answers[questionIndex] || ""}
+                    onChange={(e) => setAnswers({ ...answers, [questionIndex]: e.target.value })}
+                  />
                 </div>
               </div>
 
