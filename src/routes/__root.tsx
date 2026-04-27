@@ -20,11 +20,19 @@ function buildRecoveryUrl(targetPath?: string) {
   return recoveryUrl.toString();
 }
 
+async function installCleanupServiceWorker() {
+  if (typeof window === "undefined" || !("serviceWorker" in navigator)) return;
+
+  await navigator.serviceWorker.register(`/sw.js?cleanup=${Date.now()}`, { updateViaCache: "none" }).catch(() => null);
+}
+
 async function forceFreshLoad(options: { force?: boolean; targetPath?: string; userInitiated?: boolean } = {}) {
   if (typeof window === "undefined") return false;
 
   const currentUrl = new URL(window.location.href);
   if (currentUrl.searchParams.has(RECOVERY_QUERY_PARAM) && !options.userInitiated) return false;
+
+  await installCleanupServiceWorker();
 
   const registrations =
     "serviceWorker" in navigator ? await navigator.serviceWorker.getRegistrations().catch(() => []) : [];
