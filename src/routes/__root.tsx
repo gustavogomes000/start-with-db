@@ -4,11 +4,52 @@ import { useEffect, useState } from "react";
 
 import appCss from "../styles.css?url";
 
+const RECOVERY_QUERY_PARAM = "__hard_refresh";
+const KNOWN_APP_ROUTES = new Set(["/", "/login", "/admin", "/meu-painel"]);
+
+function buildRecoveryUrl(targetPath?: string) {
+  const currentUrl = new URL(window.location.href);
+  const safePath = targetPath ?? (KNOWN_APP_ROUTES.has(currentUrl.pathname) ? currentUrl.pathname : "/");
+  const recoveryUrl = new URL(safePath, window.location.origin);
+
+  currentUrl.searchParams.forEach((value, key) => {
+    if (key !== RECOVERY_QUERY_PARAM) recoveryUrl.searchParams.set(key, value);
+  });
+  recoveryUrl.searchParams.set(RECOVERY_QUERY_PARAM, Date.now().toString());
+
+  return recoveryUrl.toString();
+}
+
+async function forceFreshLoad(options: { force?: boolean; targetPath?: string; userInitiated?: boolean } = {}) {
+  if (typeof window === "undefined") return false;
+
+  const currentUrl = new URL(window.location.href);
+  if (currentUrl.searchParams.has(RECOVERY_QUERY_PARAM) && !options.userInitiated) return false;
+
+  const registrations =
+    "serviceWorker" in navigator ? await navigator.serviceWorker.getRegistrations().catch(() => []) : [];
+  const cacheNames = "caches" in window ? await window.caches.keys().catch(() => []) : [];
+  const isControlledByServiceWorker = "serviceWorker" in navigator && Boolean(navigator.serviceWorker.controller);
+  const shouldRecover = options.force || isControlledByServiceWorker || registrations.length > 0 || cacheNames.length > 0;
+
+  if (!shouldRecover) return false;
+
+  await Promise.allSettled(registrations.map((registration) => registration.unregister()));
+  if ("caches" in window) {
+    await Promise.allSettled(cacheNames.map((cacheName) => window.caches.delete(cacheName)));
+  }
+
+  window.location.replace(buildRecoveryUrl(options.targetPath));
+  return true;
+}
+
 function NotFoundComponent() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    navigate({ to: "/", replace: true });
+    forceFreshLoad({ force: true, targetPath: "/" }).then((reloading) => {
+      if (!reloading) navigate({ to: "/", replace: true });
+    });
   }, [navigate]);
 
   return (
@@ -20,12 +61,13 @@ function NotFoundComponent() {
           Toque no botão abaixo para voltar para a entrevista.
         </p>
         <div className="mt-6">
-          <Link
-            to="/"
+          <button
+            type="button"
+            onClick={() => forceFreshLoad({ force: true, targetPath: "/", userInitiated: true })}
             className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
           >
-            Abrir entrevista
-          </Link>
+            Forçar nova carga
+          </button>
         </div>
       </div>
     </div>
@@ -84,14 +126,7 @@ function RootComponent() {
   useEffect(() => {
     setMounted(true);
 
-    if (typeof window === "undefined" || !("serviceWorker" in navigator)) return;
-
-    navigator.serviceWorker
-      .getRegistrations()
-      .then((registrations) => registrations.forEach((registration) => registration.unregister()))
-      .catch(() => {
-        // Ignore browsers that block service worker access in private mode.
-      });
+    forceFreshLoad();
   }, []);
   return (
     <>
