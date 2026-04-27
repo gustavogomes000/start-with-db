@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
+import { getAdminSession, removeAdminSession } from "@/lib/safe-session";
 import { toast } from "sonner";
 import { Copy, LogOut, Link2, Users, Check, Share2, MessageCircle } from "lucide-react";
 
@@ -26,21 +27,13 @@ function MeuPainel() {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    const raw = localStorage.getItem("admin_session");
-    if (!raw) {
+    const s = getAdminSession();
+    if (!s) {
       navigate({ to: "/login" });
       return;
     }
-    try {
-      const s = JSON.parse(raw);
-      if (!s?.id) throw new Error("invalid");
-      setSession({ id: s.id, username: s.username });
-      fetchMine(s.id);
-    } catch {
-      localStorage.removeItem("admin_session");
-      navigate({ to: "/login" });
-    }
+    setSession({ id: s.id, username: s.username });
+    fetchMine(s.id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -52,7 +45,7 @@ function MeuPainel() {
       });
       if (error) throw error;
       if (data?.error === "unauthorized") {
-        localStorage.removeItem("admin_session");
+        removeAdminSession();
         navigate({ to: "/login" });
         return;
       }
@@ -66,7 +59,7 @@ function MeuPainel() {
   }
 
   function handleLogout() {
-    localStorage.removeItem("admin_session");
+    removeAdminSession();
     navigate({ to: "/login" });
   }
 

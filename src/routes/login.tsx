@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 // supabase client not needed — using fetch directly to avoid 4xx error overlays
+import { setAdminSession } from "@/lib/safe-session";
 import { toast } from "sonner";
 import { Eye, EyeOff, Lock, Loader2 } from "lucide-react";
 
@@ -69,10 +70,7 @@ function LoginComponent() {
         return;
       }
 
-      localStorage.setItem(
-        "admin_session",
-        JSON.stringify({ id: data.id, username: data.username, ts: Date.now() }),
-      );
+      setAdminSession({ id: data.id, username: data.username });
       toast.success(`Bem-vinda, ${data.username}!`);
       const isMaster = (data.username || "").toLowerCase().startsWith("administrador");
       // Pequeno delay para o overlay aparecer suavemente
