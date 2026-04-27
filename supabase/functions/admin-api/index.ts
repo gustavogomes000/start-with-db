@@ -33,6 +33,19 @@ Deno.serve(async (req) => {
       return json({ interviewers: data ?? [] });
     }
 
+    // Public action — check if a CPF is already registered (used before continuing the form)
+    if (action === "check_cpf") {
+      const cpfDigits = String(payload?.cpf ?? "").replace(/\D/g, "");
+      if (!isValidCPF(cpfDigits)) return json({ error: "cpf_invalid" }, 400);
+      const { data: existing } = await admin
+        .from("promotion_entries")
+        .select("id")
+        .eq("cpf", cpfDigits)
+        .maybeSingle();
+      if (existing) return json({ error: "cpf_duplicate" }, 409);
+      return json({ ok: true });
+    }
+
     // Public action — submit a questionnaire entry with CPF validation + uniqueness
     if (action === "submit_entry") {
       const p = payload ?? {};

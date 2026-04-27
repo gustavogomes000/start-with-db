@@ -81,7 +81,7 @@ function QuestionnaireComponent() {
     fetchData();
   }, [recruiterId]);
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (step === 1) {
       if (!selectedUserId) {
         toast.error("Selecione quem está entrevistando.");
@@ -95,6 +95,53 @@ function QuestionnaireComponent() {
       if (!isValidCPF(cpfDigits)) {
         toast.error("CPF inválido. Confira os números digitados.");
         return;
+      }
+      // Validar data de nascimento (idade mínima 18 anos, não futura, ano plausível)
+      const nasc = new Date(formData.dataNascimento);
+      if (isNaN(nasc.getTime())) {
+        toast.error("Data de nascimento inválida.");
+        return;
+      }
+      const hoje = new Date();
+      if (nasc > hoje) {
+        toast.error("Data de nascimento não pode ser no futuro.");
+        return;
+      }
+      if (nasc.getFullYear() < 1900) {
+        toast.error("Data de nascimento inválida.");
+        return;
+      }
+      let idade = hoje.getFullYear() - nasc.getFullYear();
+      const m = hoje.getMonth() - nasc.getMonth();
+      if (m < 0 || (m === 0 && hoje.getDate() < nasc.getDate())) idade--;
+      if (idade < 18) {
+        toast.error("É necessário ter no mínimo 18 anos.");
+        return;
+      }
+      // Checar CPF duplicado no servidor antes de prosseguir
+      setLoading(true);
+      try {
+        const { error } = await supabase.functions.invoke("admin-api", {
+          body: { action: "check_cpf", payload: { cpf: cpfDigits } },
+        });
+        if (error) {
+          let payload: any = null;
+          if ((error as any).context?.json) {
+            try { payload = await (error as any).context.json(); } catch {}
+          }
+          if (payload?.error === "cpf_duplicate") {
+            toast.error("Este CPF já foi cadastrado anteriormente.");
+            return;
+          }
+          if (payload?.error === "cpf_invalid") {
+            toast.error("CPF inválido.");
+            return;
+          }
+          toast.error("Não foi possível validar o CPF. Tente novamente.");
+          return;
+        }
+      } finally {
+        setLoading(false);
       }
     } else if (step === 2) {
       if (!answers[questionIndex] || answers[questionIndex].trim().length < 5) {
