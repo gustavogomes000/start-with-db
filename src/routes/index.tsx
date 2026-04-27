@@ -17,26 +17,37 @@ const QUESTIONS = [
     id: 1,
     question: "O que mais te preocupa hoje na sua vida ou na vida da sua família?",
     placeholder: "Ex: economia, segurança, saúde, filhos, trabalho...",
+    type: "textarea",
   },
   {
     id: 2,
     question: "Você sente que tem apoio suficiente (do governo, da comunidade ou da família) no seu dia a dia? O que falta?",
     placeholder: "Ex: creche, saúde, renda, segurança...",
+    type: "textarea",
   },
   {
     id: 3,
     question: "Qual foi a maior dificuldade que você enfrentou nos últimos anos como mulher?",
     placeholder: "Histórias de superação, desafios no trabalho, sobrecarga...",
+    type: "textarea",
   },
   {
     id: 4,
     question: "O que precisa melhorar na sua cidade para que a vida das mulheres seja melhor?",
     placeholder: "Ex: transporte, iluminação, saúde, oportunidades...",
+    type: "textarea",
   },
   {
     id: 5,
     question: "Se você pudesse mudar uma coisa imediatamente na sua vida ou na sociedade, o que seria?",
     placeholder: "Seu maior desejo ou prioridade para o futuro...",
+    type: "textarea",
+  },
+  {
+    id: 6,
+    question: "Você votaria em uma mulher que está disposta a lutar e defender esses ideais?",
+    type: "choice",
+    options: ["Sim", "Não", "Talvez"],
   },
 ];
 
@@ -146,7 +157,9 @@ function QuestionnaireComponent() {
         setLoading(false);
       }
     } else if (step === 2) {
-      if (!answers[questionIndex] || answers[questionIndex].trim().length < 5) {
+      const currentAnswer = answers[questionIndex];
+      const currentQuestion = QUESTIONS[questionIndex];
+      if (!currentAnswer || (currentQuestion.type !== 'choice' && currentAnswer.trim().length < 5)) {
         toast.error("Responda com mais detalhes.");
         return;
       }
@@ -253,139 +266,83 @@ function QuestionnaireComponent() {
 
   if (step === 0) {
     return (
-      <div
-        className="h-[100dvh] w-full flex flex-col relative overflow-hidden"
-        style={{ background: "#ffffff" }}
-      >
-        {/* Top pink area — official light pink from website */}
-        <div
-          className="absolute top-0 left-0 right-0 h-[60%] z-0"
-          style={{
-            background:
-              "linear-gradient(180deg, #f8b5c4 0%, #f5a5b8 55%, #f095aa 100%)",
-          }}
-        />
-
-        {/* Acesso discreto ao painel */}
-        <Link
-          to="/login"
-          aria-label="Acesso ao painel"
-          className="absolute top-3 right-3 z-30 w-8 h-8 rounded-full flex items-center justify-center bg-white/15 backdrop-blur-sm text-white/60 hover:text-white hover:bg-white/30 active:scale-95 transition"
-        >
-          <Lock size={13} strokeWidth={2.2} />
-        </Link>
-
-        {/* Soft white glow on the pink */}
-        <div
-          className="absolute -top-32 left-1/2 -translate-x-1/2 w-[120%] h-80 z-[1] pointer-events-none"
-          style={{
-            background:
-              "radial-gradient(ellipse at center, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 70%)",
-          }}
-        />
-
-        {/* Curved gold flourish — signature element from official site */}
-        <svg
-          className="absolute z-[2] left-0 right-0 pointer-events-none"
-          style={{ top: "calc(60% - 20px)" }}
-          viewBox="0 0 400 40"
-          preserveAspectRatio="none"
-          width="100%"
-          height="40"
-        >
-          <defs>
-            <linearGradient id="goldFlourish" x1="0" x2="1">
-              <stop offset="0%" stopColor="#d4a04a" stopOpacity="0" />
-              <stop offset="50%" stopColor="#e6b85c" stopOpacity="1" />
-              <stop offset="100%" stopColor="#d4a04a" stopOpacity="0" />
-            </linearGradient>
-          </defs>
-          <path
-            d="M 20 25 Q 200 -10 380 25"
-            stroke="url(#goldFlourish)"
-            strokeWidth="2"
-            fill="none"
-          />
-        </svg>
-
-        {/* Discreet admin access (bottom-right corner) */}
-        <button
-          type="button"
-          onClick={() => navigate({ to: "/login" })}
-          aria-label="Acesso administrativo"
-          className="absolute bottom-2 right-2 z-30 w-6 h-6 rounded-full opacity-20 hover:opacity-60 active:opacity-90 transition-opacity flex items-center justify-center"
-        >
-          <span className="w-1.5 h-1.5 rounded-full bg-gray-400" />
-        </button>
-
-        {/* Top label */}
-        <div className="relative z-10 flex items-center justify-center pt-7">
-          <div className="flex items-center gap-3">
-            <span className="w-1.5 h-1.5 rounded-full bg-white/80" />
-            <span className="text-[10px] font-bold tracking-[0.45em] text-white uppercase">
-              Pesquisa Oficial · 2026
-            </span>
-            <span className="w-1.5 h-1.5 rounded-full bg-white/80" />
-          </div>
-        </div>
-
-        {/* HERO: portrait centered + logo below (matching official layout) */}
-        <div className="relative z-10 flex flex-col items-center pt-6 px-6">
-          {/* Portrait with thin pink ring */}
-          <div className="relative w-44 h-44">
-            {/* Pink outer ring */}
-            <div
-              className="absolute -inset-[3px] rounded-full"
-              style={{
-                background:
-                  "linear-gradient(135deg, #ec407a 0%, #e91e63 100%)",
-              }}
-            />
-            <img
-              src="/brand/fernanda-hd.jpeg"
-              alt="Dra. Fernanda Sarelli"
-              className="relative w-full h-full object-cover rounded-full"
-            />
+      <div className="min-h-[100dvh] w-full bg-gray-50 flex items-center justify-center p-0 sm:p-6 font-sans">
+        <div className="w-full max-w-[420px] h-[100dvh] sm:h-[800px] sm:rounded-[40px] sm:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] relative overflow-hidden bg-white flex flex-col">
+          
+          {/* Background Top Gradient */}
+          <div
+            className="absolute top-0 left-0 right-0 h-[45%] z-0"
+            style={{
+              background: "linear-gradient(145deg, #f8b5c4 0%, #f06292 100%)",
+              borderBottomLeftRadius: "48px",
+              borderBottomRightRadius: "48px",
+            }}
+          >
+            {/* Overlay Patterns */}
+            <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,_white_10%,_transparent_10%)]" style={{ backgroundSize: '20px 20px' }}></div>
           </div>
 
-          {/* Official logo */}
-          <div className="w-full flex justify-center mt-5">
-            <img
-              src="/brand/logo-sarelli.png"
-              alt="Doutora Fernanda Sarelli — Chama a Doutora"
-              className="h-32 w-auto mx-auto object-contain block drop-shadow-[0_2px_6px_rgba(0,0,0,0.08)]"
-            />
-          </div>
-        </div>
+          {/* Discreet admin access */}
+          <Link
+            to="/login"
+            aria-label="Acesso ao painel"
+            className="absolute top-4 right-4 z-30 w-9 h-9 rounded-full flex items-center justify-center bg-white/20 backdrop-blur-md text-white/80 hover:text-white hover:bg-white/40 active:scale-95 transition-all shadow-sm"
+          >
+            <Lock size={14} strokeWidth={2.5} />
+          </Link>
 
-        {/* Floating CTA card */}
-        <div className="relative z-10 flex-1 flex items-end px-5 pb-7">
-          <div className="w-full bg-white rounded-[28px] px-7 pt-6 pb-6 shadow-[0_20px_50px_-12px_rgba(236,64,122,0.30)] border border-pink-50">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="h-[2px] w-5 bg-gradient-to-r from-[#e91e63] to-[#e6b85c] rounded-full" />
-              <span className="text-[10px] font-black tracking-[0.35em] text-[#c9a227] uppercase">
-                Sua Voz Importa
+          {/* Top Label */}
+          <div className="relative z-10 flex flex-col items-center pt-16 pb-8">
+            <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 shadow-sm">
+              <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+              <span className="text-[10px] font-bold tracking-[0.3em] text-white uppercase">
+                Pesquisa Oficial
               </span>
             </div>
+          </div>
 
-            <h1 className="text-[2rem] leading-[1] font-black text-gray-900 tracking-tight">
-              Voz das{" "}
-              <span className="bg-gradient-to-r from-[#e91e63] to-[#ec407a] bg-clip-text text-transparent">
-                Mulheres
-              </span>
-            </h1>
+          {/* Main Card */}
+          <div className="relative z-10 flex-1 flex flex-col justify-end px-5 pb-8">
+            <div className="w-full bg-white rounded-[32px] p-8 pt-12 shadow-[0_15px_40px_-10px_rgba(236,64,122,0.25)] border border-pink-50 relative flex flex-col items-center text-center">
+              
+              {/* Floating Icon */}
+              <div className="absolute -top-12 w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-[0_10px_25px_rgba(0,0,0,0.06)]">
+                <div className="w-[72px] h-[72px] rounded-full bg-gradient-to-br from-pink-500 to-pink-600 flex items-center justify-center shadow-inner">
+                  <MessageSquare className="text-white w-9 h-9" strokeWidth={1.5} />
+                </div>
+              </div>
 
-            <p className="mt-3 text-[14px] text-gray-500 font-medium leading-snug">
-              Sua opinião é a força que transforma Goiás. Leva menos de 2 minutos.
-            </p>
+              {/* Tagline */}
+              <div className="flex items-center justify-center gap-2 mb-4 w-full mt-2">
+                <div className="h-[2px] flex-1 bg-gradient-to-r from-transparent to-pink-100" />
+                <span className="text-[11px] font-bold tracking-[0.25em] text-pink-500 uppercase px-2">
+                  Sua Voz Importa
+                </span>
+                <div className="h-[2px] flex-1 bg-gradient-to-l from-transparent to-pink-100" />
+              </div>
 
-            <Button
-              onClick={() => setStep(1)}
-              className="mt-5 w-full h-[54px] rounded-2xl text-[14px] font-black bg-gradient-to-r from-[#e91e63] via-[#ec407a] to-[#f06292] bg-[length:200%_auto] hover:bg-right transition-all duration-700 shadow-[0_10px_25px_-6px_rgba(233,30,99,0.50)] border-none text-white active:scale-[0.97] uppercase tracking-[0.2em]"
-            >
-              Começar agora
-              <ChevronRight className="ml-1 h-5 w-5" />
-            </Button>
+              {/* Title */}
+              <h1 className="text-[2.6rem] leading-[1.05] font-black text-gray-900 tracking-tight mb-4">
+                Voz das <br />
+                <span className="bg-gradient-to-r from-pink-500 to-pink-600 bg-clip-text text-transparent">
+                  Mulheres
+                </span>
+              </h1>
+
+              {/* Description */}
+              <p className="text-[14px] text-gray-500 font-medium leading-relaxed mb-8 px-1">
+                Queremos entender as suas necessidades e ideias. Participe e ajude a construir um futuro melhor para todas.
+              </p>
+
+              {/* Call to Action */}
+              <Button
+                onClick={() => setStep(1)}
+                className="w-full h-[56px] rounded-2xl text-[14px] font-black bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 shadow-[0_8px_20px_-6px_rgba(219,39,119,0.5)] border-none text-white active:scale-[0.98] uppercase tracking-[0.1em] transition-all flex items-center justify-center"
+              >
+                Iniciar Pesquisa
+                <ChevronRight className="ml-1 h-5 w-5" />
+              </Button>
+            </div>
           </div>
         </div>
       </div>
@@ -406,12 +363,15 @@ function QuestionnaireComponent() {
   const isLastQuestion = step === 2 && questionIndex === QUESTIONS.length - 1;
 
   return (
-    <div className="min-h-screen bg-[#f8f9fb] flex flex-col">
-      {/* App bar — Material 3 style */}
-      <header className="bg-white border-b border-gray-100 sticky top-0 z-20">
-        <div className="max-w-md mx-auto px-5 py-3.5 flex items-center justify-between">
+    <div className="min-h-[100dvh] w-full bg-gray-50 flex items-center justify-center p-0 sm:p-6 font-sans">
+      <div className="w-full max-w-[420px] h-[100dvh] sm:h-[800px] sm:rounded-[40px] sm:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] bg-[#f8f9fb] flex flex-col relative overflow-hidden">
+        {/* App bar — Material 3 style */}
+        <header className="bg-white border-b border-gray-100 flex-shrink-0 z-20">
+          <div className="px-5 py-3.5 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img src="/brand/logo-sarelli.png" alt="Sarelli" className="h-12" />
+            <div className="w-10 h-10 rounded-full bg-pink-100 flex items-center justify-center text-pink-600">
+              <MessageSquare size={20} />
+            </div>
             <div className="flex flex-col leading-none">
               <span className="text-[10px] font-medium text-gray-400 tracking-wide">Pesquisa Oficial</span>
               <span className="text-[13px] font-semibold text-gray-800">Voz das Mulheres</span>
@@ -442,8 +402,8 @@ function QuestionnaireComponent() {
         </div>
       </header>
 
-      <main className="flex-1 px-4 pt-6 pb-32 overflow-y-auto">
-        <div className="max-w-md mx-auto">
+      <main className="flex-1 px-4 pt-6 pb-28 overflow-y-auto">
+        <div className="w-full">
 
           {step === 1 && (
             <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-400">
@@ -561,12 +521,30 @@ function QuestionnaireComponent() {
                   <Label className="text-[12px] font-medium text-gray-500 mb-2 block">
                     Resposta da entrevistada
                   </Label>
-                  <textarea
-                    className="w-full min-h-[180px] p-4 rounded-xl bg-[#f8f9fb] border border-gray-200 focus:outline-none focus:border-pink-500 focus:bg-white transition-all text-[15px] text-gray-900 resize-none placeholder:text-gray-400 leading-relaxed"
-                    placeholder={QUESTIONS[questionIndex].placeholder}
-                    value={answers[questionIndex] || ""}
-                    onChange={(e) => setAnswers({ ...answers, [questionIndex]: e.target.value })}
-                  />
+                  {QUESTIONS[questionIndex].type === 'choice' ? (
+                    <div className="space-y-3 mt-4">
+                      {QUESTIONS[questionIndex].options?.map((option) => (
+                        <button
+                          key={option}
+                          onClick={() => setAnswers({ ...answers, [questionIndex]: option })}
+                          className={`w-full p-4 rounded-xl border text-left text-[15px] transition-all ${
+                            answers[questionIndex] === option
+                              ? "border-pink-500 bg-pink-50 text-pink-700 font-medium"
+                              : "border-gray-200 bg-white text-gray-700 hover:border-pink-300"
+                          }`}
+                        >
+                          {option}
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    <textarea
+                      className="w-full min-h-[180px] p-4 rounded-xl bg-[#f8f9fb] border border-gray-200 focus:outline-none focus:border-pink-500 focus:bg-white transition-all text-[15px] text-gray-900 resize-none placeholder:text-gray-400 leading-relaxed"
+                      placeholder={QUESTIONS[questionIndex].placeholder}
+                      value={answers[questionIndex] || ""}
+                      onChange={(e) => setAnswers({ ...answers, [questionIndex]: e.target.value })}
+                    />
+                  )}
                 </div>
               </div>
             </div>
@@ -575,8 +553,8 @@ function QuestionnaireComponent() {
       </main>
 
       {/* Footer / botões — estilo Material 3 */}
-      <footer className="p-4 bg-white/95 backdrop-blur-md border-t border-gray-100 fixed bottom-0 w-full z-20">
-        <div className="max-w-md mx-auto flex gap-3">
+      <footer className="p-4 bg-white/95 backdrop-blur-md border-t border-gray-100 absolute bottom-0 left-0 right-0 z-20">
+        <div className="flex gap-3">
           {(step > 1 || (step === 2 && questionIndex > 0)) && (
             <Button
               variant="ghost"
@@ -602,61 +580,27 @@ function QuestionnaireComponent() {
   );
 }
 function SuccessScreen() {
-  const INSTAGRAM_URL = "https://www.instagram.com/drafernandasarelli/";
-  const [countdown, setCountdown] = useState(3);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCountdown((c) => (c > 0 ? c - 1 : 0));
-    }, 1000);
-    const timeout = setTimeout(() => {
-      window.location.href = INSTAGRAM_URL;
-    }, 2500);
-    return () => {
-      clearInterval(interval);
-      clearTimeout(timeout);
-    };
-  }, []);
-
   return (
-    <div className="min-h-screen bg-[#f8f9fb] flex items-center justify-center p-6">
-      <div className="w-full max-w-sm text-center space-y-6 animate-in fade-in zoom-in duration-500">
-        <div className="relative mx-auto w-24 h-24">
-          <div className="absolute inset-0 bg-green-500/20 rounded-full animate-ping" />
-          <div className="relative w-24 h-24 bg-green-500 rounded-full flex items-center justify-center shadow-[0_8px_24px_rgba(34,197,94,0.35)]">
-            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="20 6 9 17 4 12" />
-            </svg>
+    <div className="min-h-[100dvh] w-full bg-gray-50 flex items-center justify-center p-0 sm:p-6 font-sans">
+      <div className="w-full max-w-[420px] h-[100dvh] sm:h-[800px] sm:rounded-[40px] sm:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] bg-[#f8f9fb] flex flex-col items-center justify-center p-6 relative overflow-hidden">
+        <div className="w-full text-center space-y-6 animate-in fade-in zoom-in duration-500">
+          <div className="relative mx-auto w-24 h-24">
+            <div className="absolute inset-0 bg-green-500/20 rounded-full animate-ping" />
+            <div className="relative w-24 h-24 bg-green-500 rounded-full flex items-center justify-center shadow-[0_8px_24px_rgba(34,197,94,0.35)]">
+              <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            </div>
+          </div>
+          <div className="space-y-2">
+            <h2 className="text-3xl font-semibold text-gray-900 tracking-tight">
+              Pesquisa Concluída!
+            </h2>
+            <p className="text-gray-500 text-[15px] leading-relaxed">
+              Muito obrigado pela sua participação. Suas respostas foram registradas com sucesso.
+            </p>
           </div>
         </div>
-        <div className="space-y-2">
-          <h2 className="text-3xl font-semibold text-gray-900 tracking-tight">
-            Cadastro realizado!
-          </h2>
-          <p className="text-gray-500 text-[15px] leading-relaxed">
-            Tudo certo. Sua participação foi registrada com sucesso.
-          </p>
-        </div>
-        <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-          <p className="text-[13px] text-gray-500">
-            Redirecionando para o Instagram da
-          </p>
-          <p className="text-[14px] font-semibold text-pink-600 mt-0.5">
-            @drafernandasarelli
-          </p>
-          <div className="mt-3 flex items-center justify-center gap-2">
-            <div className="w-3.5 h-3.5 rounded-full border-2 border-pink-200 border-t-pink-500 animate-spin" />
-            <span className="text-[12px] font-medium text-gray-400 tabular-nums">
-              em {countdown}s
-            </span>
-          </div>
-        </div>
-        <a
-          href={INSTAGRAM_URL}
-          className="inline-block text-[13px] font-medium text-gray-400 hover:text-pink-600 transition-colors"
-        >
-          Ir agora →
-        </a>
       </div>
     </div>
   );
