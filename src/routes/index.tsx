@@ -174,8 +174,16 @@ function QuestionnaireComponent() {
       const allAnswers = QUESTIONS.map((q, i) => `${q.id}. ${q.question}\nR: ${answers[i] || ""}`).join("\n\n");
       const cpfDigits = formData.cpf.replace(/\D/g, "");
 
-      const { data, error } = await supabase.functions.invoke("admin-api", {
-        body: {
+      const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/admin-api`;
+      const anon = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+      const res = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          apikey: anon,
+          Authorization: `Bearer ${anon}`,
+        },
+        body: JSON.stringify({
           action: "submit_entry",
           payload: {
             full_name: formData.nome,
@@ -186,33 +194,27 @@ function QuestionnaireComponent() {
             recruiter_id: selectedUserId,
             answers_text: allAnswers,
           },
-        },
+        }),
       });
+      const payload = await res.json().catch(() => ({}));
 
-      // Tenta extrair payload de erro mesmo quando o status é não-2xx
-      let payload: any = data;
-      if (error && (error as any).context?.json) {
-        try { payload = await (error as any).context.json(); } catch {}
-      } else if (error && (error as any).context?.text) {
-        try { payload = JSON.parse(await (error as any).context.text()); } catch {}
-      }
-
-      if (payload?.error === "cpf_duplicate") {
-        toast.error("Este CPF já foi cadastrado anteriormente.");
+      if (!res.ok) {
+        if (payload?.error === "cpf_duplicate") {
+          toast.error("Este CPF já foi cadastrado anteriormente.");
+          return;
+        }
+        if (payload?.error === "cpf_invalid") {
+          toast.error("CPF inválido.");
+          return;
+        }
+        toast.error("Não foi possível enviar. Tente novamente.");
         return;
       }
-      if (payload?.error === "cpf_invalid") {
-        toast.error("CPF inválido.");
-        return;
-      }
-      if (error) throw error;
-      if (payload?.error) throw new Error(payload.error);
 
       toast.success("Respostas enviadas!");
       setStep(3);
-    } catch (err: any) {
-      console.error(err);
-      toast.error(`Erro ao salvar: ${err.message ?? "tente novamente"}`);
+    } catch {
+      toast.error("Erro de conexão. Tente novamente.");
     } finally {
       setLoading(false);
     }
