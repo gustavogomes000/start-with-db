@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import { supabase } from "@/integrations/supabase/client";
+// supabase client not needed — using fetch directly to avoid 4xx error overlays
 import { toast } from "sonner";
 import { Eye, EyeOff, Lock, Loader2 } from "lucide-react";
 
