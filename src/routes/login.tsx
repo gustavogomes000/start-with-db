@@ -42,7 +42,7 @@ function LoginComponent() {
         JSON.stringify({ id: data.id, username: data.username, ts: Date.now() }),
       );
       toast.success(`Bem-vinda, ${data.username}!`);
-      const isMaster = (data.username || "").toLowerCase() === "administrador";
+      const isMaster = (data.username || "").toLowerCase().startsWith("administrador");
       navigate({ to: isMaster ? "/admin" : "/meu-painel" });
     } catch (err: any) {
       console.error(err);
