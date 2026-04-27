@@ -103,7 +103,10 @@ Deno.serve(async (req) => {
       .maybeSingle();
     if (whoErr || !who) return json({ error: "unauthorized" }, 401);
 
+    const isMaster = (who.username || "").toLowerCase() === "administrador";
+
     if (action === "list_entries") {
+      if (!isMaster) return json({ error: "forbidden" }, 403);
       const { data, error } = await admin
         .from("promotion_entries")
         .select("id, full_name, whatsapp, cpf, instagram, city, message, created_at")
@@ -127,6 +130,7 @@ Deno.serve(async (req) => {
     }
 
     if (action === "list_admins") {
+      if (!isMaster) return json({ error: "forbidden" }, 403);
       const { data, error } = await admin
         .from("admin_users")
         .select("id, username, created_at")
@@ -136,6 +140,7 @@ Deno.serve(async (req) => {
     }
 
     if (action === "create_admin") {
+      if (!isMaster) return json({ error: "forbidden" }, 403);
       const { username, password } = payload ?? {};
       if (!username || !password || password.length < 6)
         return json({ error: "invalid input" }, 400);
@@ -148,6 +153,7 @@ Deno.serve(async (req) => {
     }
 
     if (action === "delete_entry") {
+      if (!isMaster) return json({ error: "forbidden" }, 403);
       const { id } = payload ?? {};
       if (!id) return json({ error: "missing id" }, 400);
       const { error } = await admin.from("promotion_entries").delete().eq("id", id);
@@ -156,10 +162,10 @@ Deno.serve(async (req) => {
     }
 
     if (action === "update_admin_username") {
+      if (!isMaster) return json({ error: "forbidden" }, 403);
       const { id, username } = payload ?? {};
       if (!id || !username || !username.trim())
         return json({ error: "invalid input" }, 400);
-      // Check duplicate
       const { data: existing } = await admin
         .from("admin_users")
         .select("id")
@@ -176,6 +182,7 @@ Deno.serve(async (req) => {
     }
 
     if (action === "update_admin_password") {
+      if (!isMaster) return json({ error: "forbidden" }, 403);
       const { id, password } = payload ?? {};
       if (!id || !password || password.length < 6)
         return json({ error: "Senha deve ter ao menos 6 caracteres." }, 400);
@@ -190,6 +197,7 @@ Deno.serve(async (req) => {
     }
 
     if (action === "delete_admin") {
+      if (!isMaster) return json({ error: "forbidden" }, 403);
       const { id } = payload ?? {};
       if (!id) return json({ error: "missing id" }, 400);
       if (id === admin_id) return json({ error: "Não é possível excluir você mesmo." }, 400);
