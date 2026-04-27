@@ -42,7 +42,9 @@ function LoginComponent() {
         JSON.stringify({ id: data.id, username: data.username, ts: Date.now() }),
       );
       toast.success(`Bem-vinda, ${data.username}!`);
-      navigate({ to: "/admin" });
+      // Administrador master vai para /admin; demais entrevistadoras vão para /meu-painel
+      const isMaster = (data.username || "").toLowerCase() === "administrador";
+      navigate({ to: isMaster ? "/admin" : "/meu-painel" });
     } catch (err: any) {
       console.error(err);
       toast.error(err.message || "Erro ao entrar.");

@@ -33,6 +33,54 @@ Deno.serve(async (req) => {
       return json({ interviewers: data ?? [] });
     }
 
+    // Public action — submit a questionnaire entry with CPF validation + uniqueness
+    if (action === "submit_entry") {
+      const p = payload ?? {};
+      const cpfDigits = String(p.cpf ?? "").replace(/\D/g, "");
+      if (!isValidCPF(cpfDigits)) return json({ error: "cpf_invalid" }, 400);
+      if (!p.full_name || !p.whatsapp || !p.recruiter_id) {
+        return json({ error: "missing_fields" }, 400);
+      }
+      // Check duplicate CPF
+      const { data: existing, error: existErr } = await admin
+        .from("promotion_entries")
+        .select("id")
+        .eq("cpf", cpfDigits)
+        .maybeSingle();
+      if (existErr) return json({ error: existErr.message }, 400);
+      if (existing) return json({ error: "cpf_duplicate" }, 409);
+
+      // Resolve recruiter name
+      const { data: rec } = await admin
+        .from("admin_users")
+        .select("username")
+        .eq("id", p.recruiter_id)
+        .maybeSingle();
+      const recruiterName = rec?.username ?? "—";
+
+      const { error: insErr } = await admin.from("promotion_entries").insert({
+        full_name: p.full_name,
+        whatsapp: p.whatsapp,
+        phone: p.whatsapp,
+        cpf: cpfDigits,
+        instagram: p.instagram ?? null,
+        city: p.city ?? "Voz das Mulheres",
+        message: `Entrevistador: ${recruiterName} (${p.recruiter_id})\nNascimento: ${p.data_nascimento ?? ""}\n\n${p.answers_text ?? ""}`,
+      });
+      if (insErr) return json({ error: insErr.message }, 400);
+
+      // Mirror in cadastros_fernanda (best-effort)
+      await admin.from("cadastros_fernanda").insert({
+        nome: p.full_name,
+        telefone: p.whatsapp,
+        instagram: p.instagram ?? null,
+        cadastrado_por: p.recruiter_id,
+        cidade: "Pesquisa Voz das Mulheres",
+      });
+
+      return json({ ok: true });
+    }
+
     if (action === "login") {
       const { username, password } = payload ?? {};
       if (!username || !password) return json({ error: "missing credentials" }, 400);
@@ -63,6 +111,19 @@ Deno.serve(async (req) => {
         .limit(1000);
       if (error) return json({ error: error.message }, 400);
       return json({ entries: data ?? [] });
+    }
+
+    // Entries created by THIS recruiter only (uses message tag we inject)
+    if (action === "list_my_entries") {
+      const tag = `(${admin_id})`;
+      const { data, error } = await admin
+        .from("promotion_entries")
+        .select("id, full_name, whatsapp, cpf, instagram, city, created_at, message")
+        .ilike("message", `%${tag}%`)
+        .order("created_at", { ascending: false })
+        .limit(1000);
+      if (error) return json({ error: error.message }, 400);
+      return json({ entries: data ?? [], username: who.username });
     }
 
     if (action === "list_admins") {
@@ -148,4 +209,19 @@ function json(data: unknown, status = 200) {
     status,
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
+}
+
+function isValidCPF(cpf: string): boolean {
+  if (!cpf || cpf.length !== 11) return false;
+  if (/^(\d)\1{10}$/.test(cpf)) return false;
+  let sum = 0;
+  for (let i = 0; i < 9; i++) sum += parseInt(cpf[i]) * (10 - i);
+  let d1 = (sum * 10) % 11;
+  if (d1 === 10) d1 = 0;
+  if (d1 !== parseInt(cpf[9])) return false;
+  sum = 0;
+  for (let i = 0; i < 10; i++) sum += parseInt(cpf[i]) * (11 - i);
+  let d2 = (sum * 10) % 11;
+  if (d2 === 10) d2 = 0;
+  return d2 === parseInt(cpf[10]);
 }
