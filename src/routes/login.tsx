@@ -29,25 +29,43 @@ function LoginComponent() {
     }
     setLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke("admin-api", {
-        body: { action: "login", payload: { username: u, password: p } },
+      const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/admin-api`;
+      const anon = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+      const res = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          apikey: anon,
+          Authorization: `Bearer ${anon}`,
+        },
+        body: JSON.stringify({ action: "login", payload: { username: u, password: p } }),
       });
-      if (error) throw error;
-      if (!data?.id) {
-        toast.error(data?.error === "invalid_credentials" ? "Usuário ou senha inválidos." : (data?.error || "Falha no login."));
+      const data = await res.json().catch(() => ({}));
+
+      if (data?.error === "invalid_credentials" || !data?.id) {
+        toast.error(
+          data?.error === "invalid_credentials"
+            ? "Usuário ou senha inválidos."
+            : data?.error === "missing_credentials"
+            ? "Preencha usuário e senha."
+            : "Falha no login. Tente novamente.",
+        );
+        setLoading(false);
         return;
       }
+
       localStorage.setItem(
         "admin_session",
         JSON.stringify({ id: data.id, username: data.username, ts: Date.now() }),
       );
       toast.success(`Bem-vinda, ${data.username}!`);
       const isMaster = (data.username || "").toLowerCase().startsWith("administrador");
-      navigate({ to: isMaster ? "/admin" : "/meu-painel" });
-    } catch (err: any) {
-      console.error(err);
-      toast.error(err.message || "Erro ao entrar.");
-    } finally {
+      // Pequeno delay para o overlay aparecer suavemente
+      setTimeout(() => {
+        navigate({ to: isMaster ? "/admin" : "/meu-painel" });
+      }, 600);
+    } catch {
+      toast.error("Erro de conexão. Tente novamente.");
       setLoading(false);
     }
   };
