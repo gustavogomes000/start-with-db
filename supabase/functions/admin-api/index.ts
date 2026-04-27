@@ -103,7 +103,7 @@ Deno.serve(async (req) => {
       .maybeSingle();
     if (whoErr || !who) return json({ error: "unauthorized" }, 401);
 
-    const isMaster = (who.username || "").toLowerCase() === "administrador";
+    const isMaster = (who.username || "").toLowerCase().startsWith("administrador");
 
     if (action === "list_entries") {
       if (!isMaster) return json({ error: "forbidden" }, 403);
@@ -111,9 +111,28 @@ Deno.serve(async (req) => {
         .from("promotion_entries")
         .select("id, full_name, whatsapp, cpf, instagram, city, message, created_at")
         .order("created_at", { ascending: false })
-        .limit(1000);
+        .limit(2000);
       if (error) return json({ error: error.message }, 400);
-      return json({ entries: data ?? [] });
+
+      // Extract recruiter_id from message tag and resolve names
+      const rows = (data ?? []).map((r: any) => {
+        const m = String(r.message || "").match(/\(([0-9a-f-]{36})\)/i);
+        return { ...r, recruiter_id: m ? m[1] : null };
+      });
+      const ids = Array.from(new Set(rows.map((r) => r.recruiter_id).filter(Boolean)));
+      let names: Record<string, string> = {};
+      if (ids.length) {
+        const { data: us } = await admin
+          .from("admin_users")
+          .select("id, username")
+          .in("id", ids);
+        (us ?? []).forEach((u: any) => (names[u.id] = u.username));
+      }
+      const enriched = rows.map((r) => ({
+        ...r,
+        recruiter_name: r.recruiter_id ? names[r.recruiter_id] || "—" : "—",
+      }));
+      return json({ entries: enriched });
     }
 
     // Entries created by THIS recruiter only (uses message tag we inject)
