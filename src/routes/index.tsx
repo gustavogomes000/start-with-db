@@ -331,206 +331,193 @@ function QuestionnaireComponent() {
   const isLastQuestion = step === 2 && questionIndex === QUESTIONS.length - 1;
 
   return (
-    <div className="min-h-screen bg-[#fff5f8] flex flex-col relative overflow-hidden">
-      <div
-        className="absolute inset-0 opacity-[0.03] pointer-events-none"
-        style={{
-          backgroundImage: `url('https://rede.deputadasarelli.com.br/assets/bg-pattern.svg')`,
-          backgroundSize: "300px",
-          backgroundRepeat: "repeat",
-        }}
-      />
-
-      <header className="px-6 py-6 flex flex-col items-center bg-white/80 backdrop-blur-md border-b border-pink-50 sticky top-0 z-20 shadow-sm">
-        <img src="/brand/logo-sarelli.png" alt="Sarelli" className="h-12 mb-4" />
-        <div className="w-full max-w-xs bg-pink-50 h-2 rounded-full overflow-hidden">
+    <div className="min-h-screen bg-[#f8f9fb] flex flex-col">
+      {/* App bar — Material 3 style */}
+      <header className="bg-white border-b border-gray-100 sticky top-0 z-20">
+        <div className="max-w-md mx-auto px-5 py-3.5 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <img src="/brand/logo-sarelli.png" alt="Sarelli" className="h-8" />
+            <div className="flex flex-col leading-none">
+              <span className="text-[10px] font-medium text-gray-400 tracking-wide">Pesquisa Oficial</span>
+              <span className="text-[13px] font-semibold text-gray-800">Voz das Mulheres</span>
+            </div>
+          </div>
+          <div className="flex items-center gap-1.5 bg-pink-50 px-2.5 py-1 rounded-full">
+            <div className="w-1.5 h-1.5 rounded-full bg-pink-500 animate-pulse" />
+            <span className="text-[11px] font-semibold text-pink-700">
+              {step === 1 ? "Cadastro" : `${questionIndex + 1}/${QUESTIONS.length}`}
+            </span>
+          </div>
+        </div>
+        {/* linear progress (Material) */}
+        <div className="h-[3px] w-full bg-pink-50">
           <div
-            className="h-full bg-gradient-to-r from-[#e91e63] to-[#ff9800] transition-all duration-700 ease-out"
+            className="h-full bg-pink-500 transition-all duration-700 ease-out"
             style={{ width: `${progress * 100}%` }}
           />
         </div>
       </header>
 
-      <main className="flex-1 p-6 pb-32 overflow-y-auto">
-        <div className="max-w-md mx-auto space-y-8">
-          <div className="space-y-1">
-            <span className="text-[10px] font-black text-pink-600 uppercase tracking-widest">
-              Etapa {step} de 2
-            </span>
-            <h2 className="text-2xl font-black text-gray-900 uppercase tracking-tighter">
-              {stepTitle}
-            </h2>
-          </div>
+      <main className="flex-1 px-4 pt-6 pb-32 overflow-y-auto">
+        <div className="max-w-md mx-auto">
 
           {step === 1 && (
-            <div className="space-y-5 animate-in slide-in-from-right duration-500 pb-10">
-              <div className="bg-white/80 backdrop-blur-md p-6 rounded-[2rem] border border-pink-50 shadow-sm space-y-5">
-                <div className="flex items-center gap-3 mb-1">
-                  <User className="text-pink-500" size={22} />
-                  <span className="text-sm font-bold text-gray-700">
-                    Identifique o entrevistador responsável
-                  </span>
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-xs font-black uppercase tracking-[0.2em] text-pink-400">
-                    Selecione o entrevistador
-                  </Label>
-                  <div className="relative">
-                    <select
-                      value={selectedUserId}
-                      onChange={(e) => setSelectedUserId(e.target.value)}
-                      className="w-full h-14 pl-5 pr-12 rounded-2xl bg-white border border-pink-100 appearance-none font-bold text-gray-900 shadow-sm focus:ring-4 focus:ring-pink-100 transition-all text-base"
-                    >
-                      <option value="">Selecione...</option>
-                      {users.map((user) => (
-                        <option key={user.id} value={user.id}>
-                          {user.nome}
-                        </option>
-                      ))}
-                    </select>
-                    <ChevronRight className="absolute right-5 top-1/2 -translate-y-1/2 h-6 w-6 text-pink-400 rotate-90 pointer-events-none" />
+            <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-400">
+              <div className="px-1 mb-2">
+                <h2 className="text-[22px] font-semibold text-gray-900 tracking-tight">Dados da entrevistada</h2>
+                <p className="text-sm text-gray-500 mt-1">Preencha as informações para começar.</p>
+              </div>
+
+              {/* Card entrevistador */}
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-[0_1px_2px_rgba(0,0,0,0.04)] p-5">
+                <div className="flex items-center gap-2.5 mb-4">
+                  <div className="w-8 h-8 rounded-full bg-pink-50 flex items-center justify-center">
+                    <User className="text-pink-600" size={16} />
                   </div>
-                  {users.length === 0 && (
-                    <p className="text-xs text-gray-400 italic">Carregando entrevistadores...</p>
-                  )}
+                  <span className="text-[13px] font-semibold text-gray-700">Entrevistador responsável</span>
+                </div>
+                <div className="relative">
+                  <select
+                    value={selectedUserId}
+                    onChange={(e) => setSelectedUserId(e.target.value)}
+                    className="w-full h-12 pl-4 pr-10 rounded-xl bg-[#f3f4f6] border border-transparent appearance-none text-[15px] font-medium text-gray-900 focus:outline-none focus:border-pink-500 focus:bg-white transition-all"
+                  >
+                    <option value="">Selecione um entrevistador</option>
+                    {users.map((user) => (
+                      <option key={user.id} value={user.id}>{user.nome}</option>
+                    ))}
+                  </select>
+                  <ChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 rotate-90 pointer-events-none" />
+                </div>
+                {users.length === 0 && (
+                  <p className="text-xs text-gray-400 mt-2">Carregando entrevistadores...</p>
+                )}
+              </div>
+
+              {/* Card dados pessoais */}
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-[0_1px_2px_rgba(0,0,0,0.04)] p-5 space-y-4">
+                <div className="flex items-center gap-2.5 mb-1">
+                  <div className="w-8 h-8 rounded-full bg-pink-50 flex items-center justify-center">
+                    <MessageSquare className="text-pink-600" size={16} />
+                  </div>
+                  <span className="text-[13px] font-semibold text-gray-700">Informações pessoais</span>
                 </div>
 
-                <div className="h-px bg-pink-50 my-2" />
-
-                <div className="space-y-2">
-                  <Label className="text-xs font-black uppercase tracking-[0.2em] text-pink-400">Nome Completo</Label>
-                  <Input
-                    value={formData.nome}
-                    onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
-                    placeholder="Nome da entrevistada"
-                    className="h-14 rounded-2xl bg-white border-pink-100 shadow-sm px-5 text-base font-medium focus:ring-4 focus:ring-pink-100"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-xs font-black uppercase tracking-[0.2em] text-pink-400">CPF</Label>
-                  <Input
-                    value={formData.cpf}
-                    onChange={(e) => setFormData({ ...formData, cpf: e.target.value })}
-                    placeholder="000.000.000-00"
-                    className="h-14 rounded-2xl bg-white border-pink-100 shadow-sm px-5 text-base font-medium focus:ring-4 focus:ring-pink-100"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-xs font-black uppercase tracking-[0.2em] text-pink-400">WhatsApp</Label>
-                  <Input
-                    value={formData.whatsapp}
-                    onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
-                    placeholder="(00) 00000-0000"
-                    className="h-14 rounded-2xl bg-white border-pink-100 shadow-sm px-5 text-base font-medium focus:ring-4 focus:ring-pink-100"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-xs font-black uppercase tracking-[0.2em] text-pink-400">Data de Nascimento</Label>
-                  <Input
-                    type="date"
-                    value={formData.dataNascimento}
-                    onChange={(e) => setFormData({ ...formData, dataNascimento: e.target.value })}
-                    className="h-14 rounded-2xl bg-white border-pink-100 shadow-sm px-5 text-base font-medium focus:ring-4 focus:ring-pink-100"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-xs font-black uppercase tracking-[0.2em] text-pink-400">Instagram</Label>
-                  <Input
-                    value={formData.instagram}
-                    onChange={(e) => setFormData({ ...formData, instagram: e.target.value })}
-                    placeholder="@perfil"
-                    className="h-14 rounded-2xl bg-white border-pink-100 shadow-sm px-5 text-base font-medium focus:ring-4 focus:ring-pink-100"
-                  />
-                </div>
+                {[
+                  { key: "nome", label: "Nome completo", placeholder: "Ex: Maria Silva", type: "text" },
+                  { key: "cpf", label: "CPF", placeholder: "000.000.000-00", type: "text" },
+                  { key: "whatsapp", label: "WhatsApp", placeholder: "(00) 00000-0000", type: "tel" },
+                  { key: "dataNascimento", label: "Data de nascimento", placeholder: "", type: "date" },
+                  { key: "instagram", label: "Instagram", placeholder: "@perfil", type: "text" },
+                ].map((field) => (
+                  <div key={field.key} className="space-y-1.5">
+                    <Label className="text-[12px] font-medium text-gray-600 px-1">{field.label}</Label>
+                    <Input
+                      type={field.type}
+                      value={(formData as any)[field.key]}
+                      onChange={(e) => setFormData({ ...formData, [field.key]: e.target.value })}
+                      placeholder={field.placeholder}
+                      className="h-12 rounded-xl bg-[#f3f4f6] border border-transparent px-4 text-[15px] font-medium text-gray-900 focus:outline-none focus-visible:ring-0 focus:border-pink-500 focus:bg-white transition-all"
+                    />
+                  </div>
+                ))}
               </div>
             </div>
           )}
 
           {step === 2 && (
-            <div className="space-y-6 animate-in slide-in-from-right fade-in duration-500">
-              {/* Pergunta — card hero gradiente */}
-              <div className="relative overflow-hidden rounded-[2rem] p-7 shadow-[0_20px_50px_-12px_rgba(233,30,99,0.35)] bg-gradient-to-br from-[#ec407a] via-[#e91e63] to-[#ad1457]">
-                {/* decorativo */}
-                <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-white/10 blur-2xl pointer-events-none" />
-                <div className="absolute -bottom-12 -left-8 w-36 h-36 rounded-full bg-[#ff9800]/20 blur-2xl pointer-events-none" />
+            <div className="animate-in fade-in slide-in-from-right-2 duration-400">
+              {/* Indicador de pergunta com números — estilo Google Forms */}
+              <div className="flex items-center gap-1.5 mb-5 px-1 overflow-x-auto">
+                {QUESTIONS.map((_, i) => (
+                  <div
+                    key={i}
+                    className={`flex-shrink-0 h-1.5 rounded-full transition-all duration-500 ${
+                      i === questionIndex
+                        ? "w-8 bg-pink-500"
+                        : i < questionIndex
+                        ? "w-4 bg-pink-300"
+                        : "w-4 bg-gray-200"
+                    }`}
+                  />
+                ))}
+              </div>
 
-                <div className="relative flex items-center justify-between mb-5">
-                  <div className="flex items-center gap-2 bg-white/15 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20">
-                    <MessageSquare className="text-white" size={14} />
-                    <span className="text-[10px] font-black text-white uppercase tracking-[0.25em]">
-                      Pergunta {questionIndex + 1} / {QUESTIONS.length}
+              {/* Card principal */}
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] overflow-hidden">
+                {/* Topo com número grande */}
+                <div className="px-6 pt-6 pb-4 border-b border-gray-50">
+                  <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0 w-10 h-10 rounded-full bg-pink-500 text-white flex items-center justify-center text-[15px] font-semibold shadow-[0_4px_12px_rgba(236,72,153,0.35)]">
+                      {questionIndex + 1}
+                    </div>
+                    <div className="flex-1 pt-1">
+                      <span className="text-[11px] font-medium text-gray-400 uppercase tracking-wider">
+                        Pergunta {questionIndex + 1} de {QUESTIONS.length}
+                      </span>
+                      <h2 className="text-[19px] leading-snug font-semibold text-gray-900 mt-1.5">
+                        {QUESTIONS[questionIndex].question}
+                      </h2>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Campo de resposta */}
+                <div className="p-6 pt-5">
+                  <Label className="text-[12px] font-medium text-gray-500 mb-2 block">
+                    Resposta da entrevistada
+                  </Label>
+                  <div className="relative">
+                    <textarea
+                      className="w-full min-h-[180px] p-4 rounded-xl bg-[#f8f9fb] border border-gray-200 focus:outline-none focus:border-pink-500 focus:bg-white transition-all text-[15px] text-gray-900 resize-none placeholder:text-gray-400 leading-relaxed"
+                      placeholder={QUESTIONS[questionIndex].placeholder}
+                      value={answers[questionIndex] || ""}
+                      onChange={(e) => setAnswers({ ...answers, [questionIndex]: e.target.value })}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between mt-2 px-1">
+                    <span className="text-[11px] text-gray-400">
+                      Mínimo de 5 caracteres
+                    </span>
+                    <span className="text-[11px] font-medium text-gray-500 tabular-nums">
+                      {(answers[questionIndex] || "").length} caracteres
                     </span>
                   </div>
-                  <div className="flex gap-1.5">
-                    {QUESTIONS.map((_, i) => (
-                      <div
-                        key={i}
-                        className={`h-1.5 rounded-full transition-all duration-500 ${
-                          i === questionIndex
-                            ? "w-6 bg-white"
-                            : i < questionIndex
-                            ? "w-1.5 bg-white/80"
-                            : "w-1.5 bg-white/30"
-                        }`}
-                      />
-                    ))}
-                  </div>
                 </div>
-
-                <p className="relative text-[1.35rem] leading-tight font-black text-white tracking-tight">
-                  {QUESTIONS[questionIndex].question}
-                </p>
               </div>
 
-              {/* Resposta */}
-              <div className="space-y-2">
-                <Label className="text-xs font-black uppercase tracking-[0.2em] text-pink-500 px-1">
-                  Sua resposta
-                </Label>
-                <div className="relative group">
-                  <div className="absolute -inset-0.5 bg-gradient-to-r from-[#e91e63] to-[#ff9800] rounded-[2rem] opacity-0 group-focus-within:opacity-60 blur transition-opacity duration-300" />
-                  <textarea
-                    className="relative w-full min-h-[220px] p-6 rounded-[2rem] bg-white border border-pink-100 focus:outline-none focus:border-pink-300 transition-all text-base font-medium resize-none shadow-xl shadow-pink-100/40 placeholder:text-gray-300 leading-relaxed"
-                    placeholder={QUESTIONS[questionIndex].placeholder}
-                    value={answers[questionIndex] || ""}
-                    onChange={(e) => setAnswers({ ...answers, [questionIndex]: e.target.value })}
-                  />
-                  <div className="absolute bottom-4 right-5 text-[10px] font-bold text-gray-400 tabular-nums">
-                    {(answers[questionIndex] || "").length} caracteres
-                  </div>
-                </div>
-                <p className="text-[11px] text-gray-400 px-1 italic">
-                  💬 Mínimo de 5 caracteres. Capture a fala da entrevistada com fidelidade.
-                </p>
-              </div>
+              <p className="text-[12px] text-gray-400 mt-4 px-2 text-center">
+                Capture a fala da entrevistada com fidelidade.
+              </p>
             </div>
           )}
         </div>
       </main>
 
-      <footer className="p-6 bg-white/80 backdrop-blur-md border-t border-pink-50 fixed bottom-0 w-full z-20">
-        <div className="max-w-md mx-auto flex gap-4">
+      {/* Footer / botões — estilo Material 3 */}
+      <footer className="p-4 bg-white/95 backdrop-blur-md border-t border-gray-100 fixed bottom-0 w-full z-20">
+        <div className="max-w-md mx-auto flex gap-3">
           {(step > 1 || (step === 2 && questionIndex > 0)) && (
             <Button
-              variant="outline"
+              variant="ghost"
               onClick={handleBack}
-              className="h-16 w-20 rounded-[1.5rem] border-none bg-pink-50 text-pink-400 active:scale-95 hover:bg-pink-100 transition-colors"
+              className="h-13 px-5 rounded-full text-pink-600 hover:bg-pink-50 font-medium text-[14px] active:scale-95 transition-all"
             >
-              <ChevronLeft size={28} strokeWidth={3} />
+              <ChevronLeft size={18} className="mr-1" />
+              Voltar
             </Button>
           )}
 
           <Button
             onClick={handleNext}
             disabled={loading}
-            className="h-16 flex-1 rounded-[1.5rem] text-base font-black bg-gradient-to-r from-[#e91e63] to-[#ff9800] shadow-[0_10px_20px_rgba(233,30,99,0.2)] border-none text-white active:scale-95 uppercase tracking-wider"
+            className="h-13 flex-1 rounded-full text-[15px] font-medium bg-pink-600 hover:bg-pink-700 shadow-[0_4px_12px_rgba(236,72,153,0.35)] text-white active:scale-[0.98] transition-all"
           >
-            {loading ? "ENVIANDO..." : isLastQuestion ? "FINALIZAR" : "CONTINUAR"}
-            {!isLastQuestion && <ChevronRight size={24} strokeWidth={3} className="ml-2" />}
+            {loading ? "Enviando..." : isLastQuestion ? "Finalizar" : "Continuar"}
+            {!loading && <ChevronRight size={18} className="ml-1" />}
           </Button>
         </div>
       </footer>
-
     </div>
   );
 }
