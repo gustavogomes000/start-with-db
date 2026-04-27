@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { ChevronRight, ChevronLeft, Send, User, MessageSquare } from "lucide-react";
+import { ChevronRight, ChevronLeft, Send, User, MessageSquare, Lock } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   component: QuestionnaireComponent,
