@@ -34,15 +34,16 @@ Deno.serve(async (req) => {
     }
 
     // Public action — check if a CPF is already registered (used before continuing the form)
+    // NOTE: returns 200 with payload errors so the browser doesn't log network errors / trigger overlay
     if (action === "check_cpf") {
       const cpfDigits = String(payload?.cpf ?? "").replace(/\D/g, "");
-      if (!isValidCPF(cpfDigits)) return json({ error: "cpf_invalid" }, 400);
+      if (!isValidCPF(cpfDigits)) return json({ ok: false, error: "cpf_invalid" });
       const { data: existing } = await admin
         .from("promotion_entries")
         .select("id")
         .eq("cpf", cpfDigits)
         .maybeSingle();
-      if (existing) return json({ error: "cpf_duplicate" }, 409);
+      if (existing) return json({ ok: false, error: "cpf_duplicate" });
       return json({ ok: true });
     }
 
