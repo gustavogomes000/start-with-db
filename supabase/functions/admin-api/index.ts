@@ -34,25 +34,27 @@ Deno.serve(async (req) => {
     }
 
     // Public action — check if a CPF is already registered (used before continuing the form)
+    // NOTE: returns 200 with payload errors so the browser doesn't log network errors / trigger overlay
     if (action === "check_cpf") {
       const cpfDigits = String(payload?.cpf ?? "").replace(/\D/g, "");
-      if (!isValidCPF(cpfDigits)) return json({ error: "cpf_invalid" }, 400);
+      if (!isValidCPF(cpfDigits)) return json({ ok: false, error: "cpf_invalid" });
       const { data: existing } = await admin
         .from("promotion_entries")
         .select("id")
         .eq("cpf", cpfDigits)
         .maybeSingle();
-      if (existing) return json({ error: "cpf_duplicate" }, 409);
+      if (existing) return json({ ok: false, error: "cpf_duplicate" });
       return json({ ok: true });
     }
 
     // Public action — submit a questionnaire entry with CPF validation + uniqueness
+    // NOTE: validation errors return 200 with payload error to avoid client-side network error overlays
     if (action === "submit_entry") {
       const p = payload ?? {};
       const cpfDigits = String(p.cpf ?? "").replace(/\D/g, "");
-      if (!isValidCPF(cpfDigits)) return json({ error: "cpf_invalid" }, 400);
+      if (!isValidCPF(cpfDigits)) return json({ ok: false, error: "cpf_invalid" });
       if (!p.full_name || !p.whatsapp || !p.recruiter_id) {
-        return json({ error: "missing_fields" }, 400);
+        return json({ ok: false, error: "missing_fields" });
       }
       // Check duplicate CPF
       const { data: existing, error: existErr } = await admin
@@ -60,8 +62,8 @@ Deno.serve(async (req) => {
         .select("id")
         .eq("cpf", cpfDigits)
         .maybeSingle();
-      if (existErr) return json({ error: existErr.message }, 400);
-      if (existing) return json({ error: "cpf_duplicate" }, 409);
+      if (existErr) return json({ ok: false, error: existErr.message }, 500);
+      if (existing) return json({ ok: false, error: "cpf_duplicate" });
 
       // Resolve recruiter name
       const { data: rec } = await admin
