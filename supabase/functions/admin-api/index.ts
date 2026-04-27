@@ -98,15 +98,15 @@ Deno.serve(async (req) => {
 
     if (action === "login") {
       const { username, password } = payload ?? {};
-      if (!username || !password) return json({ error: "missing credentials" }, 400);
+      if (!username || !password) return json({ ok: false, error: "missing_credentials" });
       const { data, error } = await admin.rpc("admin_check_password", {
         p_username: username,
         p_password: password,
       });
-      if (error) return json({ error: error.message }, 400);
+      if (error) return json({ ok: false, error: error.message });
       const row = Array.isArray(data) ? data[0] : null;
-      if (!row?.id) return json({ error: "invalid_credentials" }, 401);
-      return json({ id: row.id, username: row.username });
+      if (!row?.id) return json({ ok: false, error: "invalid_credentials" });
+      return json({ ok: true, id: row.id, username: row.username });
     }
 
     // For all other actions, verify admin_id exists
