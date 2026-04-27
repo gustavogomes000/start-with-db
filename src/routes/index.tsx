@@ -447,24 +447,62 @@ function QuestionnaireComponent() {
           )}
 
           {step === 2 && (
-            <div className="space-y-6 animate-in slide-in-from-right duration-500">
-              <div className="bg-white/70 backdrop-blur-sm p-6 rounded-[2rem] border border-pink-50 shadow-sm">
-                <div className="flex items-center gap-2 mb-3">
-                  <MessageSquare className="text-pink-500" size={18} />
-                  <span className="text-[10px] font-black text-pink-600 uppercase tracking-widest">
-                    Pergunta {questionIndex + 1}
-                  </span>
+            <div className="space-y-6 animate-in slide-in-from-right fade-in duration-500">
+              {/* Pergunta — card hero gradiente */}
+              <div className="relative overflow-hidden rounded-[2rem] p-7 shadow-[0_20px_50px_-12px_rgba(233,30,99,0.35)] bg-gradient-to-br from-[#ec407a] via-[#e91e63] to-[#ad1457]">
+                {/* decorativo */}
+                <div className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-white/10 blur-2xl pointer-events-none" />
+                <div className="absolute -bottom-12 -left-8 w-36 h-36 rounded-full bg-[#ff9800]/20 blur-2xl pointer-events-none" />
+
+                <div className="relative flex items-center justify-between mb-5">
+                  <div className="flex items-center gap-2 bg-white/15 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20">
+                    <MessageSquare className="text-white" size={14} />
+                    <span className="text-[10px] font-black text-white uppercase tracking-[0.25em]">
+                      Pergunta {questionIndex + 1} / {QUESTIONS.length}
+                    </span>
+                  </div>
+                  <div className="flex gap-1.5">
+                    {QUESTIONS.map((_, i) => (
+                      <div
+                        key={i}
+                        className={`h-1.5 rounded-full transition-all duration-500 ${
+                          i === questionIndex
+                            ? "w-6 bg-white"
+                            : i < questionIndex
+                            ? "w-1.5 bg-white/80"
+                            : "w-1.5 bg-white/30"
+                        }`}
+                      />
+                    ))}
+                  </div>
                 </div>
-                <p className="text-lg font-black leading-tight text-gray-900">
+
+                <p className="relative text-[1.35rem] leading-tight font-black text-white tracking-tight">
                   {QUESTIONS[questionIndex].question}
                 </p>
               </div>
-              <textarea
-                className="w-full min-h-[220px] p-6 rounded-[2rem] bg-white border-none focus:ring-4 focus:ring-pink-100 transition-all text-base font-medium resize-none shadow-xl shadow-pink-50/50 placeholder:text-gray-300"
-                placeholder={QUESTIONS[questionIndex].placeholder}
-                value={answers[questionIndex] || ""}
-                onChange={(e) => setAnswers({ ...answers, [questionIndex]: e.target.value })}
-              />
+
+              {/* Resposta */}
+              <div className="space-y-2">
+                <Label className="text-xs font-black uppercase tracking-[0.2em] text-pink-500 px-1">
+                  Sua resposta
+                </Label>
+                <div className="relative group">
+                  <div className="absolute -inset-0.5 bg-gradient-to-r from-[#e91e63] to-[#ff9800] rounded-[2rem] opacity-0 group-focus-within:opacity-60 blur transition-opacity duration-300" />
+                  <textarea
+                    className="relative w-full min-h-[220px] p-6 rounded-[2rem] bg-white border border-pink-100 focus:outline-none focus:border-pink-300 transition-all text-base font-medium resize-none shadow-xl shadow-pink-100/40 placeholder:text-gray-300 leading-relaxed"
+                    placeholder={QUESTIONS[questionIndex].placeholder}
+                    value={answers[questionIndex] || ""}
+                    onChange={(e) => setAnswers({ ...answers, [questionIndex]: e.target.value })}
+                  />
+                  <div className="absolute bottom-4 right-5 text-[10px] font-bold text-gray-400 tabular-nums">
+                    {(answers[questionIndex] || "").length} caracteres
+                  </div>
+                </div>
+                <p className="text-[11px] text-gray-400 px-1 italic">
+                  💬 Mínimo de 5 caracteres. Capture a fala da entrevistada com fidelidade.
+                </p>
+              </div>
             </div>
           )}
         </div>
