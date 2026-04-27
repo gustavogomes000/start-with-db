@@ -91,6 +91,11 @@ function QuestionnaireComponent() {
         toast.error("Preencha todos os campos.");
         return;
       }
+      const cpfDigits = formData.cpf.replace(/\D/g, "");
+      if (!isValidCPF(cpfDigits)) {
+        toast.error("CPF inválido. Confira os números digitados.");
+        return;
+      }
     } else if (step === 2) {
       if (!answers[questionIndex] || answers[questionIndex].trim().length < 5) {
         toast.error("Responda com mais detalhes.");
@@ -118,29 +123,33 @@ function QuestionnaireComponent() {
     setLoading(true);
     try {
       const allAnswers = QUESTIONS.map((q, i) => `${q.id}. ${q.question}\nR: ${answers[i] || ""}`).join("\n\n");
+      const cpfDigits = formData.cpf.replace(/\D/g, "");
 
-      const interviewerName = users.find((u) => u.id === selectedUserId)?.nome || "—";
-      const fullMessage = `Entrevistador: ${interviewerName} (${selectedUserId})\nNascimento: ${formData.dataNascimento}\n\n${allAnswers}`;
-
-      const { error } = await supabase.from("promotion_entries").insert({
-        full_name: formData.nome,
-        whatsapp: formData.whatsapp,
-        phone: formData.whatsapp,
-        cpf: formData.cpf,
-        instagram: formData.instagram,
-        city: "Voz das Mulheres",
-        message: fullMessage,
+      const { data, error } = await supabase.functions.invoke("admin-api", {
+        body: {
+          action: "submit_entry",
+          payload: {
+            full_name: formData.nome,
+            whatsapp: formData.whatsapp,
+            cpf: cpfDigits,
+            instagram: formData.instagram,
+            data_nascimento: formData.dataNascimento,
+            recruiter_id: selectedUserId,
+            answers_text: allAnswers,
+          },
+        },
       });
 
       if (error) throw error;
-
-      await supabase.from("cadastros_fernanda").insert({
-        nome: formData.nome,
-        telefone: formData.whatsapp,
-        instagram: formData.instagram,
-        cadastrado_por: selectedUserId,
-        cidade: "Pesquisa Voz das Mulheres",
-      });
+      if (data?.error === "cpf_duplicate") {
+        toast.error("Este CPF já foi cadastrado anteriormente.");
+        return;
+      }
+      if (data?.error === "cpf_invalid") {
+        toast.error("CPF inválido.");
+        return;
+      }
+      if (data?.error) throw new Error(data.error);
 
       toast.success("Respostas enviadas!");
       setStep(3);
@@ -151,6 +160,36 @@ function QuestionnaireComponent() {
       setLoading(false);
     }
   };
+
+  function isValidCPF(cpf: string): boolean {
+    if (!cpf || cpf.length !== 11) return false;
+    if (/^(\d)\1{10}$/.test(cpf)) return false;
+    let sum = 0;
+    for (let i = 0; i < 9; i++) sum += parseInt(cpf[i]) * (10 - i);
+    let d1 = (sum * 10) % 11;
+    if (d1 === 10) d1 = 0;
+    if (d1 !== parseInt(cpf[9])) return false;
+    sum = 0;
+    for (let i = 0; i < 10; i++) sum += parseInt(cpf[i]) * (11 - i);
+    let d2 = (sum * 10) % 11;
+    if (d2 === 10) d2 = 0;
+    return d2 === parseInt(cpf[10]);
+  }
+
+  function maskCPF(v: string) {
+    const d = v.replace(/\D/g, "").slice(0, 11);
+    return d
+      .replace(/(\d{3})(\d)/, "$1.$2")
+      .replace(/(\d{3})(\d)/, "$1.$2")
+      .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+  }
+
+  function maskPhone(v: string) {
+    const d = v.replace(/\D/g, "").slice(0, 11);
+    if (d.length <= 10) return d.replace(/(\d{2})(\d{4})(\d)/, "($1) $2-$3");
+    return d.replace(/(\d{2})(\d{5})(\d)/, "($1) $2-$3");
+  }
+
 
 
   if (step === 0) {
