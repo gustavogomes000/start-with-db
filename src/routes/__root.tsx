@@ -126,6 +126,9 @@ function RootComponent() {
   useEffect(() => {
     setMounted(true);
 
+    document.cookie = "__dpl=; Max-Age=0; path=/; SameSite=Lax; Secure";
+    document.cookie = `__dpl=; Max-Age=0; path=/; domain=${window.location.hostname}; SameSite=Lax; Secure`;
+
     const url = new URL(window.location.href);
     if (url.searchParams.has(RECOVERY_QUERY_PARAM)) {
       toast.success("Sistema validado. Está tudo certo agora!", {
