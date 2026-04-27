@@ -585,6 +585,9 @@ function AdminLayout() {
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-3 mt-2 text-sm">
+            {selected?.recruiter_name && (
+              <Field label="Entrevistadora" value={selected.recruiter_name} />
+            )}
             {selected?.whatsapp && (
               <Field label="WhatsApp" value={selected.whatsapp} />
             )}
