@@ -1,6 +1,6 @@
 import { Outlet, createRootRoute, HeadContent, Scripts, useNavigate } from "@tanstack/react-router";
 import { Toaster, toast } from "sonner";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import appCss from "../styles.css?url";
 
@@ -122,10 +122,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
 }
 
 function RootComponent() {
-  const [mounted, setMounted] = useState(false);
   useEffect(() => {
-    setMounted(true);
-
     document.cookie = "__dpl=; Max-Age=0; path=/; SameSite=Lax; Secure";
     document.cookie = `__dpl=; Max-Age=0; path=/; domain=${window.location.hostname}; SameSite=Lax; Secure`;
 
@@ -145,7 +142,7 @@ function RootComponent() {
   return (
     <>
       <Outlet />
-      {mounted && <Toaster position="top-center" richColors closeButton />}
+      <Toaster position="top-center" richColors closeButton />
     </>
   );
 }
