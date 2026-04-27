@@ -266,83 +266,48 @@ function QuestionnaireComponent() {
 
   if (step === 0) {
     return (
-      <div className="min-h-[100dvh] w-full bg-gray-50 flex items-center justify-center p-0 sm:p-6 font-sans">
-        <div className="w-full max-w-[420px] h-[100dvh] sm:h-[800px] sm:rounded-[40px] sm:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] relative overflow-hidden bg-white flex flex-col">
+      <div className="min-h-[100dvh] w-full bg-[#f0f4f9] flex items-center justify-center p-4 sm:p-6 font-sans">
+        <div className="w-full max-w-[500px] bg-white rounded-[24px] shadow-[0_2px_12px_rgba(0,0,0,0.06)] overflow-hidden flex flex-col relative border border-gray-100">
           
-          {/* Background Top Gradient */}
-          <div
-            className="absolute top-0 left-0 right-0 h-[45%] z-0"
-            style={{
-              background: "linear-gradient(145deg, #f8b5c4 0%, #f06292 100%)",
-              borderBottomLeftRadius: "48px",
-              borderBottomRightRadius: "48px",
-            }}
-          >
-            {/* Overlay Patterns */}
-            <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,_white_10%,_transparent_10%)]" style={{ backgroundSize: '20px 20px' }}></div>
-          </div>
+          {/* Top colored accent line (Google Forms style) */}
+          <div className="h-3 w-full bg-pink-600" />
 
           {/* Discreet admin access */}
           <Link
             to="/login"
             aria-label="Acesso ao painel"
-            className="absolute top-4 right-4 z-30 w-9 h-9 rounded-full flex items-center justify-center bg-white/20 backdrop-blur-md text-white/80 hover:text-white hover:bg-white/40 active:scale-95 transition-all shadow-sm"
+            className="absolute top-6 right-5 z-30 w-8 h-8 rounded-full flex items-center justify-center text-gray-300 hover:text-pink-600 hover:bg-pink-50 transition-all"
           >
             <Lock size={14} strokeWidth={2.5} />
           </Link>
 
-          {/* Top Label */}
-          <div className="relative z-10 flex flex-col items-center pt-16 pb-8">
-            <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 shadow-sm">
-              <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-              <span className="text-[10px] font-bold tracking-[0.3em] text-white uppercase">
-                Pesquisa Oficial
-              </span>
+          <div className="px-8 py-12 flex flex-col items-center text-center">
+            
+            <div className="w-16 h-16 rounded-full bg-pink-50 flex items-center justify-center mb-6">
+              <MessageSquare className="text-pink-600 w-8 h-8" strokeWidth={1.5} />
             </div>
-          </div>
 
-          {/* Main Card */}
-          <div className="relative z-10 flex-1 flex flex-col justify-end px-5 pb-8">
-            <div className="w-full bg-white rounded-[32px] p-8 pt-12 shadow-[0_15px_40px_-10px_rgba(236,64,122,0.25)] border border-pink-50 relative flex flex-col items-center text-center">
-              
-              {/* Floating Icon */}
-              <div className="absolute -top-12 w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-[0_10px_25px_rgba(0,0,0,0.06)]">
-                <div className="w-[72px] h-[72px] rounded-full bg-gradient-to-br from-pink-500 to-pink-600 flex items-center justify-center shadow-inner">
-                  <MessageSquare className="text-white w-9 h-9" strokeWidth={1.5} />
-                </div>
-              </div>
+            <span className="text-[11px] font-bold tracking-[0.2em] text-pink-500 uppercase mb-3">
+              Pesquisa de Opinião Oficial
+            </span>
 
-              {/* Tagline */}
-              <div className="flex items-center justify-center gap-2 mb-4 w-full mt-2">
-                <div className="h-[2px] flex-1 bg-gradient-to-r from-transparent to-pink-100" />
-                <span className="text-[11px] font-bold tracking-[0.25em] text-pink-500 uppercase px-2">
-                  Sua Voz Importa
-                </span>
-                <div className="h-[2px] flex-1 bg-gradient-to-l from-transparent to-pink-100" />
-              </div>
+            <h1 className="text-[2.2rem] leading-[1.1] font-black text-gray-900 tracking-tight mb-4">
+              Voz das Mulheres
+            </h1>
 
-              {/* Title */}
-              <h1 className="text-[2.6rem] leading-[1.05] font-black text-gray-900 tracking-tight mb-4">
-                Voz das <br />
-                <span className="bg-gradient-to-r from-pink-500 to-pink-600 bg-clip-text text-transparent">
-                  Mulheres
-                </span>
-              </h1>
+            <p className="text-[15px] text-gray-600 font-medium leading-relaxed mb-10 px-2">
+              Queremos entender as suas necessidades e ideias. Participe da nossa pesquisa para ajudar a construir um futuro melhor para todas. 
+              <br/><br/>
+              Leva apenas 2 minutinhos.
+            </p>
 
-              {/* Description */}
-              <p className="text-[14px] text-gray-500 font-medium leading-relaxed mb-8 px-1">
-                Queremos entender as suas necessidades e ideias. Participe e ajude a construir um futuro melhor para todas.
-              </p>
-
-              {/* Call to Action */}
-              <Button
-                onClick={() => setStep(1)}
-                className="w-full h-[56px] rounded-2xl text-[14px] font-black bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 shadow-[0_8px_20px_-6px_rgba(219,39,119,0.5)] border-none text-white active:scale-[0.98] uppercase tracking-[0.1em] transition-all flex items-center justify-center"
-              >
-                Iniciar Pesquisa
-                <ChevronRight className="ml-1 h-5 w-5" />
-              </Button>
-            </div>
+            <Button
+              onClick={() => setStep(1)}
+              className="w-full h-14 rounded-2xl text-[15px] font-semibold bg-pink-600 hover:bg-pink-700 shadow-[0_4px_12px_rgba(219,39,119,0.3)] border-none text-white active:scale-[0.98] transition-all flex items-center justify-center"
+            >
+              Iniciar Pesquisa
+              <ChevronRight className="ml-2 h-5 w-5" />
+            </Button>
           </div>
         </div>
       </div>
