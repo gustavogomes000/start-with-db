@@ -242,11 +242,13 @@ function QuestionnaireComponent() {
           </div>
 
           {/* Official logo */}
-          <img
-            src="/brand/logo-sarelli.png"
-            alt="Doutora Fernanda Sarelli — Chama a Doutora"
-            className="h-32 mt-5 object-contain drop-shadow-[0_2px_6px_rgba(0,0,0,0.08)]"
-          />
+          <div className="w-full flex justify-center mt-5">
+            <img
+              src="/brand/logo-sarelli.png"
+              alt="Doutora Fernanda Sarelli — Chama a Doutora"
+              className="h-32 w-auto mx-auto object-contain block drop-shadow-[0_2px_6px_rgba(0,0,0,0.08)]"
+            />
+          </div>
         </div>
 
         {/* Floating CTA card */}
