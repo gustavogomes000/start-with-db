@@ -75,6 +75,23 @@ function AdminLayout() {
   const [pwdAdmin, setPwdAdmin] = useState<AdminUser | null>(null);
   const [newPassword, setNewPassword] = useState("");
   const [savingEdit, setSavingEdit] = useState(false);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  function buildLink(id: string) {
+    if (typeof window === "undefined") return "";
+    return `${window.location.origin}/?recruiter=${id}`;
+  }
+
+  async function copiarLink(id: string) {
+    try {
+      await navigator.clipboard.writeText(buildLink(id));
+      setCopiedId(id);
+      toast.success("Link copiado!");
+      setTimeout(() => setCopiedId((c) => (c === id ? null : c)), 2000);
+    } catch {
+      toast.error("Não foi possível copiar.");
+    }
+  }
 
   useEffect(() => {
     if (typeof window === "undefined") return;
