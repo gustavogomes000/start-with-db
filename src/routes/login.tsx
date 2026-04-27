@@ -4,9 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import { supabase } from "@/integrations/supabase/client";
+// supabase client not needed — using fetch directly to avoid 4xx error overlays
 import { toast } from "sonner";
-import { Eye, EyeOff, Lock } from "lucide-react";
+import { Eye, EyeOff, Lock, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/login")({
   component: LoginComponent,
@@ -29,31 +29,61 @@ function LoginComponent() {
     }
     setLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke("admin-api", {
-        body: { action: "login", payload: { username: u, password: p } },
+      const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/admin-api`;
+      const anon = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+      const res = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          apikey: anon,
+          Authorization: `Bearer ${anon}`,
+        },
+        body: JSON.stringify({ action: "login", payload: { username: u, password: p } }),
       });
-      if (error) throw error;
-      if (!data?.id) {
-        toast.error(data?.error === "invalid_credentials" ? "Usuário ou senha inválidos." : (data?.error || "Falha no login."));
+      const data = await res.json().catch(() => ({}));
+
+      if (data?.error === "invalid_credentials" || !data?.id) {
+        toast.error(
+          data?.error === "invalid_credentials"
+            ? "Usuário ou senha inválidos."
+            : data?.error === "missing_credentials"
+            ? "Preencha usuário e senha."
+            : "Falha no login. Tente novamente.",
+        );
+        setLoading(false);
         return;
       }
+
       localStorage.setItem(
         "admin_session",
         JSON.stringify({ id: data.id, username: data.username, ts: Date.now() }),
       );
       toast.success(`Bem-vinda, ${data.username}!`);
       const isMaster = (data.username || "").toLowerCase().startsWith("administrador");
-      navigate({ to: isMaster ? "/admin" : "/meu-painel" });
-    } catch (err: any) {
-      console.error(err);
-      toast.error(err.message || "Erro ao entrar.");
-    } finally {
+      // Pequeno delay para o overlay aparecer suavemente
+      setTimeout(() => {
+        navigate({ to: isMaster ? "/admin" : "/meu-painel" });
+      }, 600);
+    } catch {
+      toast.error("Erro de conexão. Tente novamente.");
       setLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-pink-50 via-white to-pink-100 px-4 py-8 relative overflow-hidden">
+      {loading && (
+        <div className="fixed inset-0 z-[60] bg-white/85 backdrop-blur-sm flex flex-col items-center justify-center gap-4">
+          <div className="relative w-20 h-20">
+            <div className="absolute inset-0 rounded-full border-4 border-pink-100" />
+            <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-[#e91e63] animate-spin" />
+            <Loader2 className="absolute inset-0 m-auto w-8 h-8 text-[#e91e63] animate-pulse" />
+          </div>
+          <p className="text-[11px] font-black tracking-[0.3em] text-gray-700 uppercase">
+            Entrando...
+          </p>
+        </div>
+      )}
       {/* Decorative background blobs */}
       <div className="absolute top-0 left-0 w-72 h-72 bg-pink-200/40 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-pink-300/30 rounded-full blur-3xl translate-x-1/3 translate-y-1/3" />
