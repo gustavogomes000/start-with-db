@@ -552,10 +552,10 @@ function AdminLayout() {
         <DialogContent className="max-w-md rounded-3xl">
           <DialogHeader>
             <DialogTitle className="text-xl font-black uppercase tracking-tight">
-              Novo administrador
+              Nova entrevistadora
             </DialogTitle>
             <DialogDescription>
-              Crie credenciais para um novo acesso ao painel.
+              Crie um login para uma nova entrevistadora. Ela receberá um link próprio para coletar cadastros.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-3 mt-2">
